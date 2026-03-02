@@ -25,6 +25,12 @@ Professional content-led "Resume & Authority" hub for Jose Fernandez, a New Jers
   - Mandatory clear space: `0.5em` around logo
   - No ® symbol usage
 
+### Centralized Configuration
+- **Single Source of Truth:** `lib/config.ts`
+- **Contains:** Contact info, business details, navigation, social media links, service types
+- **Benefits:** Update once, changes apply site-wide
+- **Documentation:** `HOW_TO_UPDATE_INFO.md` for easy updates
+
 ### Contact Form Integration
 - **Architecture:** DynamoDB-first with GHL sync
 - **Flow:**
@@ -41,6 +47,7 @@ Professional content-led "Resume & Authority" hub for Jose Fernandez, a New Jers
 - Dynamic sitemap with priorities
 - robots.txt with admin/api exclusions
 - Loading states and accessibility features
+- Social media integration (Facebook, Instagram, LinkedIn, YouTube, Zillow)
 
 ---
 
@@ -73,6 +80,7 @@ Professional content-led "Resume & Authority" hub for Jose Fernandez, a New Jers
   BlogList.tsx                 # Blog post listing
 
 /lib
+  config.ts                    # Centralized site configuration
   mdx.ts                       # MDX utilities (getAllPosts, getPostBySlug)
   relatedPosts.ts              # Tag-based recommendation algorithm
   structuredData.ts            # JSON-LD schema generators
@@ -310,6 +318,15 @@ npx ampx sandbox --identifier jtr
 - ✅ All TypeScript errors resolved
 - ✅ Amplify Gen 2 enum limitations handled (using strings)
 - ✅ Environment variables configured
+- ✅ Centralized configuration system implemented
+- ✅ Social media integration complete
+
+### Recent Updates (2026-03-02)
+- ✅ Created `lib/config.ts` for centralized site configuration
+- ✅ Updated all components to use config (Header, Footer, ContactForm, structured data)
+- ✅ Added social media icons to footer (Facebook, Instagram, LinkedIn, YouTube, Zillow)
+- ✅ Created `HOW_TO_UPDATE_INFO.md` documentation
+- ✅ Fixed Amplify backend deployment errors
 
 ### Future Enhancements
 - [ ] Add blog post pagination (currently shows all)
@@ -348,9 +365,15 @@ npx ampx sandbox --identifier jtr
 - `amplify/functions/ghl-contact/handler.ts` - GHL sync
 
 ### Utilities
+- `lib/config.ts` - Centralized site configuration
 - `lib/mdx.ts` - Blog post utilities
 - `lib/relatedPosts.ts` - Recommendation engine
 - `lib/structuredData.ts` - SEO schemas
+
+### Documentation
+- `PROJECT_CONTEXT.md` - Complete project documentation
+- `HOW_TO_UPDATE_INFO.md` - Guide for updating contact info
+- `README.md` - AWS Amplify starter template info
 
 ---
 
@@ -385,14 +408,16 @@ npm run type-check       # TypeScript validation
 
 **Current Phase:** Backend Deployment (Sandbox)  
 **Last Updated:** 2026-03-02  
-**Version:** 1.0.0-beta
+**Version:** 1.0.0
 
 ### Completed
-- ✅ All 16 core tasks complete
+- ✅ All 17 core tasks complete
 - ✅ Frontend fully functional
 - ✅ Backend code written
 - ✅ Environment variables configured
 - ✅ TypeScript errors resolved
+- ✅ Centralized configuration system
+- ✅ Social media integration
 
 ### In Progress
 - 🔄 Amplify sandbox deployment
