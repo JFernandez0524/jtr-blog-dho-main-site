@@ -3,6 +3,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs, getAllPosts } from "@/lib/mdx";
 import { getRelatedPosts } from "@/lib/relatedPosts";
 import { generateArticleSchema } from "@/lib/structuredData";
+import BlogCTA from "@/components/BlogCTA";
 import Link from "next/link";
 
 export async function generateStaticParams() {
@@ -95,6 +96,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="prose prose-lg max-w-none prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate">
           <MDXRemote source={post.content} />
         </div>
+
+        {/* CTA */}
+        <BlogCTA />
       </section>
 
       {/* Related Posts */}

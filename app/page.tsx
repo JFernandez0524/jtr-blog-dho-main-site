@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BentoGrid from "@/components/BentoGrid";
+import ZillowReviews from "@/components/ZillowReviews";
 import { getAllPosts } from "@/lib/mdx";
 import { generateOrganizationSchema } from "@/lib/structuredData";
 import { siteConfig } from "@/lib/config";
@@ -16,6 +17,31 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: true,
     email: true,
+  },
+  alternates: {
+    canonical: "https://www.josetherealtor.com",
+  },
+  openGraph: {
+    title: "Jose Fernandez | NJ Real Estate Specialist",
+    description: "Expert guidance for inherited property, foreclosure assistance, and as-is home sales in New Jersey.",
+    url: "https://www.josetherealtor.com",
+    siteName: "Jose Fernandez Real Estate",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/api/og?title=Jose%20Fernandez%20-%20NJ%20Real%20Estate%20Specialist",
+        width: 1200,
+        height: 630,
+        alt: "Jose Fernandez - New Jersey Real Estate Specialist",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jose Fernandez | NJ Real Estate Specialist",
+    description: "Expert guidance for inherited property, foreclosure assistance, and as-is home sales in New Jersey.",
+    images: ["/api/og?title=Jose%20Fernandez%20-%20NJ%20Real%20Estate%20Specialist"],
   },
 };
 
@@ -109,6 +135,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Zillow Reviews */}
+      <ZillowReviews />
 
       {/* Trust Indicators */}
       <section className="bg-remax-slate/5 py-16">
