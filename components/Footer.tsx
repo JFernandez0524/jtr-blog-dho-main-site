@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { siteConfig } from "@/lib/config";
 
 export default function Footer() {
@@ -6,21 +7,18 @@ export default function Footer() {
     <footer className="border-t border-remax-slate/10 mt-24 bg-white">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* Brand with 2025 Standards */}
+          {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              {/* REMAX Logotype with mandatory clear space */}
-              <div className="py-logo-clear-x px-logo-clear-x">
-                <span className="text-xl font-bold text-remax-blue tracking-tight">
-                  REMAX
-                </span>
-              </div>
-              
-              {/* Horizontal separation */}
-              <div className="h-5 w-px bg-remax-slate/20 mx-logo-clear-m" />
-              
-              {/* Associate name: 75% of REMAX height */}
-              <span className="text-base font-remax text-remax-slate">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/remax-logo.svg"
+                alt="RE/MAX"
+                width={80}
+                height={32}
+                className="h-8 w-auto"
+              />
+              <div className="h-8 w-px bg-remax-slate/20" />
+              <span className="text-base font-semibold text-remax-slate">
                 {siteConfig.contact.name}
               </span>
             </div>

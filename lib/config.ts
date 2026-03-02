@@ -13,7 +13,7 @@ export const siteConfig = {
   // Contact Information
   contact: {
     name: "Jose Fernandez",
-    email: "info@josefernandez.com", // TODO: Update with real email
+    email: "info@josetherealtor.com", // TODO: Update with real email
     phone: "+1 (973) 384-1054", // TODO: Update with real phone
     phoneDisplay: "(973) 384-1054",
     address: {
@@ -21,7 +21,7 @@ export const siteConfig = {
       city: "Freehold",
       state: "NJ",
       zip: "07728",
-      full: "83 South St, Freehold, NJ 07728"
+      full: "83 South St, STE 302, Freehold, NJ 07728"
     }
   },
 

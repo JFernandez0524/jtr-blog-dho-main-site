@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { siteConfig } from "@/lib/config";
 
@@ -12,14 +13,17 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-4">
-            <div className="py-logo-clear-x px-logo-clear-x">
-              <span className="text-xl sm:text-2xl font-bold text-remax-blue tracking-tight">
-                REMAX
-              </span>
-            </div>
-            <div className="h-5 sm:h-6 w-px bg-remax-slate/20 mx-logo-clear-m" />
-            <span className="text-base sm:text-xl font-remax text-remax-slate">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/remax-logo.svg"
+              alt="RE/MAX"
+              width={100}
+              height={40}
+              className="h-8 sm:h-10 w-auto"
+              priority
+            />
+            <div className="h-8 sm:h-10 w-px bg-remax-slate/20" />
+            <span className="text-base sm:text-lg font-semibold text-remax-slate">
               {siteConfig.contact.name}
             </span>
           </Link>

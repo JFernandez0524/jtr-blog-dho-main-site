@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
+import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Contact Jose Fernandez | Free Real Estate Consultation - NJ",
@@ -41,7 +42,9 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-remax-blue mb-1">Phone</h3>
-                    <p className="text-remax-slate">(555) 123-4567</p>
+                    <a href={`tel:${siteConfig.contact.phone}`} className="text-remax-slate hover:text-remax-blue">
+                      {siteConfig.contact.phoneDisplay}
+                    </a>
                     <p className="text-sm text-remax-slate/60">Mon-Fri 9am-6pm EST</p>
                   </div>
                 </div>
@@ -54,7 +57,9 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-remax-blue mb-1">Email</h3>
-                    <p className="text-remax-slate">jose@example.com</p>
+                    <a href={`mailto:${siteConfig.contact.email}`} className="text-remax-slate hover:text-remax-blue">
+                      {siteConfig.contact.email}
+                    </a>
                     <p className="text-sm text-remax-slate/60">Response within 24 hours</p>
                   </div>
                 </div>
@@ -68,7 +73,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-remax-blue mb-1">Office</h3>
-                    <p className="text-remax-slate">Serving all of New Jersey</p>
+                    <p className="text-remax-slate">{siteConfig.contact.address.full}</p>
                     <p className="text-sm text-remax-slate/60">Available for in-person meetings</p>
                   </div>
                 </div>
