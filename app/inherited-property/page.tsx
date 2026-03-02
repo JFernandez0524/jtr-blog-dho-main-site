@@ -51,6 +51,20 @@ export default function InheritedPropertyPage() {
           </p>
         </section>
 
+        <section className="my-8">
+          <div className="aspect-video w-full max-w-4xl mx-auto">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/Wl3JPs492iU"
+              title="Inherited Property Guide"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="rounded-lg"
+            />
+          </div>
+        </section>
+
         <section>
           <h3>Common Challenges I Help Solve</h3>
           <ul className="space-y-4 text-remax-slate">

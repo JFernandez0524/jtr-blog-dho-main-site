@@ -51,6 +51,20 @@ export default function ForeclosurePage() {
           </p>
         </section>
 
+        <section className="my-8">
+          <div className="aspect-video w-full max-w-4xl mx-auto">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/oFggswHSPdE"
+              title="Foreclosure Prevention Guide"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="rounded-lg"
+            />
+          </div>
+        </section>
+
         <section className="bg-remax-red/5 border-l-4 border-remax-red p-6 rounded">
           <h3 className="text-remax-red">Don't Wait Until It's Too Late</h3>
           <p className="text-remax-slate">
