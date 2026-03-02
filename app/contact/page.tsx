@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
 import { siteConfig } from "@/lib/config";
 
@@ -13,6 +14,13 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="bg-gradient-to-b from-remax-blue/5 to-white py-20">
         <div className="max-w-4xl mx-auto px-6 text-center">
+          <Image
+            src="/jose-profile.jpg"
+            alt={siteConfig.contact.name}
+            width={150}
+            height={150}
+            className="rounded-full mx-auto mb-6 shadow-lg"
+          />
           <h1 className="text-balance mb-4">Let's Discuss Your Situation</h1>
           <p className="text-xl text-remax-slate/80">
             Free, confidential consultation with no pressure or obligation.

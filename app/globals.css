@@ -7,9 +7,15 @@
     border-color: rgb(99 102 106 / 0.2);
   }
   
+  html {
+    overflow-x: hidden;
+  }
+  
   body {
     @apply bg-white font-sans antialiased;
     color: #63666A;
+    overflow-x: hidden;
+    width: 100%;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -32,6 +38,16 @@
   a {
     @apply hover:opacity-80 transition-opacity;
     color: #003DA5;
+  }
+  
+  /* Prevent horizontal scroll */
+  * {
+    max-width: 100%;
+  }
+  
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
   }
 }
 

@@ -22,9 +22,9 @@ export default function RootLayout({
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
 
   return (
-    <html lang="en">
+    <html lang="en" className="overflow-x-hidden">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         {gtmId && (
           <script
             dangerouslySetInnerHTML={{
@@ -37,7 +37,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         )}
       </head>
-      <body className={inter.variable}>
+      <body className={`${inter.variable} overflow-x-hidden`}>
         {gtmId && (
           <noscript>
             <iframe
