@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { getPostSlugs } from "@/lib/mdx";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://josefernandez.com";
+  const baseUrl = "https://www.josetherealtor.com";
   const postSlugs = getPostSlugs();
 
   // Static pages

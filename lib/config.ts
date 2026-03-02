@@ -8,7 +8,7 @@ export const siteConfig = {
   name: "Jose Fernandez",
   title: "Jose Fernandez | New Jersey Real Estate Specialist",
   description: "Expert real estate solutions for inherited properties, foreclosures, and as-is sales in New Jersey.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://josefernandez.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.josetherealtor.com",
   
   // Contact Information
   contact: {
