@@ -1,20 +1,12 @@
 "use client";
 
 import { Authenticator } from "@aws-amplify/ui-react";
-import { AuthUser } from "aws-amplify/auth";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-function Login({ user }: { user?: AuthUser }) {
-  useEffect(() => {
-    if (user) {
-      redirect("/admin/leads");
-    }
-  }, [user]);
-  return null;
-}
-
 export default function LoginWithGoogle() {
+  const router = useRouter();
+
   return (
     <Authenticator
       socialProviders={["google"]}
@@ -32,7 +24,14 @@ export default function LoginWithGoogle() {
         },
       }}
     >
-      {({ user }) => <Login user={user} />}
+      {({ user }) => {
+        useEffect(() => {
+          if (user) {
+            router.push("/admin/leads");
+          }
+        }, [user]);
+        return null;
+      }}
     </Authenticator>
   );
 }
