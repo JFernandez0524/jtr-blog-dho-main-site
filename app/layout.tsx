@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "@aws-amplify/ui-react/styles.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import ConfigureAmplifyClientSide from "@/components/ConfigureAmplifyClientSide";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -42,6 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         )}
       </head>
       <body className={`${inter.variable} overflow-x-hidden`}>
+        <ConfigureAmplifyClientSide />
         {gtmId && (
           <noscript>
             <iframe

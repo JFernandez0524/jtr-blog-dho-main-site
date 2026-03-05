@@ -111,9 +111,55 @@ Create `.env.local`:
 GHL_API_TOKEN=your_ghl_api_token
 GHL_LOCATION_ID=your_ghl_location_id
 
+# Required for Google OAuth (Admin Authentication)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
 # Optional
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
+
+### Google OAuth Setup for Admin Panel
+
+The admin panel at `/admin/leads` uses Google OAuth for authentication via AWS Cognito.
+
+**Step 1: Deploy Amplify Backend**
+```bash
+npx ampx sandbox
+```
+
+**Step 2: Get Cognito Domain**
+1. Go to AWS Console → Amazon Cognito → User Pools
+2. Find your user pool (will have "amplify" in the name)
+3. Go to "App integration" tab → "Domain" section
+4. Note the Cognito domain (format: `https://amplifyxxxxx.auth.us-east-1.amazoncognito.com`)
+
+**Step 3: Create Google OAuth Credentials**
+1. Navigate to [Google Cloud Console](https://console.cloud.google.com)
+2. Create/select a project
+3. Enable Google+ API (if not enabled)
+4. Go to Credentials → Create OAuth 2.0 Client ID
+5. Application type: "Web application"
+6. Authorized JavaScript origins: `https://<your-cognito-domain>.auth.<region>.amazoncognito.com`
+7. Authorized redirect URIs: `https://<your-cognito-domain>.auth.<region>.amazoncognito.com/oauth2/idpresponse`
+8. Save Client ID and Client Secret
+
+**Step 4: Update Environment Variables**
+Add the Google credentials to `.env.local`:
+```env
+GOOGLE_CLIENT_ID=your_client_id_from_google
+GOOGLE_CLIENT_SECRET=your_client_secret_from_google
+```
+
+**Step 5: Redeploy Backend**
+```bash
+npx ampx sandbox
+```
+
+**Troubleshooting:**
+- **"Invalid redirect URI"**: Ensure the redirect URI in Google Console exactly matches your Cognito domain
+- **"Client ID not found"**: Verify environment variables are set correctly and backend is redeployed
+- **"Access denied"**: Check that the Google OAuth app is not in testing mode or add your email to test users
 
 ---
 
