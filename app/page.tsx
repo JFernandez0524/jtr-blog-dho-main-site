@@ -4,7 +4,7 @@ import Link from "next/link";
 import BentoGrid from "@/components/BentoGrid";
 import ZillowReviews from "@/components/ZillowReviews";
 import { getAllPosts } from "@/lib/mdx";
-import { generateOrganizationSchema } from "@/lib/structuredData";
+import { generateOrganizationSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -49,6 +49,7 @@ export default function Home() {
   const allPosts = getAllPosts();
   const latestPosts = allPosts.slice(0, 2);
   const organizationSchema = generateOrganizationSchema();
+  const localBusinessSchema = generateLocalBusinessSchema();
 
   return (
     <main className="min-h-screen">
@@ -56,6 +57,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
 
       {/* Hero Section */}
@@ -71,12 +76,14 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/contact"
+                  aria-label="Get free consultation with Jose Fernandez"
                   className="px-8 py-4 bg-remax-blue text-white rounded-lg hover:opacity-90 transition-opacity text-center font-semibold"
                 >
                   Get Free Consultation
                 </Link>
                 <a
                   href={`tel:${siteConfig.contact.phone}`}
+                  aria-label={`Call Jose Fernandez at ${siteConfig.contact.phoneDisplay}`}
                   className="px-8 py-4 border-2 border-remax-blue text-remax-blue rounded-lg hover:bg-remax-blue/5 transition-colors text-center font-semibold"
                 >
                   {siteConfig.contact.phoneDisplay}

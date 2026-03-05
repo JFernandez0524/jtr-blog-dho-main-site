@@ -17,14 +17,9 @@ export default function ZillowReviews() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch(
-          "https://api.bridgedataoutput.com/api/v2/OData/reviews/Reviews?access_token=4b0f974b3aed829530a847ae2d07441b&$filter=AccountIdReviewee eq '20943858'&$top=6"
-        );
+        const response = await fetch("/api/reviews");
         const data = await response.json();
-        
-        if (data && data.value) {
-          setReviews(data.value);
-        }
+        setReviews(data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
       } finally {

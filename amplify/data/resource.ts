@@ -37,7 +37,10 @@ const schema = a.schema({
       ghlContactId: a.string(),
       ghlErrorMessage: a.string(),
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    .authorization((allow) => [
+      allow.publicApiKey().to(["create"]),
+      allow.authenticated().to(["read", "update", "delete"]),
+    ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

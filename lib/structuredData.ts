@@ -29,6 +29,45 @@ export function generatePersonSchema() {
   };
 }
 
+export function generateLocalBusinessSchema(reviewCount?: number, averageRating?: number) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    name: siteConfig.contact.name,
+    image: `${siteConfig.url}/jose-profile.jpg`,
+    "@id": siteConfig.url,
+    url: siteConfig.url,
+    telephone: siteConfig.contact.phone,
+    email: siteConfig.contact.email,
+    priceRange: "$$",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: siteConfig.contact.address.street,
+      addressLocality: siteConfig.contact.address.city,
+      addressRegion: siteConfig.contact.address.state,
+      postalCode: siteConfig.contact.address.zip,
+      addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 40.2607,
+      longitude: -74.2743,
+    },
+    areaServed: siteConfig.business.areasServed.map((area) => ({
+      "@type": "City",
+      name: area,
+    })),
+    ...(reviewCount && averageRating && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: averageRating.toString(),
+        reviewCount: reviewCount.toString(),
+      },
+    }),
+    sameAs: Object.values(siteConfig.social).filter(Boolean),
+  };
+}
+
 export function generateArticleSchema(article: {
   title: string;
   excerpt: string;
@@ -52,11 +91,11 @@ export function generateArticleSchema(article: {
       "@type": "Person",
       name: "Jose Fernandez",
     },
-    url: `https://josefernandez.com/blog/${article.slug}`,
+    url: `${siteConfig.url}/blog/${article.slug}`,
     keywords: article.tags.join(", "),
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://josefernandez.com/blog/${article.slug}`,
+      "@id": `${siteConfig.url}/blog/${article.slug}`,
     },
   };
 }
@@ -95,7 +134,7 @@ export function generateOrganizationSchema() {
     "@type": "RealEstateAgent",
     name: "Jose Fernandez - NJ Real Estate Specialist",
     description: "Expert guidance for inherited property, foreclosure assistance, and as-is home sales in New Jersey.",
-    url: "https://josefernandez.com",
+    url: siteConfig.url,
     areaServed: {
       "@type": "State",
       name: "New Jersey",
