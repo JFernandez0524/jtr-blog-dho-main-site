@@ -52,7 +52,7 @@ export default function InheritedPropertyPage() {
         </section>
 
         <section className="my-8">
-          <div className="aspect-video w-full max-w-4xl mx-auto">
+          <div className="aspect-video w-full max-w-4xl mx-auto relative">
             <iframe
               width="100%"
               height="100%"
@@ -60,7 +60,7 @@ export default function InheritedPropertyPage() {
               title="Inherited Property Guide"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              className="rounded-lg"
+              className="absolute inset-0 w-full h-full rounded-lg"
             />
           </div>
         </section>

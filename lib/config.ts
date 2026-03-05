@@ -44,10 +44,28 @@ export const siteConfig = {
     zillow: "https://www.zillow.com/profile/Jose%20Fernandez%20NJ",
   },
 
+  // Hero Messaging (easy to swap between versions)
+  hero: {
+    // Default: Longer version (more comprehensive)
+    headline: "Helping New Jersey Families Protect the Wealth in Their Home During Life's Most Difficult Transitions",
+    subheadline: "Probate. Foreclosure. Financial hardship.\n\nI help New Jersey homeowners understand their real options and make the best decision for their situation—whether that means selling the property, keeping it, or exploring alternatives.",
+    
+    // Alternate: Shorter version (for A/B testing)
+    headlineAlt: "NJ Resource for Families Facing Probate or Foreclosure",
+    subheadlineAlt: "When life changes suddenly, real estate decisions can feel overwhelming. I help families navigate inherited homes, financial hardship, and complex property situations so they can protect their equity and move forward with confidence.",
+  },
+
+  // CTA Text
+  cta: {
+    primary: "Get Guidance",
+    secondary: "Explore Your Options",
+  },
+
   // Navigation
   nav: {
     main: [
       { label: "Home", href: "/" },
+      { label: "About", href: "/about" },
       { label: "Inherited Property", href: "/inherited-property" },
       { label: "Foreclosure", href: "/foreclosure" },
       { label: "Sell As-Is", href: "/sell-as-is" },
