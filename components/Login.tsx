@@ -29,8 +29,8 @@ export default function LoginWithGoogle() {
           if (user) {
             router.push("/admin/leads");
           }
-        }, [user]);
-        return null;
+        }, [user, router]);
+        return <div>Loading...</div>;
       }}
     </Authenticator>
   );
