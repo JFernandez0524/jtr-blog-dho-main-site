@@ -1,10 +1,10 @@
-import { defineFunction } from "@aws-amplify/backend";
+import { defineFunction, secret } from "@aws-amplify/backend";
 
 export const ghlContact = defineFunction({
   name: "ghl-contact",
   entry: "./handler.ts",
   environment: {
-    GHL_API_TOKEN: process.env.GHL_API_TOKEN || "",
-    GHL_LOCATION_ID: process.env.GHL_LOCATION_ID || "",
+    GHL_API_TOKEN: secret('GHL_API_TOKEN'),
+    GHL_LOCATION_ID: secret('GHL_LOCATION_ID'),
   },
 });
