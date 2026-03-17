@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import PillarLayout from "@/components/PillarLayout";
+import PropertyValuationForm from "@/components/PropertyValuationForm";
+import ZillowReviews from "@/components/ZillowReviews";
 import { generateServiceSchema } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
@@ -40,9 +42,15 @@ export default function InheritedPropertyPage() {
       />
       <PillarLayout
       title="Inherited Property Solutions"
-      subtitle="Compassionate guidance through estate sales and probate in New Jersey"
+      subtitle="You don't have to figure this out alone. Get an instant property valuation and understand all your options — before making any decisions."
+      compact
     >
       <div className="space-y-8">
+        <section>
+          <h2 className="mb-4">Get Your Free Property Valuation</h2>
+          <PropertyValuationForm />
+        </section>
+
         <section>
           <h2>You're Not Alone in This Process</h2>
           <p className="text-lg text-remax-slate/80">
@@ -107,6 +115,7 @@ export default function InheritedPropertyPage() {
         </section>
       </div>
     </PillarLayout>
+    <ZillowReviews />
     </>
   );
 }

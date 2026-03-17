@@ -4,13 +4,14 @@ interface PillarLayoutProps {
   title: string;
   subtitle: string;
   children: ReactNode;
+  compact?: boolean;
 }
 
-export default function PillarLayout({ title, subtitle, children }: PillarLayoutProps) {
+export default function PillarLayout({ title, subtitle, children, compact }: PillarLayoutProps) {
   return (
     <article className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-remax-blue/5 to-white py-20">
+      <section className={`bg-gradient-to-b from-remax-blue/5 to-white ${compact ? "py-8" : "py-20"}`}>
         <div className="max-w-4xl mx-auto px-6">
           <h1 className="text-balance mb-4">{title}</h1>
           <p className="text-xl text-remax-slate/80">{subtitle}</p>
@@ -18,7 +19,7 @@ export default function PillarLayout({ title, subtitle, children }: PillarLayout
       </section>
 
       {/* Content Area */}
-      <section className="max-w-4xl mx-auto px-6 py-16">
+      <section className={`max-w-4xl mx-auto px-6 ${compact ? "py-6" : "py-16"}`}>
         <div className="prose prose-lg max-w-none">
           {children}
         </div>

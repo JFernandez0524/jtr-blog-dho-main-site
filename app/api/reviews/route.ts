@@ -18,9 +18,12 @@ export async function GET() {
       return NextResponse.json([], { status: 200 });
     }
 
-    const response = await fetch(
-      `https://api.bridgedataoutput.com/api/v2/OData/reviews/Reviews?access_token=${apiKey}&$filter=AccountIdReviewee eq '20943858'&$top=6`
-    );
+    const url = new URL("https://api.bridgedataoutput.com/api/v2/OData/reviews/Reviews");
+    url.searchParams.set("access_token", apiKey);
+    url.searchParams.set("$filter", "AccountIdReviewee eq '20943858'");
+    url.searchParams.set("$top", "6");
+
+    const response = await fetch(url.toString());
 
     if (!response.ok) {
       console.error("Failed to fetch reviews:", response.status);

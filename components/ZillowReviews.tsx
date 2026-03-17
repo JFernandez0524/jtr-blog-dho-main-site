@@ -5,7 +5,8 @@ import Image from "next/image";
 
 interface Review {
   Description: string;
-  ReviewerFullName: string;
+  ReviewerFullName: string | null;
+  ReviewerScreenName: string;
   FreeFormLocation: string;
   Rating: number;
 }
@@ -72,12 +73,12 @@ export default function ZillowReviews() {
                   </svg>
                 ))}
               </div>
-              <p className="text-remax-slate/80 text-sm italic mb-4 line-clamp-4">
-                "{review.Description.substring(0, 180)}..."
+              <p className="text-remax-slate/80 text-sm italic mb-4 line-clamp-4 cursor-help" title={review.Description}>
+                "{review.Description}"
               </p>
               <div className="border-t border-remax-slate/10 pt-4">
                 <p className="font-semibold text-remax-slate">
-                  {review.ReviewerFullName || "Verified Client"}
+                  {review.ReviewerFullName || review.ReviewerScreenName || "Verified Client"}
                 </p>
                 <p className="text-sm text-remax-slate/60">
                   {review.FreeFormLocation || "New Jersey"}
