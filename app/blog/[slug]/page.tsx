@@ -60,11 +60,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       {/* Header */}
       <header className="bg-gradient-to-b from-remax-blue/5 to-white py-16">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/blog" className="text-remax-blue hover:opacity-80 mb-6 inline-block">
             ← Back to Blog
           </Link>
-          <h1 className="text-balance mb-4">{post.title}</h1>
+          <h1 className="text-4xl lg:text-5xl font-bold text-balance mb-4 w-full">{post.title}</h1>
           <div className="flex items-center gap-6 text-remax-slate/80">
             <span>{post.author}</span>
             <span>•</span>
@@ -92,8 +92,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </header>
 
       {/* Content */}
-      <section className="max-w-4xl mx-auto px-6 py-12">
-        <div className="prose prose-lg max-w-none prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate">
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <div className="prose prose-lg max-w-none prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate [&>h1]:mb-6 [&>h1]:mt-8 [&>h2]:mb-6 [&>h2]:mt-8 [&>h3]:mb-4 [&>h3]:mt-6 [&>p]:mb-4 [&>ul]:mb-4 [&>ol]:mb-4 [&>li]:mb-2">
           <MDXRemote source={post.content} />
         </div>
 
