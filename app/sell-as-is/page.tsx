@@ -41,10 +41,11 @@ export default function SellAsIsPage() {
       <PillarLayout
       title="Sell Your House As-Is"
       subtitle="No repairs, no staging, no hassle—sell your property in any condition"
+      pageType="sell-as-is"
     >
       <div className="space-y-8">
         <section>
-          <h2>Sell Without the Stress</h2>
+          <h2 className="!mb-4 !mt-8">Sell Without the Stress</h2>
           <p className="text-lg text-remax-slate/80">
             Not every homeowner has the time, money, or energy to prepare a house for the traditional market. 
             If your property needs work, you're dealing with tenant issues, or you simply want a fast sale, 
@@ -53,7 +54,7 @@ export default function SellAsIsPage() {
         </section>
 
         <section>
-          <h3>Perfect For These Situations</h3>
+          <h3 className="!mb-4 !mt-6">Perfect For These Situations</h3>
           <ul className="space-y-4 text-remax-slate">
             <li className="flex gap-3">
               <span className="text-remax-blue font-bold">→</span>
@@ -79,7 +80,7 @@ export default function SellAsIsPage() {
         </section>
 
         <section>
-          <h3>What "As-Is" Really Means</h3>
+          <h3 className="mb-4 mt-6">What "As-Is" Really Means</h3>
           <p className="text-remax-slate mb-4">
             Selling as-is means the buyer accepts the property in its current condition. You won't need to:
           </p>
@@ -92,7 +93,7 @@ export default function SellAsIsPage() {
         </section>
 
         <section className="bg-remax-blue/5 p-8 rounded-lg">
-          <h3>My As-Is Selling Process</h3>
+          <h3 className="mb-4 mt-6">My As-Is Selling Process</h3>
           <ol className="space-y-3 text-remax-slate list-decimal list-inside">
             <li>Property walkthrough to understand current condition</li>
             <li>Market analysis for realistic as-is pricing</li>
@@ -103,7 +104,7 @@ export default function SellAsIsPage() {
         </section>
 
         <section>
-          <h3>Maximize Your As-Is Sale</h3>
+          <h3 className="mb-4 mt-6">Maximize Your As-Is Sale</h3>
           <p className="text-remax-slate">
             While you won't make repairs, strategic pricing and marketing can still get you competitive offers. 
             I have a network of investors and buyers specifically looking for as-is properties in New Jersey, 

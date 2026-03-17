@@ -41,10 +41,11 @@ export default function ForeclosurePage() {
       <PillarLayout
       title="Foreclosure Assistance"
       subtitle="Protect your credit and explore all options before it's too late"
+      pageType="foreclosure"
     >
       <div className="space-y-8">
         <section>
-          <h2>Time-Sensitive Solutions</h2>
+          <h2 className="mb-4 mt-8">Time-Sensitive Solutions</h2>
           <p className="text-lg text-remax-slate/80">
             If you're facing foreclosure, acting quickly can save your credit and give you more options. 
             I specialize in helping New Jersey homeowners navigate this challenging situation with dignity and strategic planning.
@@ -66,7 +67,7 @@ export default function ForeclosurePage() {
         </section>
 
         <section className="bg-remax-red/5 border-l-4 border-remax-red p-6 rounded">
-          <h3 className="text-remax-red">Don't Wait Until It's Too Late</h3>
+          <h3 className="text-remax-red mb-4 mt-6">Don't Wait Until It's Too Late</h3>
           <p className="text-remax-slate">
             The earlier you reach out, the more options you have. Even if you've received a foreclosure notice, 
             there are still strategies we can explore together.
@@ -74,7 +75,7 @@ export default function ForeclosurePage() {
         </section>
 
         <section>
-          <h3>Your Options</h3>
+          <h3 className="mb-4 mt-6">Your Options</h3>
           <ul className="space-y-4 text-remax-slate">
             <li className="flex gap-3">
               <span className="text-remax-blue font-bold">→</span>
@@ -96,7 +97,7 @@ export default function ForeclosurePage() {
         </section>
 
         <section>
-          <h3>How I Can Help</h3>
+          <h3 className="mb-4 mt-6">How I Can Help</h3>
           <p className="text-remax-slate mb-4">
             I have experience negotiating with lenders and understanding New Jersey foreclosure laws. 
             My approach is confidential, non-judgmental, and focused on finding the best path forward for your situation.
@@ -110,7 +111,7 @@ export default function ForeclosurePage() {
         </section>
 
         <section className="bg-remax-blue/5 p-8 rounded-lg">
-          <h3>Take Action Today</h3>
+          <h3 className="mb-4 mt-6">Take Action Today</h3>
           <p className="text-remax-slate">
             Every day matters when facing foreclosure. Let's discuss your situation in a confidential, 
             pressure-free conversation and create a plan that works for you.

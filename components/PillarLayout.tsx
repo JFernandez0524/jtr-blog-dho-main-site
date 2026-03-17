@@ -1,22 +1,28 @@
 import { ReactNode } from "react";
+import AsyncHeroImage from "./AsyncHeroImage";
 
 interface PillarLayoutProps {
   title: string;
   subtitle: string;
   children: ReactNode;
   compact?: boolean;
+  pageType: string;
 }
 
-export default function PillarLayout({ title, subtitle, children, compact }: PillarLayoutProps) {
+export default function PillarLayout({ title, subtitle, children, compact, pageType }: PillarLayoutProps) {
   return (
     <article className="min-h-screen">
       {/* Hero Section */}
-      <section className={`bg-gradient-to-b from-remax-blue/5 to-white ${compact ? "py-8" : "py-20"}`}>
-        <div className="max-w-4xl mx-auto px-6">
-          <h1 className="text-balance mb-4">{title}</h1>
-          <p className="text-xl text-remax-slate/80">{subtitle}</p>
+      <AsyncHeroImage
+        pageType={pageType}
+        className={`bg-gradient-to-b from-remax-blue/5 to-white ${compact ? "py-8" : "py-20"} relative`}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <h1 className="text-balance mb-6 text-white">{title}</h1>
+          <p className="text-xl text-white/90">{subtitle}</p>
         </div>
-      </section>
+      </AsyncHeroImage>
 
       {/* Content Area */}
       <section className={`max-w-4xl mx-auto px-6 ${compact ? "py-6" : "py-16"}`}>
@@ -28,7 +34,7 @@ export default function PillarLayout({ title, subtitle, children, compact }: Pil
       {/* CTA Section */}
       <section className="bg-remax-blue text-white py-16">
         <div className="max-w-4xl mx-auto px-6 text-center space-y-6">
-          <h2 className="text-white">Ready to Get Started?</h2>
+          <h2 className="text-white mb-4">Ready to Get Started?</h2>
           <p className="text-xl text-white/90">
             Let's discuss your situation and find the best solution for you.
           </p>

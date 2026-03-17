@@ -14,14 +14,14 @@ function BentoCard({ title, description, href, className = "", icon }: BentoCard
   return (
     <Link
       href={href}
-      className={`group relative overflow-hidden rounded-2xl border border-remax-slate/10 bg-white p-8 hover:border-remax-blue/30 transition-all hover:shadow-lg ${className}`}
+      className={`group relative overflow-hidden rounded-2xl border border-remax-slate/10 bg-white p-4 md:p-8 hover:border-remax-blue/30 transition-all hover:shadow-lg ${className}`}
     >
-      {icon && <div className="mb-4 text-remax-blue">{icon}</div>}
-      <h3 className="text-2xl mb-3 group-hover:text-remax-blue transition-colors">
+      {icon && <div className="mb-2 md:mb-4 text-remax-blue">{icon}</div>}
+      <h3 className="text-xl md:text-2xl mb-2 md:mb-3 group-hover:text-remax-blue transition-colors">
         {title}
       </h3>
-      <p className="text-remax-slate/80">{description}</p>
-      <div className="absolute bottom-8 right-8 text-remax-blue opacity-0 group-hover:opacity-100 transition-opacity">
+      <p className="text-remax-slate/80 text-sm md:text-base">{description}</p>
+      <div className="absolute bottom-4 md:bottom-8 right-4 md:right-8 text-remax-blue opacity-0 group-hover:opacity-100 transition-opacity">
         →
       </div>
     </Link>
@@ -36,14 +36,14 @@ export default function BentoGrid({ latestPosts }: BentoGridProps) {
   const [post1, post2] = latestPosts;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-fr">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {/* Hero Card - Large */}
-      <div className="md:col-span-2 lg:col-span-2 lg:row-span-2 rounded-2xl bg-gradient-to-br from-remax-blue to-remax-blue/80 text-white p-12 flex flex-col justify-between">
+      <div className="md:col-span-2 lg:col-span-2 lg:row-span-2 rounded-2xl bg-gradient-to-br from-remax-blue to-remax-blue/80 text-white p-6 md:p-12 flex flex-col justify-between">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white">
             Your Trusted NJ Real Estate Partner
           </h2>
-          <p className="text-xl text-white/90 mb-8">
+          <p className="text-lg md:text-xl text-white/90 mb-6 md:mb-8">
             Specializing in complex situations: inherited property, foreclosure assistance, and as-is home sales.
           </p>
         </div>
@@ -125,10 +125,10 @@ export default function BentoGrid({ latestPosts }: BentoGridProps) {
       )}
 
       {/* CTA Card */}
-      <div className="md:col-span-2 lg:col-span-1 rounded-2xl bg-remax-red text-white p-8 flex flex-col justify-between">
+      <div className="md:col-span-2 lg:col-span-1 rounded-2xl bg-remax-red text-white p-4 md:p-8 flex flex-col justify-between">
         <div>
-          <h3 className="text-2xl font-semibold mb-3 text-white">Time-Sensitive?</h3>
-          <p className="text-white/90 mb-6">
+          <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-3 text-white">Time-Sensitive?</h3>
+          <p className="text-white/90 mb-4 md:mb-6 text-sm md:text-base">
             Facing foreclosure or need to sell quickly? Every day matters.
           </p>
         </div>

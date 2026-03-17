@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
+import AsyncHeroImage from "@/components/AsyncHeroImage";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -12,8 +13,12 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-remax-blue/5 to-white py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <AsyncHeroImage
+        pageType="contact"
+        className="bg-gradient-to-b from-remax-blue/5 to-white py-20 relative"
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <Image
             src="/jose-profile.jpg"
             alt={siteConfig.contact.name}
@@ -21,12 +26,12 @@ export default function ContactPage() {
             height={150}
             className="rounded-full mx-auto mb-6 shadow-lg"
           />
-          <h1 className="text-balance mb-4">Let's Discuss Your Situation</h1>
-          <p className="text-xl text-remax-slate/80">
+          <h1 className="text-balance mb-4 text-white">Let's Discuss Your Situation</h1>
+          <p className="text-xl text-white/90">
             Free, confidential consultation with no pressure or obligation.
           </p>
         </div>
-      </section>
+      </AsyncHeroImage>
 
       {/* Contact Form & Info */}
       <section className="max-w-6xl mx-auto px-6 py-16">
@@ -109,6 +114,17 @@ export default function ContactPage() {
                   <span>Clear explanation of your options</span>
                 </li>
               </ul>
+            </div>
+
+            {/* Professional Credentials */}
+            <div className="border-t border-remax-slate/10 pt-6 mt-6">
+              <h3 className="font-semibold text-remax-blue mb-2">Professional Credentials</h3>
+              <div className="text-sm text-remax-slate/80 space-y-1">
+                <p>Licensed Real Estate Salesperson</p>
+                <p>New York & New Jersey</p>
+                <p>NY License #10401392134 | NJ License #1430283</p>
+                <p>RE/MAX Homeland Realtors</p>
+              </div>
             </div>
           </div>
         </div>

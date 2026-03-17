@@ -23,11 +23,16 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-remax-slate/80">
-              {siteConfig.business.brokerage} | {siteConfig.contact.address.state} Real Estate Specialist
+              {siteConfig.business.brokerage} | NY & NJ Real Estate Specialist
             </p>
             <div className="text-sm text-remax-slate/80 space-y-1">
               <p>{siteConfig.contact.phoneDisplay}</p>
               <p>{siteConfig.contact.email}</p>
+            </div>
+            <div className="text-sm text-remax-slate/80 space-y-1 mt-3">
+              <p>Licensed Real Estate Salesperson</p>
+              <p>New York & New Jersey</p>
+              <p>NY License #10401392134 | NJ License #1430283</p>
             </div>
             
             {/* Professional Logos */}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Visibility Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'remax-blue': '#003da5',
+                        'remax-slate': '#334155',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="p-8">
+        <h1 class="text-2xl font-bold mb-8">Hero Button Visibility Test</h1>
+        
+        <!-- Test with different background images -->
+        <div class="space-y-8">
+            <!-- Dark background test -->
+            <div class="relative p-8 rounded-lg" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://picsum.photos/seed/dark/800/400'); background-size: cover; background-position: center;">
+                <h2 class="text-white text-xl mb-4">Dark Background Test</h2>
+                <div class="flex gap-4">
+                    <!-- Primary button -->
+                    <button class="px-8 py-4 bg-remax-blue text-white rounded-lg hover:opacity-90 transition-opacity font-semibold">
+                        Get Guidance
+                    </button>
+                    <!-- NEW: Secondary button with white border and text -->
+                    <button class="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white/10 transition-colors font-semibold">
+                        Explore Your Options
+                    </button>
+                </div>
+            </div>
+
+            <!-- Light background test -->
+            <div class="relative p-8 rounded-lg" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://picsum.photos/seed/light/800/400'); background-size: cover; background-position: center;">
+                <h2 class="text-white text-xl mb-4">Light Background Test</h2>
+                <div class="flex gap-4">
+                    <!-- Primary button -->
+                    <button class="px-8 py-4 bg-remax-blue text-white rounded-lg hover:opacity-90 transition-opacity font-semibold">
+                        Get Guidance
+                    </button>
+                    <!-- NEW: Secondary button with white border and text -->
+                    <button class="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white/10 transition-colors font-semibold">
+                        Explore Your Options
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison: OLD vs NEW -->
+            <div class="bg-gray-800 p-8 rounded-lg">
+                <h2 class="text-white text-xl mb-4">Before vs After Comparison</h2>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-white/70 mb-2">OLD (Blue text - hard to see):</p>
+                        <button class="px-8 py-4 border-2 border-remax-blue text-remax-blue rounded-lg hover:bg-remax-blue/5 transition-colors font-semibold">
+                            Explore Your Options
+                        </button>
+                    </div>
+                    <div>
+                        <p class="text-white/70 mb-2">NEW (White text - clearly visible):</p>
+                        <button class="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white/10 transition-colors font-semibold">
+                            Explore Your Options
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accessibility notes -->
+        <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h3 class="font-semibold text-green-800 mb-2">✅ Accessibility Improvements:</h3>
+            <ul class="text-green-700 space-y-1">
+                <li>• White text on dark overlay provides high contrast ratio (>4.5:1)</li>
+                <li>• Button remains clearly distinguishable from primary button</li>
+                <li>• Hover state provides visual feedback</li>
+                <li>• Works on any background image color</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

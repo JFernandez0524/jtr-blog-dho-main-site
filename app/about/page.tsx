@@ -1,5 +1,8 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import AsyncHeroImage from "@/components/AsyncHeroImage";
+import ZillowReviews from "@/components/ZillowReviews";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -14,11 +17,25 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-remax-blue/5 to-white py-16">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="mb-4">About Jose Fernandez</h1>
+      <AsyncHeroImage
+        pageType="contact"
+        className="bg-gradient-to-b from-remax-blue/5 to-white py-20 relative"
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <Image
+            src="/jose-profile.jpg"
+            alt={siteConfig.contact.name}
+            width={150}
+            height={150}
+            className="rounded-full mx-auto mb-6 shadow-lg"
+          />
+          <h1 className="mb-4 text-white">About Jose Fernandez</h1>
+          <p className="text-xl text-white/90">
+            Helping New Jersey families protect their home equity during life's most difficult transitions.
+          </p>
         </div>
-      </section>
+      </AsyncHeroImage>
 
       {/* My Mission */}
       <section className="max-w-4xl mx-auto px-6 py-16">
@@ -42,8 +59,37 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Why I Focus on Probate and Foreclosure */}
+      {/* Professional Credentials */}
       <section className="bg-remax-slate/5 py-16">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl mb-8 text-remax-blue">Professional Credentials</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Licenses & Certifications</h3>
+              <ul className="space-y-2 text-remax-slate">
+                <li>• Licensed New York Real Estate Salesperson</li>
+                <li>• Licensed New Jersey Real Estate Salesperson</li>
+                <li>• RE/MAX Homeland Realtors</li>
+                <li>• Probate Real Estate Specialist</li>
+                <li>• Distressed Property Expert</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Experience</h3>
+              <ul className="space-y-2 text-remax-slate">
+                <li>• 10+ Years in Real Estate</li>
+                <li>• 500+ Families Helped</li>
+                <li>• Specialized in Complex Situations</li>
+                <li>• Serving New York & New Jersey</li>
+                <li>• Fluent in English and Spanish</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why I Focus on Probate and Foreclosure */}
+      <section className="py-16">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-3xl mb-8 text-remax-blue">Why I Focus on Probate and Foreclosure</h2>
           <div className="prose prose-lg max-w-none text-remax-slate space-y-6">
@@ -71,6 +117,31 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Personal Connection */}
+      <section className="bg-remax-slate/5 py-16">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl mb-8 text-remax-blue">My Connection to New York & New Jersey</h2>
+          <div className="prose prose-lg max-w-none text-remax-slate space-y-6">
+            <p>
+              As a licensed professional in both New York and New Jersey, I understand the unique challenges families face in our region. 
+              From property taxes to probate laws, every detail matters when protecting your family's wealth.
+            </p>
+            <p>
+              I've seen firsthand how the right guidance can save families from financial hardship, and how the 
+              wrong decisions can cost them everything they've worked for. That's what drives me to provide 
+              honest, expert advice when families need it most.
+            </p>
+            <p className="font-semibold">
+              My commitment is simple: to treat every family's situation with the same care and attention 
+              I would want for my own family.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Client Reviews */}
+      <ZillowReviews />
 
       {/* A Different Approach */}
       <section className="max-w-4xl mx-auto px-6 py-16">

@@ -147,3 +147,71 @@ export function generateOrganizationSchema() {
     ],
   };
 }
+
+export function generateFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(faq => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer
+      }
+    }))
+  };
+}
+
+export function generateBreadcrumbSchema(breadcrumbs: Array<{ name: string; url: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: crumb.url
+    }))
+  };
+}
+
+export function generateReviewSchema(reviews: {
+  reviewCount: number;
+  averageRating: number;
+  reviews?: Array<{
+    author: string;
+    rating: number;
+    text: string;
+    date: string;
+  }>;
+}) {
+  const schema: any = {
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    ratingValue: reviews.averageRating,
+    reviewCount: reviews.reviewCount,
+    bestRating: 5,
+    worstRating: 1
+  };
+
+  if (reviews.reviews && reviews.reviews.length > 0) {
+    schema.review = reviews.reviews.map(review => ({
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: review.author
+      },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: review.rating,
+        bestRating: 5,
+        worstRating: 1
+      },
+      reviewBody: review.text,
+      datePublished: review.date
+    }));
+  }
+
+  return schema;
+}

@@ -4,8 +4,9 @@ import Link from "next/link";
 import BentoGrid from "@/components/BentoGrid";
 import ZillowReviews from "@/components/ZillowReviews";
 import SituationsHook from "@/components/SituationsHook";
+import AsyncHeroImage from "@/components/AsyncHeroImage";
 import { getAllPosts } from "@/lib/mdx";
-import { generateOrganizationSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
+import { generateOrganizationSchema, generateLocalBusinessSchema, generateReviewSchema } from "@/lib/structuredData";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -51,6 +52,13 @@ export default function Home() {
   const latestPosts = allPosts.slice(0, 2);
   const organizationSchema = generateOrganizationSchema();
   const localBusinessSchema = generateLocalBusinessSchema();
+  
+  // Placeholder for future reviews - update when you get Google/Yelp reviews
+  const reviewSchema = generateReviewSchema({
+    reviewCount: 0,
+    averageRating: 5.0,
+    reviews: []
+  });
 
   return (
     <main className="min-h-screen">
@@ -65,13 +73,18 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-remax-blue/5 to-white py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      <AsyncHeroImage
+        pageType="homepage"
+        className="bg-gradient-to-b from-remax-blue/5 to-white py-8 md:py-12 relative"
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <h1 className="mb-6">{siteConfig.hero.headline}</h1>
-              <p className="text-xl text-remax-slate/80 mb-8 whitespace-pre-line">
-                {siteConfig.hero.subheadline}
+              <h1 className="mb-4 text-white">{siteConfig.hero.headlineAlt}</h1>
+              <p className="text-sm text-white/80 mb-2">Licensed Real Estate Professional | New York & New Jersey</p>
+              <p className="text-lg text-white/90 mb-6">
+                When life changes suddenly, real estate decisions can feel overwhelming. I help families navigate complex property situations with confidence.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -84,7 +97,7 @@ export default function Home() {
                 <Link
                   href="/about"
                   aria-label="Learn about Jose Fernandez's approach"
-                  className="px-8 py-4 border-2 border-remax-blue text-remax-blue rounded-lg hover:bg-remax-blue/5 transition-colors text-center font-semibold"
+                  className="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white/10 transition-colors text-center font-semibold"
                 >
                   {siteConfig.cta.secondary}
                 </Link>
@@ -94,15 +107,15 @@ export default function Home() {
               <Image
                 src="/jose-profile.jpg"
                 alt={siteConfig.contact.name}
-                width={500}
-                height={500}
+                width={350}
+                height={350}
                 className="rounded-2xl shadow-2xl"
                 priority
               />
             </div>
           </div>
         </div>
-      </section>
+      </AsyncHeroImage>
 
       {/* Situations Hook */}
       <SituationsHook />
@@ -167,28 +180,28 @@ export default function Home() {
         <h2 className="text-center mb-12">Why Work With Me?</h2>
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <h3 className="text-xl">Specialized Expertise</h3>
+            <h3 className="text-xl mb-3">Specialized Expertise</h3>
             <p className="text-remax-slate/80">
               I focus exclusively on complex real estate situations where homeowners need more than a traditional agent. 
               Whether it's probate, foreclosure, or selling as-is, I have the experience to guide you through.
             </p>
           </div>
           <div className="space-y-4">
-            <h3 className="text-xl">Compassionate Approach</h3>
+            <h3 className="text-xl mb-3">Compassionate Approach</h3>
             <p className="text-remax-slate/80">
               Real estate challenges often come during difficult times. I provide judgment-free guidance with patience 
               and understanding, always putting your needs first.
             </p>
           </div>
           <div className="space-y-4">
-            <h3 className="text-xl">Local Market Knowledge</h3>
+            <h3 className="text-xl mb-3">Local Market Knowledge</h3>
             <p className="text-remax-slate/80">
               As a New Jersey specialist, I understand local probate laws, foreclosure timelines, and market conditions 
               that affect your specific situation.
             </p>
           </div>
           <div className="space-y-4">
-            <h3 className="text-xl">No-Pressure Consultation</h3>
+            <h3 className="text-xl mb-3">No-Pressure Consultation</h3>
             <p className="text-remax-slate/80">
               Every situation is unique. I offer free consultations to understand your needs and explore all options 
               before you make any decisions.
