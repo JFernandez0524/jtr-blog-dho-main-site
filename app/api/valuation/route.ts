@@ -137,6 +137,8 @@ async function syncToGHL(body: any, zestimate: number) {
       body: JSON.stringify({ tags: ["valuation-lead", "inherited-property"], customFields }),
     });
   } else if (!res.ok) {
+    const errBody = await res.text();
+    console.error("GHL error body:", errBody);
     throw new Error(`GHL error: ${res.status}`);
   }
 }
