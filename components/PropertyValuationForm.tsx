@@ -31,26 +31,69 @@ export default function PropertyValuationForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [result, setResult] = useState<ValuationResult | null>(null);
   const [error, setError] = useState("");
+  const [addressError, setAddressError] = useState("");
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (addressData) return; // already resolved, don't re-fetch
-    if (query.length < 3) { setSuggestions([]); return; }
+    if (query.length < 3) { 
+      setSuggestions([]);
+      setAddressError("");
+      return; 
+    }
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    setIsLoadingSuggestions(true);
+    setAddressError("");
+    
     debounceRef.current = setTimeout(async () => {
-      const res = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      setSuggestions(Array.isArray(data) ? data : []);
+      try {
+        const res = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        
+        if (!res.ok) {
+          setAddressError(data.error || "Failed to load address suggestions");
+          setSuggestions([]);
+          return;
+        }
+        
+        if (data.error) {
+          setAddressError(data.error);
+          setSuggestions([]);
+          return;
+        }
+        
+        setSuggestions(data.predictions || []);
+      } catch (error) {
+        console.error("Address autocomplete error:", error);
+        setAddressError("Failed to load address suggestions");
+        setSuggestions([]);
+      } finally {
+        setIsLoadingSuggestions(false);
+      }
     }, 300);
   }, [query, addressData]);
 
   const handleSelect = async (suggestion: Suggestion) => {
     setQuery(suggestion.description);
     setSuggestions([]);
-    const res = await fetch(`/api/places/details?placeId=${suggestion.placeId}`);
-    const data = await res.json();
-    setAddressData(data);
+    setAddressError("");
+    
+    try {
+      const res = await fetch(`/api/places/details?placeId=${suggestion.placeId}`);
+      const data = await res.json();
+      
+      if (!res.ok) {
+        setAddressError(data.error || "Failed to load address details");
+        return;
+      }
+      
+      setAddressData(data);
+    } catch (error) {
+      console.error("Address details error:", error);
+      setAddressError("Failed to load address details");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -117,6 +160,11 @@ export default function PropertyValuationForm() {
           className={inputClass}
           autoComplete="off"
         />
+        {isLoadingSuggestions && (
+          <div className="absolute right-3 top-3 text-remax-slate/50">
+            <div className="animate-spin h-5 w-5 border-2 border-remax-blue border-t-transparent rounded-full"></div>
+          </div>
+        )}
         {suggestions.length > 0 && (
           <ul className="absolute z-10 w-full bg-white border border-remax-slate/20 rounded-lg shadow-lg mt-1 max-h-60 overflow-auto">
             {suggestions.map((s) => (
@@ -129,6 +177,11 @@ export default function PropertyValuationForm() {
               </li>
             ))}
           </ul>
+        )}
+        {addressError && (
+          <div className="absolute z-10 w-full bg-red-50 border border-red-200 rounded-lg shadow-lg mt-1 p-3">
+            <p className="text-red-600 text-sm">{addressError}</p>
+          </div>
         )}
       </div>
 
