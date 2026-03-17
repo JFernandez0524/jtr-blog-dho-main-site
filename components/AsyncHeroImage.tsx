@@ -10,13 +10,10 @@ interface AsyncHeroImageProps {
 }
 
 export default function AsyncHeroImage({ pageType, className = "", children }: AsyncHeroImageProps) {
-  const [backgroundImage, setBackgroundImage] = useState<string>("");
   const fallbackImage = getFallbackImage(pageType);
+  const [backgroundImage, setBackgroundImage] = useState<string>(fallbackImage);
 
   useEffect(() => {
-    // Start with fallback immediately
-    setBackgroundImage(fallbackImage);
-
     // Load Unsplash image asynchronously
     getHeroImage(pageType).then((heroImage) => {
       if (heroImage && heroImage !== fallbackImage) {

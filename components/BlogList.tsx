@@ -77,6 +77,7 @@ export default function BlogList({ posts }: BlogListProps) {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
+                  timeZone: "UTC",
                 })}
               </time>
               <span>{post.readingTime}</span>
