@@ -29,7 +29,7 @@ const schema = a.schema({
       phone: a.string().required(),
       message: a.string(),
       serviceType: a.string(),
-      formType: a.enum(["CONTACT", "VALUATION"]).required(),
+      formType: a.enum(["CONTACT", "VALUATION"]),
       source: a.string(),
       pageUrl: a.string(),
       referrer: a.string(),
