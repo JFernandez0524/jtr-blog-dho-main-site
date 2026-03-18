@@ -5,17 +5,18 @@ import { getHeroImage, getFallbackImage } from "@/lib/unsplash";
 
 interface AsyncHeroImageProps {
   pageType: string;
+  title?: string;
   className?: string;
   children: React.ReactNode;
 }
 
-export default function AsyncHeroImage({ pageType, className = "", children }: AsyncHeroImageProps) {
+export default function AsyncHeroImage({ pageType, title, className = "", children }: AsyncHeroImageProps) {
   const fallbackImage = getFallbackImage(pageType);
   const [backgroundImage, setBackgroundImage] = useState<string>(fallbackImage);
 
   useEffect(() => {
     // Load Unsplash image asynchronously
-    getHeroImage(pageType).then((heroImage) => {
+    getHeroImage(pageType, title).then((heroImage) => {
       if (heroImage && heroImage !== fallbackImage) {
         setBackgroundImage(heroImage);
       }
@@ -23,7 +24,7 @@ export default function AsyncHeroImage({ pageType, className = "", children }: A
       // Keep fallback on error
       setBackgroundImage(fallbackImage);
     });
-  }, [pageType, fallbackImage]);
+  }, [pageType, title, fallbackImage]);
 
   return (
     <section 

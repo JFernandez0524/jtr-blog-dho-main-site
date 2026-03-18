@@ -13,13 +13,48 @@ const SEARCH_QUERIES = {
 
 export type HeroImageType = keyof typeof SEARCH_QUERIES;
 
-export async function getHeroImage(pageType: string): Promise<string> {
+// Convert page titles to effective search queries
+export function titleToSearchQuery(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '') // Remove punctuation
+    .replace(/\s+/g, ' ') // Normalize spaces
+    .trim() + ' real estate'; // Add context
+}
+
+export async function getHeroImage(pageType: string, title?: string): Promise<string> {
   if (!UNSPLASH_ACCESS_KEY) {
     console.warn('UNSPLASH_ACCESS_KEY not configured, using fallback');
     return getFallbackImage(pageType);
   }
 
   try {
+    // Try title-based query first if provided
+    if (title) {
+      const titleQuery = titleToSearchQuery(title);
+      const titleResponse = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(titleQuery)}&per_page=1&orientation=landscape`,
+        {
+          headers: {
+            'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+          },
+        }
+      );
+
+      if (titleResponse.ok) {
+        const titleData = await titleResponse.json();
+        if (titleData.results && titleData.results.length > 0) {
+          const photo = titleData.results[0];
+          const imageUrl = photo.urls.regular;
+          console.log(`Generated image URL for title "${title}": ${imageUrl}`);
+          return imageUrl;
+        }
+      }
+      
+      console.log(`No results for title "${title}", falling back to pageType`);
+    }
+
+    // Fallback to pageType query
     const query = SEARCH_QUERIES[pageType as keyof typeof SEARCH_QUERIES] || SEARCH_QUERIES.default;
     
     const response = await fetch(
