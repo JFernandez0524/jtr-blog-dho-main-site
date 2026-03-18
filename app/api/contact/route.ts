@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
       phone,
       message,
       serviceType,
+      formType: "CONTACT",
       source: source || request.url,
       pageUrl: source || request.url,
       referrer: referrer || "direct",
@@ -137,7 +138,13 @@ export async function POST(request: NextRequest) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            ...body,
+            name,
+            email,
+            phone,
+            message,
+            serviceType,
+            formType: "CONTACT",
+            referrer: referrer || "direct",
             submissionId: submission.data.id,
           }),
         }

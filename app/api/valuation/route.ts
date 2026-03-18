@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "@/amplify/data/resource";
+import outputs from "@/amplify_outputs.json";
+import { Amplify } from "aws-amplify";
+
+Amplify.configure(outputs);
 
 const BRIDGE_BASE = "https://api.bridgedataoutput.com/api/v2";
-
-const GHL_HEADERS = (token: string) => ({
-  "Authorization": `Bearer ${token}`,
-  "Content-Type": "application/json",
-  "Version": "2021-07-28",
-});
 
 function getBridgeHeaders() {
   const apiKey = process.env.BRIDGE_DATA_API_KEY;
@@ -94,59 +94,11 @@ async function getZestimate(
   return 0;
 }
 
-async function syncToGHL(body: any, zestimate: number) {
-  const token = process.env.GHL_API_TOKEN;
-  const locationId = process.env.GHL_LOCATION_ID;
-  if (!token || !locationId) throw new Error("GHL credentials not configured");
-
-  const nameParts = (body.name || "").trim().split(" ");
-  const firstName = nameParts[0] || "Unknown";
-  const lastName = nameParts.slice(1).join(" ") || "Lead";
-
-  const customFields = [
-    { id: "p3NOYiInAERYbe0VsLHB", value: body.street },
-    { id: "h4UIjKQvFu7oRW4SAY8W", value: body.city },
-    { id: "9r9OpQaxYPxqbA6Hvtx7", value: body.state },
-    { id: "hgbjsTVwcyID7umdhm2o", value: body.zip },
-    { id: "7wIe1cRbZYXUnc3WOVb2", value: zestimate.toString() },
-    { id: "oaf4wCuM3Ub9eGpiddrO", value: "INHERITED PROPERTY" },
-    { id: "pGfgxcdFaYAkdq0Vp53j", value: "Property Valuation Form" },
-  ];
-
-  const res = await fetch("https://services.leadconnectorhq.com/contacts/", {
-    method: "POST",
-    headers: GHL_HEADERS(token),
-    body: JSON.stringify({
-      locationId,
-      firstName,
-      lastName,
-      email: body.email,
-      phone: body.phone,
-      source: "Property Valuation Form",
-      tags: ["valuation-lead", "inherited-property"],
-      customFields,
-    }),
-  });
-
-  const result = await res.json();
-
-  if (res.status === 400 && result.meta?.contactId) {
-    await fetch(`https://services.leadconnectorhq.com/contacts/${result.meta.contactId}`, {
-      method: "PUT",
-      headers: GHL_HEADERS(token),
-      body: JSON.stringify({ tags: ["valuation-lead", "inherited-property"], customFields }),
-    });
-  } else if (!res.ok) {
-    const errBody = await res.text();
-    console.error("GHL error body:", errBody);
-    throw new Error(`GHL error: ${res.status}`);
-  }
-}
-
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { street, city, state, zip } = body;
+  const { street, city, state, zip, name, email, phone } = body;
 
+  // STEP 1: Get Zestimate from Bridge API
   let zestimate = 0;
   try {
     zestimate = await getZestimate(street, city, state, zip, body.lat, body.lng);
@@ -154,10 +106,79 @@ export async function POST(request: NextRequest) {
     console.error("Zestimate lookup failed:", err);
   }
 
+  const client = generateClient<Schema>();
+
+  // STEP 2: Save to DynamoDB FIRST (never lose a lead)
+  const submission = await client.models.ContactSubmission.create({
+    name,
+    email,
+    phone,
+    formType: "VALUATION",
+    street,
+    city,
+    state,
+    zip,
+    zestimate: zestimate.toString(),
+    source: "Property Valuation Form",
+    referrer: request.headers.get("referer") || "direct",
+    submittedAt: new Date().toISOString(),
+    ghlSyncStatus: "PENDING",
+  });
+
+  if (!submission.data) {
+    throw new Error("Failed to save submission to database");
+  }
+
+  console.log("Valuation submission saved to DynamoDB:", submission.data.id);
+
+  // STEP 3: Attempt to sync to GHL via Lambda
   try {
-    await syncToGHL(body, zestimate);
-  } catch (err) {
-    console.error("GHL sync failed:", err);
+    const lambdaResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_AMPLIFY_FUNCTION_URL || "http://localhost:3000"}/ghl-contact`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          formType: "VALUATION",
+          street,
+          city,
+          state,
+          zip,
+          zestimate: zestimate.toString(),
+          referrer: request.headers.get("referer") || "direct",
+          submissionId: submission.data.id,
+        }),
+      }
+    );
+
+    const lambdaResult = await lambdaResponse.json();
+
+    // Update sync status based on Lambda result
+    if (lambdaResult.ghlSynced) {
+      await client.models.ContactSubmission.update({
+        id: submission.data.id,
+        ghlSyncStatus: "SYNCED",
+        ghlContactId: lambdaResult.ghlContactId,
+      });
+      console.log("GHL sync successful:", lambdaResult.ghlContactId);
+    } else {
+      await client.models.ContactSubmission.update({
+        id: submission.data.id,
+        ghlSyncStatus: "FAILED",
+        ghlErrorMessage: lambdaResult.ghlError || "Unknown error",
+      });
+      console.error("GHL sync failed:", lambdaResult.ghlError);
+    }
+  } catch (error) {
+    console.error("Lambda invocation failed:", error);
+    await client.models.ContactSubmission.update({
+      id: submission.data.id,
+      ghlSyncStatus: "FAILED",
+      ghlErrorMessage: error instanceof Error ? error.message : "Lambda invocation failed",
+    });
   }
 
   return NextResponse.json({
