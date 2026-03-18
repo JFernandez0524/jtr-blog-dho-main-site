@@ -9,3 +9,7 @@ export const backend = defineBackend({
   ghlContact,
 });
 
+// Pass environment variables to Lambda function
+backend.ghlContact.addEnvironment("GHL_API_TOKEN", process.env.GHL_API_TOKEN || '');
+backend.ghlContact.addEnvironment("GHL_LOCATION_ID", process.env.GHL_LOCATION_ID || '');
+
