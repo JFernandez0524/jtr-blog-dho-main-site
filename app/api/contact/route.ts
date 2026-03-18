@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Schema } from "@/amplify/data/resource";
 import { ContactFormSchema } from "@/lib/validation";
 import { cookiesClient } from "@/utils/amplify-utils";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 // Rate limiting: in-memory store
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -128,27 +128,23 @@ export async function POST(request: NextRequest) {
 
     // STEP 2: Attempt to sync to GHL via Lambda
     try {
-      const lambdaResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_AMPLIFY_FUNCTION_URL || "http://localhost:3000"}/ghl-contact`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+      const lambda = new LambdaClient({ region: process.env.AWS_REGION || "us-east-1" });
+      const command = new InvokeCommand({
+        FunctionName: process.env.GHL_LAMBDA_FUNCTION_NAME!,
+        Payload: JSON.stringify({
           body: JSON.stringify({
-            name,
-            email,
-            phone,
-            message,
-            serviceType,
+            name, email, phone, message, serviceType,
             formType: "CONTACT",
             referrer: referrer || "direct",
             submissionId: submission.data.id,
           }),
-        }
-      );
+        }),
+      });
 
-      const lambdaResult = await lambdaResponse.json();
+      const response = await lambda.send(command);
+      const rawPayload = JSON.parse(Buffer.from(response.Payload!).toString());
+      const lambdaResult = rawPayload.body ? JSON.parse(rawPayload.body) : {};
 
-      // Update sync status based on Lambda result
       if (lambdaResult.ghlSynced) {
         await client.models.ContactSubmission.update({
           id: submission.data.id,
@@ -165,7 +161,6 @@ export async function POST(request: NextRequest) {
         console.error("GHL sync failed:", lambdaResult.ghlError);
       }
     } catch (lambdaError) {
-      // Lambda failed, but we still have the lead in DynamoDB
       console.error("Lambda invocation failed:", lambdaError);
       await client.models.ContactSubmission.update({
         id: submission.data.id,

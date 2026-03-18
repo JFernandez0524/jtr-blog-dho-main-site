@@ -13,3 +13,8 @@ export const backend = defineBackend({
 backend.ghlContact.addEnvironment("GHL_API_TOKEN", process.env.GHL_API_TOKEN || '');
 backend.ghlContact.addEnvironment("GHL_LOCATION_ID", process.env.GHL_LOCATION_ID || '');
 
+// Grant authenticated users permission to invoke the Lambda
+backend.ghlContact.resources.lambda.grantInvoke(
+  backend.auth.resources.authenticatedUserIamRole
+);
+
