@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import outputs from "@/amplify_outputs.json";
-import { Amplify } from "aws-amplify";
-
-Amplify.configure(outputs);
+import { cookiesClient } from "@/utils/amplify-utils";
 
 const BRIDGE_BASE = "https://api.bridgedataoutput.com/api/v2";
 
@@ -106,7 +102,7 @@ export async function POST(request: NextRequest) {
     console.error("Zestimate lookup failed:", err);
   }
 
-  const client = generateClient<Schema>();
+  const client = cookiesClient;
 
   // STEP 2: Save to DynamoDB FIRST (never lose a lead)
   const submission = await client.models.ContactSubmission.create({

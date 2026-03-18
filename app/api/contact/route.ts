@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateClient } from "aws-amplify/data";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
 import type { Schema } from "@/amplify/data/resource";
 import { ContactFormSchema } from "@/lib/validation";
-
-Amplify.configure(outputs, { ssr: true });
+import { cookiesClient } from "@/utils/amplify-utils";
 
 // Rate limiting: in-memory store
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -107,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     const { name, email, phone, message, serviceType, source, referrer } = validation.data;
 
-    const client = generateClient<Schema>();
+    const client = cookiesClient;
 
     // STEP 1: Save to DynamoDB FIRST (never lose a lead)
     const submission = await client.models.ContactSubmission.create({
