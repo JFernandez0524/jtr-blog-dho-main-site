@@ -14,11 +14,13 @@ export const auth = defineAuth({
       },
       callbackUrls: [
         'http://localhost:3000/login',
+        'https://www.josetherealtor.com/login',
         'https://josetherealtor.com/login',
       ],
       logoutUrls: [
         'http://localhost:3000/',
         'https://josetherealtor.com/',
+        'https://www.josetherealtor.com/', 
       ],
     },
   },

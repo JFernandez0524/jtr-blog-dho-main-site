@@ -2,15 +2,20 @@
 
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { AuthUser } from "aws-amplify/auth";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import "@aws-amplify/ui-react/styles.css";
 
 function Login({ user }: { user?: AuthUser }) {
+  const router = useRouter();
+
   useEffect(() => {
     if (user) {
-      redirect("/admin/leads");
+      // Use router.push for client-side navigation instead of redirect()
+      router.push("/admin/leads");
     }
-  }, [user]);
+  }, [user, router]);
+
   return null;
 }
 

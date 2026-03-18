@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Schema } from "@/amplify/data/resource";
 import { cookiesClient } from "@/utils/amplify-utils";
 
 const BRIDGE_BASE = "https://api.bridgedataoutput.com/api/v2";
