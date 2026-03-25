@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookiesClient } from "@/utils/amplify-utils";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 const BRIDGE_BASE = "https://api.bridgedataoutput.com/api/v2";
 
@@ -192,28 +193,24 @@ export async function POST(request: NextRequest) {
 
   // STEP 3: Attempt to sync to GHL via Lambda
   try {
-    const lambdaResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_AMPLIFY_FUNCTION_URL || "http://localhost:3000"}/ghl-contact`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+    const lambda = new LambdaClient({ region: process.env.AWS_REGION || "us-east-1" });
+    const command = new InvokeCommand({
+      FunctionName: process.env.GHL_LAMBDA_FUNCTION_NAME!,
+      Payload: JSON.stringify({
         body: JSON.stringify({
-          name,
-          email,
-          phone,
+          name, email, phone,
           formType: "VALUATION",
-          street,
-          city,
-          state,
-          zip,
+          street, city, state, zip,
           zestimate: zestimate.toString(),
           referrer: request.headers.get("referer") || "direct",
           submissionId: submission.data.id,
         }),
-      }
-    );
+      }),
+    });
 
-    const lambdaResult = await lambdaResponse.json();
+    const response = await lambda.send(command);
+    const rawPayload = JSON.parse(Buffer.from(response.Payload!).toString());
+    const lambdaResult = rawPayload.body ? JSON.parse(rawPayload.body) : {};
 
     // Update sync status based on Lambda result
     if (lambdaResult.ghlSynced) {
