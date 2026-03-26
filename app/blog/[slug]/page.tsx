@@ -3,7 +3,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs, getAllPosts } from "@/lib/mdx";
 import { getRelatedPosts } from "@/lib/relatedPosts";
 import { generateArticleSchema, generateFAQSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
-import BlogCTA from "@/components/BlogCTA";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
 
@@ -140,7 +140,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* Content */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         <div className="prose prose-lg max-w-none prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate [&>h1]:mb-6 [&>h1]:mt-8 [&>h2]:mb-6 [&>h2]:mt-8 [&>h3]:mb-4 [&>h3]:mt-6 [&>p]:mb-4 [&>ul]:mb-4 [&>ol]:mb-4 [&>li]:mb-2">
-          <MDXRemote source={post.content} />
+          <MDXRemote source={post.content} components={{ YouTubeEmbed }} />
         </div>
 
         {/* CTA */}
