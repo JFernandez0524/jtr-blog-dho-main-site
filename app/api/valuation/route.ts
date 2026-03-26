@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ValuationFormSchema } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/rateLimit";
 import { cookiesClient } from "@/utils/amplify-utils";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+
+const GHL_LAMBDA_FUNCTION_NAME = process.env.GHL_LAMBDA_FUNCTION_NAME;
+if (!GHL_LAMBDA_FUNCTION_NAME) {
+  console.warn("GHL_LAMBDA_FUNCTION_NAME not set — GHL sync will be skipped");
+}
 
 const BRIDGE_BASE = "https://api.bridgedataoutput.com/api/v2";
 
@@ -142,8 +149,29 @@ async function getZestimate(
 }
 
 export async function POST(request: NextRequest) {
+  const rateLimitKey =
+    request.headers.get("x-forwarded-for") ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+
+  if (!checkRateLimit(rateLimitKey)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": "3600" } }
+    );
+  }
+
   const body = await request.json();
-  const { street, city, state, zip, name, email, phone } = body;
+
+  const validation = ValuationFormSchema.safeParse(body);
+  if (!validation.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: validation.error.flatten().fieldErrors },
+      { status: 400 }
+    );
+  }
+
+  const { street, city, state, zip, name, email, phone, lat, lng, address } = validation.data;
 
   console.log("=== VALUATION REQUEST START ===");
   console.log("Request body:", { street, city, state, zip, name, email, phone });
@@ -159,7 +187,7 @@ export async function POST(request: NextRequest) {
     }
     
     console.log("Calling getZestimate...");
-    zestimate = await getZestimate(street, city, state, zip, body.lat, body.lng);
+    zestimate = await getZestimate(street, city, state, zip, lat, lng);
     console.log("getZestimate returned:", zestimate);
   } catch (err) {
     console.error("Zestimate lookup failed:", err);
@@ -192,61 +220,55 @@ export async function POST(request: NextRequest) {
   console.log("Valuation submission saved to DynamoDB:", submission.data.id);
 
   // STEP 3: Attempt to sync to GHL via Lambda
-  try {
-    const lambda = new LambdaClient({ region: process.env.AWS_REGION || "us-east-1" });
-    const command = new InvokeCommand({
-      FunctionName: process.env.GHL_LAMBDA_FUNCTION_NAME!,
-      Payload: JSON.stringify({
-        body: JSON.stringify({
-          name, email, phone,
-          formType: "VALUATION",
-          street, city, state, zip,
-          zestimate: zestimate.toString(),
-          referrer: request.headers.get("referer") || "direct",
-          submissionId: submission.data.id,
+  if (GHL_LAMBDA_FUNCTION_NAME) {
+    try {
+      const lambda = new LambdaClient({ region: process.env.AWS_REGION || "us-east-1" });
+      const command = new InvokeCommand({
+        FunctionName: GHL_LAMBDA_FUNCTION_NAME,
+        Payload: JSON.stringify({
+          body: JSON.stringify({
+            name, email, phone,
+            formType: "VALUATION",
+            street, city, state, zip,
+            zestimate: zestimate.toString(),
+            referrer: request.headers.get("referer") || "direct",
+            submissionId: submission.data.id,
+          }),
         }),
-      }),
-    });
-
-    const response = await lambda.send(command);
-    const rawPayload = JSON.parse(Buffer.from(response.Payload!).toString());
-    const lambdaResult = rawPayload.body ? JSON.parse(rawPayload.body) : {};
-
-    // Update sync status based on Lambda result
-    if (lambdaResult.ghlSynced) {
-      await client.models.ContactSubmission.update({
-        id: submission.data.id,
-        ghlSyncStatus: "SYNCED",
-        ghlContactId: lambdaResult.ghlContactId,
       });
-      console.log("GHL sync successful:", lambdaResult.ghlContactId);
-    } else {
+
+      const response = await lambda.send(command);
+      const rawPayload = JSON.parse(Buffer.from(response.Payload!).toString());
+      const lambdaResult = rawPayload.body ? JSON.parse(rawPayload.body) : {};
+
+      if (lambdaResult.ghlSynced) {
+        await client.models.ContactSubmission.update({
+          id: submission.data.id,
+          ghlSyncStatus: "SYNCED",
+          ghlContactId: lambdaResult.ghlContactId,
+        });
+        console.log("GHL sync successful:", lambdaResult.ghlContactId);
+      } else {
+        await client.models.ContactSubmission.update({
+          id: submission.data.id,
+          ghlSyncStatus: "FAILED",
+          ghlErrorMessage: lambdaResult.ghlError || "Unknown error",
+        });
+        console.error("GHL sync failed:", lambdaResult.ghlError);
+      }
+    } catch (error) {
+      console.error("Lambda invocation failed:", error);
       await client.models.ContactSubmission.update({
         id: submission.data.id,
         ghlSyncStatus: "FAILED",
-        ghlErrorMessage: lambdaResult.ghlError || "Unknown error",
+        ghlErrorMessage: error instanceof Error ? error.message : "Lambda invocation failed",
       });
-      console.error("GHL sync failed:", lambdaResult.ghlError);
     }
-  } catch (error) {
-    console.error("Lambda invocation failed:", error);
-    await client.models.ContactSubmission.update({
-      id: submission.data.id,
-      ghlSyncStatus: "FAILED",
-      ghlErrorMessage: error instanceof Error ? error.message : "Lambda invocation failed",
-    });
   }
-
-  console.log("Final response data:", {
-    success: true,
-    valuation: { zestimate, address: body.address, city, state, zip },
-    zestimateError
-  });
-  console.log("=== VALUATION REQUEST END ===");
 
   return NextResponse.json({
     success: true,
-    valuation: { zestimate, address: body.address, city, state, zip },
+    valuation: { zestimate, address, city, state, zip },
     ...(zestimateError && { zestimateError })
   });
 }
