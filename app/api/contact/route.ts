@@ -2,12 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ContactFormSchema } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { cookiesClient } from "@/utils/amplify-utils";
-import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-
-const GHL_LAMBDA_FUNCTION_NAME = process.env.GHL_LAMBDA_FUNCTION_NAME;
-if (!GHL_LAMBDA_FUNCTION_NAME) {
-  console.warn("GHL_LAMBDA_FUNCTION_NAME not set — GHL sync will be skipped");
-}
+import { syncToGHL } from "@/lib/ghl";
 
 async function verifyRecaptcha(token: string): Promise<boolean> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -82,48 +77,31 @@ export async function POST(request: NextRequest) {
 
     console.log("Submission saved to DynamoDB:", submission.data.id);
 
-    if (GHL_LAMBDA_FUNCTION_NAME) {
-      try {
-        const lambda = new LambdaClient({ region: process.env.AWS_REGION || "us-east-1" });
-        const command = new InvokeCommand({
-          FunctionName: GHL_LAMBDA_FUNCTION_NAME,
-          Payload: JSON.stringify({
-            body: JSON.stringify({
-              name, email, phone, message, serviceType,
-              formType: "CONTACT",
-              referrer: referrer || "direct",
-              submissionId: submission.data.id,
-            }),
-          }),
-        });
-
-        const response = await lambda.send(command);
-        const rawPayload = JSON.parse(Buffer.from(response.Payload!).toString());
-        const lambdaResult = rawPayload.body ? JSON.parse(rawPayload.body) : {};
-
-        if (lambdaResult.ghlSynced) {
-          await client.models.ContactSubmission.update({
-            id: submission.data.id,
-            ghlSyncStatus: "SYNCED",
-            ghlContactId: lambdaResult.ghlContactId,
-          });
-          console.log("GHL sync successful:", lambdaResult.ghlContactId);
-        } else {
-          await client.models.ContactSubmission.update({
-            id: submission.data.id,
-            ghlSyncStatus: "FAILED",
-            ghlErrorMessage: lambdaResult.ghlError || "Unknown error",
-          });
-          console.error("GHL sync failed:", lambdaResult.ghlError);
-        }
-      } catch (lambdaError) {
-        console.error("Lambda invocation failed:", lambdaError);
-        await client.models.ContactSubmission.update({
-          id: submission.data.id,
-          ghlSyncStatus: "FAILED",
-          ghlErrorMessage: lambdaError instanceof Error ? lambdaError.message : "Lambda error",
-        });
+    try {
+      const ghlResult = await syncToGHL({
+        name, email, phone, message, serviceType,
+        formType: "CONTACT",
+        referrer: referrer || "direct",
+        submissionId: submission.data.id,
+      });
+      await client.models.ContactSubmission.update({
+        id: submission.data.id,
+        ghlSyncStatus: ghlResult.success ? "SYNCED" : "FAILED",
+        ghlContactId: ghlResult.contactId,
+        ghlErrorMessage: ghlResult.error,
+      });
+      if (ghlResult.success) {
+        console.log("GHL sync successful:", ghlResult.contactId);
+      } else {
+        console.error("GHL sync failed:", ghlResult.error);
       }
+    } catch (ghlError) {
+      console.error("GHL sync error:", ghlError);
+      await client.models.ContactSubmission.update({
+        id: submission.data.id,
+        ghlSyncStatus: "FAILED",
+        ghlErrorMessage: ghlError instanceof Error ? ghlError.message : "GHL sync error",
+      });
     }
 
     return NextResponse.json({
