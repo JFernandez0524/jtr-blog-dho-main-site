@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { street, city, state, zip, name, email, phone, lat, lng, address } = validation.data;
+  const { street, city, state, zip, name, email, phone, lat, lng, address, pageUrl } = validation.data;
 
   console.log("=== VALUATION REQUEST START ===");
   console.log("Request body:", { street, city, state, zip, name, email, phone });
@@ -220,7 +220,8 @@ export async function POST(request: NextRequest) {
       name, email, phone,
       formType: "VALUATION",
       street, city, state, zip,
-      zestimate: zestimate.toString(),
+      zestimate: zestimate > 0 ? zestimate.toString() : "N/A",
+      source: pageUrl || request.headers.get("referer") || "Property Valuation Form",
       referrer: request.headers.get("referer") || "direct",
       submissionId: submission.data.id,
     });

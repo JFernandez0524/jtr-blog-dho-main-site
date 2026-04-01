@@ -108,7 +108,7 @@ export default function PropertyValuationForm() {
       const res = await fetch("/api/valuation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...addressData, ...formData }),
+        body: JSON.stringify({ ...addressData, ...formData, pageUrl: window.location.href }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Unable to retrieve valuation.");

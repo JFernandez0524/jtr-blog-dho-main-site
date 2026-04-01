@@ -11,6 +11,7 @@ export const ValuationFormSchema = z.object({
   lat: z.number().optional(),
   lng: z.number().optional(),
   address: z.string().optional(),
+  pageUrl: z.string().url().optional(),
 });
 
 export type ValuationFormData = z.infer<typeof ValuationFormSchema>;

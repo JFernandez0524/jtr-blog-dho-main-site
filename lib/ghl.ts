@@ -76,6 +76,7 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
           phone: data.phone,
           name: data.name,
           source: data.source || "Website Contact Form",
+          tags: ["hot-lead"],
           customFields,
         }),
       });
