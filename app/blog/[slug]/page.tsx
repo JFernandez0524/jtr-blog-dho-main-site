@@ -4,6 +4,7 @@ import { getPostBySlug, getPostSlugs, getAllPosts } from "@/lib/mdx";
 import { getRelatedPosts } from "@/lib/relatedPosts";
 import { generateArticleSchema, generateFAQSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
+import BlogCTA from "@/components/BlogCTA";
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
 
