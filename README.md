@@ -27,7 +27,9 @@ Professional content-led real estate authority website for Jose Fernandez, a New
 ### Core Functionality
 - **3 Pillar Service Pages:** Inherited Property, Foreclosure Prevention, Sell As-Is
 - **MDX Blog System:** SEO-optimized blog with tag-based filtering and related posts
-- **Lead Capture:** Contact form with DynamoDB storage and GoHighLevel CRM sync
+- **Location Pages:** Town-specific inherited property pages at `/{town-slug}` (e.g. `/inherited-property-freehold-nj`)
+- **Property Valuation Form:** Address autocomplete + Zillow Zestimate via Bridge Data API
+- **Lead Capture:** Contact and valuation forms with DynamoDB storage and GoHighLevel CRM sync
 - **Admin Dashboard:** Lead management interface at `/admin/leads`
 - **SEO Optimization:** Dynamic OG images, JSON-LD structured data, sitemap, robots.txt
 
@@ -114,6 +116,12 @@ GHL_LOCATION_ID=your_ghl_location_id
 # Required for Google OAuth (Admin Authentication)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Required for address autocomplete
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+
+# Required for Zillow Zestimate
+BRIDGE_DATA_API_KEY=your_bridge_data_api_key
 
 # Optional
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -214,8 +222,10 @@ jtr-blog-dho-main-site/
 │   └── structuredData.ts         # JSON-LD schema generators
 │
 ├── content/                      # Content files
-│   └── blog/                     # MDX blog posts
-│       ├── *.mdx                 # Blog post files
+│   ├── blog/                     # MDX blog posts
+│   │   └── *.mdx                 # Blog post files
+│   └── locations/                # MDX location pages
+│       └── *.mdx                 # e.g. inherited-property-freehold-nj.mdx
 │
 ├── amplify/                      # AWS Amplify backend
 │   ├── backend.ts                # Backend configuration
@@ -304,6 +314,27 @@ Your content here...
 ```
 
 3. File automatically appears in blog index
+
+### Adding a New Location Page
+
+1. Create MDX file in `content/locations/` named `inherited-property-{town-slug}-nj.mdx`
+2. Add frontmatter:
+
+```yaml
+---
+town: "Town Name"
+county: "County Name"
+title: "Inherited Property in Town Name, NJ | Jose Fernandez"
+metaDescription: "SEO meta description"
+heroHeading: "Inherited Property in Town Name, NJ"
+heroSubtext: "Supporting subheading text"
+youtubeId: "youtube-video-id"  # optional
+---
+
+Your content here...
+```
+
+3. Page is automatically available at `/{filename-without-extension}` and added to the sitemap
 
 ### Creating a New Component
 

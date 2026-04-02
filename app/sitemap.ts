@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getPostSlugs } from "@/lib/mdx";
+import { getPostSlugs, getLocationSlugs } from "@/lib/mdx";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.josetherealtor.com";
@@ -53,5 +53,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...blogPages];
+  const locationPages: MetadataRoute.Sitemap = getLocationSlugs().map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...blogPages, ...locationPages];
 }

@@ -70,3 +70,44 @@ export function getPostSlugs(): string[] {
     .filter((file) => file.endsWith(".mdx"))
     .map((file) => file.replace(/\.mdx$/, ""));
 }
+
+const locationsDirectory = path.join(process.cwd(), "content/locations");
+
+export interface LocationMetadata {
+  slug: string;
+  town: string;
+  county: string;
+  title: string;
+  metaDescription: string;
+  heroHeading: string;
+  heroSubtext: string;
+  youtubeId?: string;
+}
+
+export interface Location extends LocationMetadata {
+  content: string;
+}
+
+export function getAllLocations(): LocationMetadata[] {
+  const files = fs.readdirSync(locationsDirectory);
+  return files
+    .filter((file) => file.endsWith(".mdx"))
+    .map((file) => {
+      const slug = file.replace(/\.mdx$/, "");
+      const { data } = matter(fs.readFileSync(path.join(locationsDirectory, file), "utf8"));
+      return { slug, town: data.town, county: data.county, title: data.title, metaDescription: data.metaDescription, heroHeading: data.heroHeading, heroSubtext: data.heroSubtext, youtubeId: data.youtubeId };
+    });
+}
+
+export function getLocationBySlug(slug: string): Location {
+  const fullPath = path.join(locationsDirectory, `${slug}.mdx`);
+  const { data, content } = matter(fs.readFileSync(fullPath, "utf8"));
+  return { slug, town: data.town, county: data.county, title: data.title, metaDescription: data.metaDescription, heroHeading: data.heroHeading, heroSubtext: data.heroSubtext, youtubeId: data.youtubeId, content };
+}
+
+export function getLocationSlugs(): string[] {
+  if (!fs.existsSync(locationsDirectory)) return [];
+  return fs.readdirSync(locationsDirectory)
+    .filter((file) => file.endsWith(".mdx"))
+    .map((file) => file.replace(/\.mdx$/, ""));
+}
