@@ -11,6 +11,8 @@ frontend:
       commands:
         - echo "GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY" >> .env.production
         - echo "BRIDGE_DATA_API_KEY=$BRIDGE_DATA_API_KEY" >> .env.production
+        - echo "GHL_API_TOKEN=$GHL_API_TOKEN" >> .env.production
+        - echo "GHL_LOCATION_ID=$GHL_LOCATION_ID" >> .env.production
     build:
       commands:
         - npm run build
