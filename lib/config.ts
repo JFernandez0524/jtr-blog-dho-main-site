@@ -66,7 +66,7 @@ export const siteConfig = {
     main: [
       { label: "Home", href: "/" },
       { label: "About", href: "/about" },
-      { label: "Inherited Property", href: "/inherited-property" },
+      { label: "Inherited Property", href: "/inherited-property-new-jersey" },
       { label: "Foreclosure", href: "/foreclosure" },
       { label: "Sell As-Is", href: "/sell-as-is" },
       { label: "Blog", href: "/blog" },
@@ -74,7 +74,7 @@ export const siteConfig = {
     ],
     footer: {
       services: [
-        { label: "Inherited Property Solutions", href: "/inherited-property" },
+        { label: "Inherited Property Solutions", href: "/inherited-property-new-jersey" },
         { label: "Foreclosure Prevention", href: "/foreclosure" },
         { label: "Sell Your Home As-Is", href: "/sell-as-is" },
       ],

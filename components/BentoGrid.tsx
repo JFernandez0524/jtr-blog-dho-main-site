@@ -59,7 +59,7 @@ export default function BentoGrid({ latestPosts }: BentoGridProps) {
       <BentoCard
         title="Inherited Property"
         description="Navigate probate and estate sales with compassionate, expert guidance."
-        href="/inherited-property"
+        href="/inherited-property-new-jersey"
         className="lg:row-span-1"
         icon={
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
