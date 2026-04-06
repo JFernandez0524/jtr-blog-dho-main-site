@@ -5,6 +5,9 @@ import { generateServiceSchema } from "@/lib/structuredData";
 export const metadata: Metadata = {
   title: "Sell Your House As-Is | Jose Fernandez - NJ Real Estate",
   description: "Sell your New Jersey home as-is without repairs, cleaning, or staging. Fast, hassle-free solutions for any property condition.",
+  alternates: {
+    canonical: "https://www.josetherealtor.com/sell-as-is",
+  },
   openGraph: {
     title: "Sell Your House As-Is",
     description: "Sell your New Jersey home as-is without repairs, cleaning, or staging. Fast, hassle-free solutions for any property condition.",

@@ -17,6 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locationS
   return {
     title: location.title,
     description: location.metaDescription,
+    alternates: {
+      canonical: `https://www.josetherealtor.com/${locationSlug}`,
+    },
     openGraph: { title: location.title, description: location.metaDescription },
   };
 }

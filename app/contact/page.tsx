@@ -7,6 +7,9 @@ import { siteConfig } from "@/lib/config";
 export const metadata: Metadata = {
   title: "Contact Jose Fernandez | Free Real Estate Consultation - NJ",
   description: "Get expert guidance on inherited property, foreclosure, or selling as-is. Free, confidential consultation with no pressure.",
+  alternates: {
+    canonical: "https://www.josetherealtor.com/contact",
+  },
 };
 
 export default function ContactPage() {

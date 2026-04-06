@@ -6,6 +6,9 @@ import AsyncHeroImage from "@/components/AsyncHeroImage";
 export const metadata: Metadata = {
   title: "Real Estate Insights & Guides | Jose Fernandez Blog",
   description: "Expert advice on inherited property, foreclosure prevention, and selling homes as-is in New Jersey.",
+  alternates: {
+    canonical: "https://www.josetherealtor.com/blog",
+  },
 };
 
 export default function BlogPage() {

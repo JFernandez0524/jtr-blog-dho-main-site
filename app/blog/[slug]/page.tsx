@@ -21,6 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} | Jose Fernandez`,
     description: post.excerpt,
+    alternates: {
+      canonical: `https://www.josetherealtor.com/blog/${slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,

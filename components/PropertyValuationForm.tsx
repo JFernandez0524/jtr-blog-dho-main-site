@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Link from "next/link";
 
 interface Suggestion {
@@ -24,6 +25,7 @@ interface ValuationResult {
 }
 
 export default function PropertyValuationForm() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [addressData, setAddressData] = useState<AddressData | null>(null);
@@ -105,10 +107,14 @@ export default function PropertyValuationForm() {
     setStatus("loading");
     setError("");
     try {
+      let recaptchaToken = "";
+      if (executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha("valuation_form");
+      }
       const res = await fetch("/api/valuation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...addressData, ...formData, pageUrl: window.location.href }),
+        body: JSON.stringify({ ...addressData, ...formData, pageUrl: window.location.href, recaptchaToken }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Unable to retrieve valuation.");

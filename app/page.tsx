@@ -6,7 +6,7 @@ import ZillowReviews from "@/components/ZillowReviews";
 import SituationsHook from "@/components/SituationsHook";
 import AsyncHeroImage from "@/components/AsyncHeroImage";
 import { getAllPosts } from "@/lib/mdx";
-import { generateOrganizationSchema, generateLocalBusinessSchema, generateReviewSchema } from "@/lib/structuredData";
+import { generateOrganizationSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -52,13 +52,6 @@ export default function Home() {
   const latestPosts = allPosts.slice(0, 2);
   const organizationSchema = generateOrganizationSchema();
   const localBusinessSchema = generateLocalBusinessSchema();
-  
-  // Placeholder for future reviews - update when you get Google/Yelp reviews
-  const reviewSchema = generateReviewSchema({
-    reviewCount: 0,
-    averageRating: 5.0,
-    reviews: []
-  });
 
   return (
     <main className="min-h-screen">

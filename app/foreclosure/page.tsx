@@ -5,6 +5,9 @@ import { generateServiceSchema } from "@/lib/structuredData";
 export const metadata: Metadata = {
   title: "Foreclosure Help & Prevention | Jose Fernandez - NJ Real Estate",
   description: "Facing foreclosure in New Jersey? Explore your options including short sales, loan modifications, and strategic solutions to protect your credit.",
+  alternates: {
+    canonical: "https://www.josetherealtor.com/foreclosure",
+  },
   openGraph: {
     title: "Foreclosure Assistance",
     description: "Facing foreclosure in New Jersey? Explore your options including short sales, loan modifications, and strategic solutions to protect your credit.",

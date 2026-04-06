@@ -37,26 +37,12 @@ export default function AdminLeadsPage() {
   async function retrySync(submissionId: string) {
     setRetrying(submissionId);
     try {
-      const submission = submissions.find((s) => s.id === submissionId);
-      if (!submission) return;
-
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/admin/retry-sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: submission.name,
-          email: submission.email,
-          phone: submission.phone,
-          message: submission.message,
-          serviceType: submission.serviceType,
-          source: submission.source,
-          referrer: submission.referrer,
-        }),
+        body: JSON.stringify({ submissionId }),
       });
-
-      if (response.ok) {
-        await fetchSubmissions();
-      }
+      if (response.ok) await fetchSubmissions();
     } catch (error) {
       console.error("Retry failed:", error);
     } finally {

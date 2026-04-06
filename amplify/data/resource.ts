@@ -1,6 +1,14 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
+  RateLimit: a
+    .model({
+      key: a.string().required(),
+      count: a.integer().required(),
+      expiresAt: a.integer().required(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
   Lead: a
     .model({
       name: a.string().required(),
