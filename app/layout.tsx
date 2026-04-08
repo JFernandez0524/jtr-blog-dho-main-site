@@ -4,7 +4,7 @@ import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import RecaptchaProvider from "@/components/RecaptchaProvider";
+import SafeRecaptchaProvider from "@/components/SafeRecaptchaProvider";
 import ConfigureAmplifyClientSide from "@/components/ConfigureAmplifyClientSide";
 
 const inter = Inter({ 
@@ -58,23 +58,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-remax-blue focus:text-white focus:rounded">
           Skip to main content
         </a>
-        {recaptchaSiteKey ? (
-          <RecaptchaProvider siteKey={recaptchaSiteKey}>
-            <Header />
-            <main id="main-content">
-              {children}
-            </main>
-            <Footer />
-          </RecaptchaProvider>
-        ) : (
-          <>
-            <Header />
-            <main id="main-content">
-              {children}
-            </main>
-            <Footer />
-          </>
-        )}
+        <SafeRecaptchaProvider siteKey={recaptchaSiteKey}>
+          <Header />
+          <main id="main-content">
+            {children}
+          </main>
+          <Footer />
+        </SafeRecaptchaProvider>
       </body>
     </html>
   );

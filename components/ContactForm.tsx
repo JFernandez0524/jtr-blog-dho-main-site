@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useSafeReCaptcha } from "./SafeRecaptchaProvider";
 import { siteConfig } from "@/lib/config";
 
 declare global {
@@ -11,7 +11,7 @@ declare global {
 }
 
 export default function ContactForm() {
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  const { executeRecaptcha } = useSafeReCaptcha();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

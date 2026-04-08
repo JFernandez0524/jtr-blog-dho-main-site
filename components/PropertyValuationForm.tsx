@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useSafeReCaptcha } from "./SafeRecaptchaProvider";
 import Link from "next/link";
 
 interface Suggestion {
@@ -25,7 +25,7 @@ interface ValuationResult {
 }
 
 export default function PropertyValuationForm() {
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  const { executeRecaptcha } = useSafeReCaptcha();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [addressData, setAddressData] = useState<AddressData | null>(null);
