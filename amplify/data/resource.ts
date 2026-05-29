@@ -52,7 +52,7 @@ const schema = a.schema({
       ghlErrorMessage: a.string(),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(["create"]),
+      allow.publicApiKey().to(["create", "update"]),
       allow.authenticated().to(["read", "update", "delete"]),
     ]),
 });
