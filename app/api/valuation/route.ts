@@ -147,25 +147,34 @@ export async function POST(request: NextRequest) {
 
   const client = cookiesClient;
 
-  const submission = await client.models.ContactSubmission.create({
-    name,
-    email,
-    phone,
-    formType: "VALUATION",
-    street,
-    city,
-    state,
-    zip,
-    zestimate: zestimate.toString(),
-    source: "Property Valuation Form",
-    referrer: request.headers.get("referer") || "direct",
-    submittedAt: new Date().toISOString(),
-    ghlSyncStatus: "PENDING",
-  });
+  let submission;
+  try {
+    const result = await client.models.ContactSubmission.create({
+      name,
+      email,
+      phone,
+      formType: "VALUATION",
+      street,
+      city,
+      state,
+      zip,
+      zestimate: zestimate.toString(),
+      source: "Property Valuation Form",
+      referrer: request.headers.get("referer") || "direct",
+      submittedAt: new Date().toISOString(),
+      ghlSyncStatus: "PENDING",
+    });
+    if (!result.data) throw new Error("No data returned from create");
+    submission = result.data;
+  } catch (dbError) {
+    console.error("DynamoDB write failed:", dbError);
+    return NextResponse.json(
+      { error: "Failed to save your submission. Please try again or call us directly." },
+      { status: 500 }
+    );
+  }
 
-  if (!submission.data) throw new Error("Failed to save submission to database");
-
-  console.log("Valuation submission saved to DynamoDB:", submission.data.id);
+  console.log("Valuation submission saved to DynamoDB:", submission.id);
 
   try {
     const ghlResult = await syncToGHL({
@@ -175,10 +184,10 @@ export async function POST(request: NextRequest) {
       zestimate: zestimate > 0 ? zestimate.toString() : "N/A",
       source: pageUrl || request.headers.get("referer") || "Property Valuation Form",
       referrer: request.headers.get("referer") || "direct",
-      submissionId: submission.data.id,
+      submissionId: submission.id,
     });
     await client.models.ContactSubmission.update({
-      id: submission.data.id,
+      id: submission.id,
       ghlSyncStatus: ghlResult.success ? "SYNCED" : "FAILED",
       ghlContactId: ghlResult.contactId,
       ghlErrorMessage: ghlResult.error,
@@ -186,7 +195,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("GHL sync error:", error);
     await client.models.ContactSubmission.update({
-      id: submission.data.id,
+      id: submission.id,
       ghlSyncStatus: "FAILED",
       ghlErrorMessage: error instanceof Error ? error.message : "GHL sync error",
     });

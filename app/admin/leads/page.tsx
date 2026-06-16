@@ -23,8 +23,8 @@ export default function AdminLeadsPage() {
 
   async function fetchSubmissions() {
     try {
-      const { data } = await client.models.ContactSubmission.list();
-      setSubmissions(data.sort((a, b) => 
+      const { data } = await client.models.ContactSubmission.list({ authMode: "userPool" });
+      setSubmissions(data.sort((a, b) =>
         new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
       ));
     } catch (error) {
