@@ -68,16 +68,16 @@ export default function InheritedPropertyPage() {
         title="Just Inherited a New Jersey Property? You Have More Options Than You Think."
         subtitle="Most families feel overwhelmed — unsure about probate, repairs, or what the home is even worth. I've helped hundreds of NJ families navigate this, and I can help you understand all your options before making any decisions."
         heroCta={
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <a
               href="#valuation-form"
-              className="px-6 py-3 bg-white text-remax-blue font-semibold rounded-lg hover:bg-white/90 transition-colors"
+              className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white text-remax-blue font-semibold rounded-lg hover:bg-white/90 transition-colors text-sm sm:text-base text-center"
             >
-              Get My Free Property Valuation
+              Get My Free Valuation
             </a>
             <a
               href={telHref}
-              className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors"
+              className="px-5 py-2.5 sm:px-6 sm:py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm sm:text-base text-center"
             >
               Call {siteConfig.contact.phoneDisplay}
             </a>
@@ -87,9 +87,9 @@ export default function InheritedPropertyPage() {
         compact
         noBottomCta
       >
-        {/* Jose + Form */}
-        <div id="valuation-form" className="not-prose grid md:grid-cols-2 gap-8 mb-12 scroll-mt-6">
-          <div className="flex flex-col gap-4">
+        {/* Jose + Form — form first on mobile so it's visible without scrolling */}
+        <div id="valuation-form" className="not-prose grid md:grid-cols-2 gap-8 mb-12 scroll-mt-20">
+          <div className="flex flex-col gap-4 order-2 md:order-1">
             <div className="flex items-center gap-4">
               <Image
                 src="/jose-profile.jpg"
@@ -112,7 +112,7 @@ export default function InheritedPropertyPage() {
               </div>
             </div>
 
-            <div className="space-y-3 text-remax-slate">
+            <div className="hidden md:block space-y-3 text-remax-slate">
               <p>
                 I specialize in helping NJ families navigate inherited properties — from understanding
                 what the home is worth to guiding you through probate, family decisions, and the
@@ -147,7 +147,7 @@ export default function InheritedPropertyPage() {
             </p>
           </div>
 
-          <div>
+          <div className="order-1 md:order-2">
             <h2 className="text-xl font-bold text-remax-blue mb-4">Get Your Free Property Valuation</h2>
             <PropertyValuationForm />
           </div>

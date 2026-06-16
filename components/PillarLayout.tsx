@@ -20,8 +20,8 @@ export default function PillarLayout({ title, subtitle, children, compact, pageT
       >
         <div className="absolute inset-0 bg-black/50" />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <h1 className="text-balance mb-6 text-white">{title}</h1>
-          <p className="text-xl text-white/90">{subtitle}</p>
+          <h1 className="text-2xl md:text-5xl lg:text-6xl text-balance mb-3 md:mb-6 text-white">{title}</h1>
+          <p className="text-sm md:text-xl text-white/90">{subtitle}</p>
           {heroCta && <div className="mt-6">{heroCta}</div>}
         </div>
       </AsyncHeroImage>
