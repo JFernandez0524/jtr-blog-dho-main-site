@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
       name, email, phone,
       formType: "VALUATION",
       street, city, state, zip,
-      zestimate: zestimate > 0 ? zestimate.toString() : "N/A",
+      zestimate: zestimate > 0 ? zestimate.toString() : undefined,
       source: pageUrl || request.headers.get("referer") || "Property Valuation Form",
       referrer: request.headers.get("referer") || "direct",
       submissionId: submission.id,
