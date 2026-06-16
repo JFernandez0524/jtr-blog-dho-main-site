@@ -25,7 +25,25 @@ const SERVICE_TYPE_MAP: Record<string, string> = {
   "inherited-property": "Probate",
   "foreclosure": "Preforeclosure",
   "sell-as-is": "Sell As Is",
+  "general": "General Inquiry",
 };
+
+function getSourceLabel(source?: string): string {
+  if (!source) return "Website";
+  if (source.includes("/foreclosure")) return "Foreclosure Landing Page";
+  if (source.includes("/sell-as-is")) return "Sell As-Is Landing Page";
+  if (source.includes("/inherited-property")) return "Inherited Property Landing Page";
+  if (source.includes("/contact")) return "Contact Page";
+  return "Website";
+}
+
+function getServiceTypeFromSource(source?: string): string {
+  if (!source) return "General Inquiry";
+  if (source.includes("/foreclosure")) return "Preforeclosure";
+  if (source.includes("/sell-as-is")) return "Sell As Is";
+  if (source.includes("/inherited-property")) return "Probate";
+  return "General Inquiry";
+}
 
 export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
   const GHL_API_TOKEN = process.env.GHL_API_TOKEN;
@@ -49,18 +67,18 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
         if (data.message) customFields.push({ id: "ZvxM7eN2rOdgdV9OGKY6", value: data.message });
         if (data.referrer) customFields.push({ id: "PBInTgsd2nMCD3Ngmy0a", value: data.referrer });
         if (data.serviceType) {
-          customFields.push({ id: "oaf4wCuM3Ub9eGpiddrO", value: SERVICE_TYPE_MAP[data.serviceType] || "Probate" });
+          customFields.push({ id: "oaf4wCuM3Ub9eGpiddrO", value: SERVICE_TYPE_MAP[data.serviceType] || "General Inquiry" });
         }
-        customFields.push({ id: "pGfgxcdFaYAkdq0Vp53j", value: "Probate Landing Page" });
+        customFields.push({ id: "pGfgxcdFaYAkdq0Vp53j", value: getSourceLabel(data.source) });
       } else if (data.formType === "VALUATION") {
         if (data.street) customFields.push({ id: "p3NOYiInAERYbe0VsLHB", value: data.street });
         if (data.city) customFields.push({ id: "h4UIjKQvFu7oRW4SAY8W", value: data.city });
         if (data.state) customFields.push({ id: "9r9OpQaxYPxqbA6Hvtx7", value: data.state });
         if (data.zip) customFields.push({ id: "hgbjsTVwcyID7umdhm2o", value: data.zip });
         if (data.zestimate) customFields.push({ id: "7wIe1cRbZYXUnc3WOVb2", value: data.zestimate });
-        customFields.push({ id: "oaf4wCuM3Ub9eGpiddrO", value: "Probate" });
+        customFields.push({ id: "oaf4wCuM3Ub9eGpiddrO", value: getServiceTypeFromSource(data.source) });
         if (data.referrer) customFields.push({ id: "PBInTgsd2nMCD3Ngmy0a", value: data.referrer });
-        customFields.push({ id: "pGfgxcdFaYAkdq0Vp53j", value: "Probate Landing Page" });
+        customFields.push({ id: "pGfgxcdFaYAkdq0Vp53j", value: getSourceLabel(data.source) });
       }
 
       const response = await fetch("https://services.leadconnectorhq.com/contacts/", {
