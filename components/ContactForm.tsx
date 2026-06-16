@@ -10,14 +10,14 @@ declare global {
   }
 }
 
-export default function ContactForm() {
+export default function ContactForm({ defaultServiceType = "" }: { defaultServiceType?: string }) {
   const { executeRecaptcha } = useSafeReCaptcha();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     message: "",
-    serviceType: "",
+    serviceType: defaultServiceType,
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
