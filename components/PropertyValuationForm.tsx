@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSafeReCaptcha } from "./SafeRecaptchaProvider";
-import Link from "next/link";
+import { siteConfig } from "@/lib/config";
+
+const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 
 interface Suggestion {
   placeId: string;
@@ -131,25 +133,42 @@ export default function PropertyValuationForm() {
 
   if (status === "success" && result) {
     return (
-      <div className="bg-white rounded-xl shadow-md p-8 text-center space-y-4">
-        <div className="text-green-600 font-semibold text-sm uppercase tracking-wide">
-          Estimated Property Value
-        </div>
-        <div className="text-5xl font-bold text-remax-blue">
-          ${Number(result.zestimate).toLocaleString()}
-        </div>
-        {result.address && (
-          <p className="text-remax-slate/70 text-sm">{result.address}</p>
+      <div className="bg-white rounded-xl shadow-md p-8 space-y-5">
+        {result.zestimate > 0 ? (
+          <div className="text-center space-y-2">
+            <div className="text-green-600 font-semibold text-sm uppercase tracking-wide">
+              Estimated Property Value
+            </div>
+            <div className="text-5xl font-bold text-remax-blue">
+              ${Number(result.zestimate).toLocaleString()}
+            </div>
+            {result.address && (
+              <p className="text-remax-slate/70 text-sm">{result.address}</p>
+            )}
+            <p className="text-xs text-remax-slate/50 border-t pt-3">
+              This is a Zillow Zestimate, not a professional appraisal. Actual value may differ based on condition and local market.
+            </p>
+          </div>
+        ) : (
+          <div className="text-center space-y-2">
+            <div className="text-remax-blue font-semibold text-lg">We received your information</div>
+            <p className="text-remax-slate/70 text-sm">
+              Jose will do a custom property analysis when he reaches out to you.
+            </p>
+          </div>
         )}
-        <p className="text-xs text-remax-slate/50 border-t pt-4">
-          ⚠️ This is a Zillow Zestimate and not a professional appraisal. Actual value may differ based on property condition and local market factors.
-        </p>
-        <Link
-          href="/contact"
-          className="inline-block mt-2 px-6 py-3 bg-remax-blue text-white rounded-lg font-semibold hover:opacity-90 transition-opacity"
-        >
-          Get a Professional Valuation from Jose
-        </Link>
+        <div className="bg-remax-blue/5 border border-remax-blue/20 rounded-lg p-5 space-y-3">
+          <p className="font-semibold text-remax-blue">What happens next:</p>
+          <p className="text-remax-slate text-sm">
+            Jose will personally review your property and reach out within a few hours during business hours to walk through your options — no pressure, no obligation.
+          </p>
+          <p className="text-sm">
+            Or call him now:{" "}
+            <a href={telHref} className="text-remax-blue font-semibold hover:underline">
+              {siteConfig.contact.phoneDisplay}
+            </a>
+          </p>
+        </div>
       </div>
     );
   }

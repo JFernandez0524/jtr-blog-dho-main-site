@@ -6,6 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SafeRecaptchaProvider from "@/components/SafeRecaptchaProvider";
 import ConfigureAmplifyClientSide from "@/components/ConfigureAmplifyClientSide";
+import StickyCallButton from "@/components/StickyCallButton";
+import FacebookMessenger from "@/components/FacebookMessenger";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -60,10 +62,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </a>
         <SafeRecaptchaProvider siteKey={recaptchaSiteKey}>
           <Header />
-          <main id="main-content">
+          <main id="main-content" className="pb-16 md:pb-0">
             {children}
           </main>
           <Footer />
+          <StickyCallButton />
+          <FacebookMessenger />
         </SafeRecaptchaProvider>
       </body>
     </html>
