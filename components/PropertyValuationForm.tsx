@@ -26,6 +26,18 @@ interface ValuationResult {
   address?: string;
 }
 
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
+
+const pushDataLayer = (event: string, data?: Record<string, unknown>) => {
+  if (typeof window !== "undefined" && window.dataLayer) {
+    window.dataLayer.push({ event, ...data });
+  }
+};
+
 export default function PropertyValuationForm() {
   const { executeRecaptcha } = useSafeReCaptcha();
   const [query, setQuery] = useState("");
@@ -38,6 +50,7 @@ export default function PropertyValuationForm() {
   const [addressError, setAddressError] = useState("");
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasStarted = useRef(false);
 
   useEffect(() => {
     if (addressData) return; // already resolved, don't re-fetch
@@ -100,6 +113,13 @@ export default function PropertyValuationForm() {
     }
   };
 
+  const handleFormStart = () => {
+    if (!hasStarted.current) {
+      hasStarted.current = true;
+      pushDataLayer("form_start", { form_name: "valuation_form" });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addressData) {
@@ -108,6 +128,7 @@ export default function PropertyValuationForm() {
     }
     setStatus("loading");
     setError("");
+    pushDataLayer("form_submit", { form_name: "valuation_form" });
     try {
       let recaptchaToken = "";
       if (executeRecaptcha) {
@@ -122,9 +143,14 @@ export default function PropertyValuationForm() {
       if (!res.ok || !data.success) throw new Error(data.error || "Unable to retrieve valuation.");
       setResult(data.valuation);
       setStatus("success");
+      pushDataLayer("form_success", {
+        form_name: "valuation_form",
+        has_zestimate: (data.valuation?.zestimate ?? 0) > 0,
+      });
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
       setStatus("error");
+      pushDataLayer("form_error", { form_name: "valuation_form", error_message: err.message });
     }
   };
 
@@ -182,6 +208,7 @@ export default function PropertyValuationForm() {
           required
           value={query}
           onChange={(e) => { setQuery(e.target.value); setAddressData(null); }}
+          onFocus={handleFormStart}
           className={inputClass}
           autoComplete="off"
         />
@@ -217,6 +244,7 @@ export default function PropertyValuationForm() {
           required
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onFocus={handleFormStart}
           className={inputClass}
         />
         <input
@@ -225,6 +253,7 @@ export default function PropertyValuationForm() {
           required
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          onFocus={handleFormStart}
           className={inputClass}
         />
       </div>
@@ -235,6 +264,7 @@ export default function PropertyValuationForm() {
         required
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        onFocus={handleFormStart}
         className={inputClass}
       />
 
