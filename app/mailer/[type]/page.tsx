@@ -62,8 +62,7 @@ export default async function MailerPage({
   if (!(type in CAMPAIGN_TYPES)) notFound();
   const config = CAMPAIGN_TYPES[type as CampaignType];
 
-  const { addr, city, zest, name } = await searchParams;
-  const firstName = name?.split(" ")[0];
+  const { addr, city, zest, name: firstName } = await searchParams;
   const zestFormatted = zest ? formatZestimate(zest) : "";
   const hasAddress = Boolean(addr && city);
   const hasZestimate = Boolean(zestFormatted);
