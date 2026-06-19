@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import Header from "@/components/Header";
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
 
 const GTM_ID = "GTM-53SVHBKB";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const h = await headers();
+  const isCampaign = h.get("x-campaign-page") === "1";
 
   return (
     <html lang="en" className="overflow-x-hidden">
@@ -54,17 +57,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-remax-blue focus:text-white focus:rounded">
-          Skip to main content
-        </a>
+        {!isCampaign && (
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-remax-blue focus:text-white focus:rounded">
+            Skip to main content
+          </a>
+        )}
         <SafeRecaptchaProvider siteKey={recaptchaSiteKey}>
-          <Header />
-          <main id="main-content" className="pb-16 md:pb-0">
+          {!isCampaign && <Header />}
+          <main id="main-content" className={isCampaign ? "" : "pb-16 md:pb-0"}>
             {children}
           </main>
-          <Footer />
-          <StickyCallButton />
-          <FacebookMessenger />
+          {!isCampaign && <Footer />}
+          {!isCampaign && <StickyCallButton />}
+          {!isCampaign && <FacebookMessenger />}
         </SafeRecaptchaProvider>
       </body>
     </html>

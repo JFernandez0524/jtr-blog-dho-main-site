@@ -3,6 +3,13 @@ import { fetchAuthSession } from "aws-amplify/auth/server";
 import { runWithAmplifyServerContext } from "@/utils/amplify-utils";
 
 export async function middleware(request: NextRequest) {
+  // Campaign mailer pages — strip chrome via header flag, skip auth
+  if (request.nextUrl.pathname.startsWith("/mailer")) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-campaign-page", "1");
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
   const response = NextResponse.next();
 
   const authenticated = await runWithAmplifyServerContext({
@@ -26,5 +33,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/mailer/:path*"],
 };

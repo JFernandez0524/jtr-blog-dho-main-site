@@ -122,3 +122,21 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
 
   return { success: false, error: lastError };
 }
+
+export async function tagGHLContact(contactId: string, tags: string[]): Promise<void> {
+  const GHL_API_TOKEN = process.env.GHL_API_TOKEN;
+  if (!GHL_API_TOKEN) return;
+  try {
+    await fetch(`https://services.leadconnectorhq.com/contacts/${contactId}/tags`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GHL_API_TOKEN}`,
+        "Content-Type": "application/json",
+        Version: "2021-07-28",
+      },
+      body: JSON.stringify({ tags }),
+    });
+  } catch {
+    // Non-critical — tagging failure must not block anything
+  }
+}
