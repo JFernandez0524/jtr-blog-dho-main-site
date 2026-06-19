@@ -27,6 +27,8 @@ export async function POST(request: Request) {
     return Response.json({ ok: true, skipped: "no contact id" });
   }
 
+  console.log(`[postcard-scan] Tagging GHL contact ${ghlContactId} with mail:scanned`);
   await tagGHLContact(ghlContactId, ["mail:scanned"]);
+  console.log(`[postcard-scan] Done`);
   return Response.json({ ok: true });
 }
