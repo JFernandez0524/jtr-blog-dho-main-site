@@ -32,7 +32,7 @@ export default async function RootLayout({
   const isCampaign = h.get("x-campaign-page") === "1";
 
   return (
-    <html lang="en" className="overflow-x-hidden">
+    <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="geo.region" content="US-NJ" />
