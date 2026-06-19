@@ -7,7 +7,7 @@ import { siteConfig } from "@/lib/config";
 
 const CAMPAIGN_TYPES = {
   "inherited-property": {
-    heroHeading: "We know about your inherited property",
+    heroHeading: "Thinking about selling your inherited property?",
     heroSub: "We help NJ families navigate estate sales with confidence — and get the best outcome.",
     ctaHeading: "Get your no-obligation cash offer",
     ctaSub: "No repairs. No showings. Close on your timeline.",
