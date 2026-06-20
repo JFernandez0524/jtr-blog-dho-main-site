@@ -3,14 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
+import StickyCallButton from "@/components/StickyCallButton";
+import FacebookMessenger from "@/components/FacebookMessenger";
 import { siteConfig } from "@/lib/config";
 
 const CAMPAIGN_TYPES = {
   "inherited-property": {
     heroHeading: "Thinking about selling your inherited property?",
     heroSub: "We help NJ families navigate estate sales with confidence — and get the best outcome.",
-    ctaHeading: "Get your no-obligation cash offer",
-    ctaSub: "No repairs. No showings. Close on your timeline.",
+    ctaHeading: "Schedule Your Free In-Home Analysis",
+    ctaSub: "I'll walk through the property with you, run the numbers both ways, and give you an honest recommendation — no pressure, no obligation.",
     serviceType: "inherited-property",
   },
   "preforeclosure": {
@@ -50,6 +52,25 @@ function formatZestimate(zest: string): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(num);
 }
 
+const FAQ = [
+  {
+    q: "What if the house needs a lot of work?",
+    a: "You can sell it as-is. Most buyers in this market factor in renovation costs — you're not required to fix anything before selling. I'll help you understand what the property is worth in its current condition.",
+  },
+  {
+    q: "What if we haven't finished probate yet?",
+    a: "We can still talk now. I'll help you understand the timeline and what steps you can start taking before probate is complete — so you're not scrambling later.",
+  },
+  {
+    q: "What if multiple heirs disagree?",
+    a: "I've helped many families navigate this. Getting an honest, professional valuation often gives everyone a clearer starting point and takes some of the emotion out of the conversation.",
+  },
+  {
+    q: "How quickly can we close?",
+    a: "Most families I work with close in 60–90 days once they're ready to move forward. If speed is a priority, our cash buyers can close in as little as 2–3 weeks. If you need more time to sort things out, there's no pressure.",
+  },
+];
+
 export default async function MailerPage({
   params,
   searchParams,
@@ -61,6 +82,7 @@ export default async function MailerPage({
 
   if (!(type in CAMPAIGN_TYPES)) notFound();
   const config = CAMPAIGN_TYPES[type as CampaignType];
+  const isInheritedProperty = type === "inherited-property";
 
   const { addr, city, zest, name: firstName } = await searchParams;
   const zestFormatted = zest ? formatZestimate(zest) : "";
@@ -72,7 +94,7 @@ export default async function MailerPage({
   return (
     <div className="min-h-screen bg-white font-inter">
       {/* Mini header — logo + phone only */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <Image src="/remax-logo.svg" alt="RE/MAX" width={90} height={36} className="h-8 w-auto" priority />
@@ -91,7 +113,7 @@ export default async function MailerPage({
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-10 space-y-10">
+      <main className="max-w-4xl mx-auto px-4 py-10 pb-24 md:pb-10 space-y-10">
 
         {/* Personalized hero */}
         <section className="text-center space-y-4">
@@ -111,10 +133,17 @@ export default async function MailerPage({
 
         {/* Zestimate card or soft fallback */}
         {hasZestimate ? (
-          <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center space-y-2">
-            <p className="text-sm font-medium text-blue-700 uppercase tracking-wide">Estimated home value</p>
-            <p className="text-5xl font-bold text-remax-blue">{zestFormatted}</p>
-            <p className="text-sm text-gray-500">Based on recent comparable sales in your area</p>
+          <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6 space-y-3">
+            <p className="text-sm font-medium text-blue-700 uppercase tracking-wide text-center">Estimated Starting Value</p>
+            <p className="text-5xl font-bold text-remax-blue text-center">{zestFormatted}</p>
+            {isInheritedProperty ? (
+              <div className="border-t border-blue-200 pt-3 space-y-1 text-sm text-blue-900">
+                <p className="font-semibold">This is a Zestimate® — a starting point, not the final word.</p>
+                <p className="text-blue-800">Automated estimates don&apos;t account for interior condition, updates, or what a buyer will actually pay. A free in-home walkthrough is the only way to get a real number.</p>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 text-center">Based on recent comparable sales in your area</p>
+            )}
           </section>
         ) : (
           <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center space-y-3">
@@ -125,6 +154,66 @@ export default async function MailerPage({
               Fill out the form below and we&apos;ll get you a real number within 24 hours — no obligation.
             </p>
           </section>
+        )}
+
+        {/* Inherited property — two paths + FAQ + video */}
+        {isInheritedProperty && (
+          <>
+            {/* Two paths */}
+            <section className="space-y-5">
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl font-bold text-gray-900">Two Ways Families Sell an Inherited Property</h2>
+                <p className="text-gray-500">The right path depends on condition, timeline, and your goals — here&apos;s how I help you decide.</p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
+                  <p className="font-bold text-remax-blue text-base">List on the Market</p>
+                  <p className="text-gray-600 text-sm">Best when the property is in decent shape and you have time. We market to qualified buyers and typically get the highest price.</p>
+                  <p className="text-xs text-gray-400 font-medium">Typical timeline: 60–90 days</p>
+                </div>
+                <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
+                  <p className="font-bold text-remax-blue text-base">Sell Off-Market for Cash</p>
+                  <p className="text-gray-600 text-sm">Best when speed or condition matters more. No showings, no repairs — we work with serious cash buyers who can close fast.</p>
+                  <p className="text-xs text-gray-400 font-medium">Typical timeline: 14–21 days</p>
+                </div>
+              </div>
+
+              <div className="bg-remax-blue/5 border border-remax-blue/20 rounded-xl p-5 text-center space-y-1">
+                <p className="font-semibold text-remax-blue">A free in-home walkthrough is the only way to know which path puts more money in your pocket.</p>
+                <p className="text-sm text-gray-500">I&apos;ll assess the condition, run the numbers both ways, and give you a straight answer.</p>
+              </div>
+            </section>
+
+            {/* FAQ */}
+            <section className="space-y-5">
+              <h2 className="text-2xl font-bold text-gray-900">Common Questions</h2>
+              <div className="space-y-5">
+                {FAQ.map(({ q, a }) => (
+                  <div key={q} className="border-l-4 border-remax-blue/30 pl-4">
+                    <p className="font-semibold text-remax-blue mb-1">{q}</p>
+                    <p className="text-gray-600 text-sm">{a}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Video */}
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold text-gray-900">What NJ Families Need to Know About Inherited Properties</h2>
+              <div className="aspect-video w-full relative rounded-xl overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/Wl3JPs492iU"
+                  title="Inherited Property New Jersey Guide"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+              </div>
+            </section>
+          </>
         )}
 
         {/* CTA + form */}
@@ -164,6 +253,9 @@ export default async function MailerPage({
         <p>{siteConfig.business.license} · {siteConfig.business.brokerage}</p>
         <p className="mt-1">&copy; {new Date().getFullYear()} {siteConfig.contact.name}. All rights reserved.</p>
       </footer>
+
+      <StickyCallButton />
+      <FacebookMessenger />
     </div>
   );
 }
