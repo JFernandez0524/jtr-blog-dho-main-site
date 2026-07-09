@@ -15,6 +15,8 @@ export interface ContactData {
   submissionId: string;
   /** Existing GHL contact ID (from a mailer ?cid= param) — update that contact instead of creating a new one */
   ghlContactId?: string;
+  /** DeBounce flagged the email as risky (catch-all/role/disposable) — tag so follow-up leads with a call */
+  emailRisky?: boolean;
 }
 
 export interface GHLResponse {
@@ -150,7 +152,7 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
           phone: data.phone,
           name: data.name,
           source: data.source || "Website Contact Form",
-          tags: ["hot-lead"],
+          tags: ["hot-lead", ...(data.emailRisky ? ["email:risky"] : [])],
           customFields,
         }),
       });
@@ -212,7 +214,11 @@ async function updateGHLContact(data: ContactData, apiToken: string): Promise<GH
 
       if (response.ok) {
         console.log(`GHL update successful for contact ${contactId}`);
-        await tagGHLContact(contactId, ["hot-lead", "mail:converted"]);
+        await tagGHLContact(contactId, [
+          "hot-lead",
+          "mail:converted",
+          ...(data.emailRisky ? ["email:risky"] : []),
+        ]);
         if (data.message) {
           await addGHLContactNote(contactId, `Mailer form submission: ${data.message}`);
         }

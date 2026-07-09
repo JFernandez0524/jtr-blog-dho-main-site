@@ -4,6 +4,10 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import { cookiesClient } from "@/utils/amplify-utils";
 import { syncToGHL } from "@/lib/ghl";
 import { verifyRecaptcha } from "@/lib/recaptcha";
+import { verifyEmailDeliverability } from "@/lib/emailVerification";
+
+const EMAIL_UNDELIVERABLE_MESSAGE =
+  "That email address doesn't appear to work — please double-check it.";
 
 const BRIDGE_BASE = "https://api.bridgedataoutput.com/api/v2";
 
@@ -134,6 +138,18 @@ export async function POST(request: NextRequest) {
 
   const { street, city, state, zip, name, email, phone, lat, lng, address, pageUrl } = validation.data;
 
+  // Deliverability check (DeBounce) — reject only hard-invalid; fail open on errors
+  const emailCheck = await verifyEmailDeliverability(email);
+  if (emailCheck.verdict === "undeliverable") {
+    return NextResponse.json(
+      { error: EMAIL_UNDELIVERABLE_MESSAGE, details: { email: [EMAIL_UNDELIVERABLE_MESSAGE] } },
+      { status: 400 }
+    );
+  }
+  if (emailCheck.verdict !== "deliverable") {
+    console.log(`Email verification for ${email}: ${emailCheck.verdict}${emailCheck.reason ? ` (${emailCheck.reason})` : ""}`);
+  }
+
   let zestimate = 0;
   let zestimateError = null;
 
@@ -185,6 +201,7 @@ export async function POST(request: NextRequest) {
       source: pageUrl || request.headers.get("referer") || "Property Valuation Form",
       referrer: request.headers.get("referer") || "direct",
       submissionId: submission.id,
+      emailRisky: emailCheck.verdict === "risky",
     });
     await client.models.ContactSubmission.update({
       id: submission.id,

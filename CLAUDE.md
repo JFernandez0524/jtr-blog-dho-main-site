@@ -33,6 +33,7 @@ GOOGLE_MAPS_API_KEY=          # Server-only (no NEXT_PUBLIC_ prefix — key must
 BRIDGE_DATA_API_KEY=       # Zillow Zestimate via Bridge Data API
 NEXT_PUBLIC_SITE_URL=
 GHL_BOOKING_CALENDAR_URL=  # GHL booking widget URL embedded on /mailer/* pages (optional — fallback CTA renders when unset; origin is added to frame-src CSP)
+DEBOUNCE_API_KEY=          # DeBounce.io email deliverability check on form submits (optional — fails open when unset)
 ```
 
 ## Architecture

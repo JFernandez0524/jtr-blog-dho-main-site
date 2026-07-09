@@ -4,6 +4,10 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import { cookiesClient } from "@/utils/amplify-utils";
 import { syncToGHL } from "@/lib/ghl";
 import { verifyRecaptcha } from "@/lib/recaptcha";
+import { verifyEmailDeliverability } from "@/lib/emailVerification";
+
+const EMAIL_UNDELIVERABLE_MESSAGE =
+  "That email address doesn't appear to work — please double-check it.";
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,6 +44,21 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, email, phone, message, serviceType, source, referrer, ghlContactId } = validation.data;
+
+    // Deliverability check (DeBounce). Only hard-invalid emails are rejected —
+    // the lead gets an inline error and can fix the typo. Risky results are
+    // accepted and tagged in GHL; API failures fail open.
+    const emailCheck = await verifyEmailDeliverability(email);
+    if (emailCheck.verdict === "undeliverable") {
+      return NextResponse.json(
+        { error: EMAIL_UNDELIVERABLE_MESSAGE, details: { email: [EMAIL_UNDELIVERABLE_MESSAGE] } },
+        { status: 400 }
+      );
+    }
+    if (emailCheck.verdict !== "deliverable") {
+      console.log(`Email verification for ${email}: ${emailCheck.verdict}${emailCheck.reason ? ` (${emailCheck.reason})` : ""}`);
+    }
+
     const client = cookiesClient;
 
     const submission = await client.models.ContactSubmission.create({
@@ -68,6 +87,7 @@ export async function POST(request: NextRequest) {
         referrer: referrer || "direct",
         submissionId: submission.data.id,
         ghlContactId,
+        emailRisky: emailCheck.verdict === "risky",
       });
       await client.models.ContactSubmission.update({
         id: submission.data.id,
