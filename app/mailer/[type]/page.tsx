@@ -46,6 +46,29 @@ const CAMPAIGN_TYPES = {
 
 type CampaignType = keyof typeof CAMPAIGN_TYPES;
 
+/**
+ * Message-matched hero variants. Postcard/letter templates append &msg=<key>
+ * to the QR URL so the first screen echoes the tone of the piece the lead is
+ * holding. Only heroHeading/heroSub change — everything else stays on one
+ * measured funnel. Unknown or missing msg falls back to the campaign default.
+ */
+const MESSAGE_VARIANTS: Partial<Record<CampaignType, Record<string, { heroHeading: string; heroSub: string }>>> = {
+  "inherited-property": {
+    breakup: {
+      heroHeading: "Before you file this away — here's where the property stands today.",
+      heroSub: "No pressure, and no more mail unless you want it. Just the honest numbers, whenever you're ready.",
+    },
+    intro: {
+      heroHeading: "Thinking about selling your inherited property?",
+      heroSub: "The Borrero Group at RE/MAX has helped NJ families sell 750+ properties — from fixer-uppers to million-dollar estates. Let's find the right path for yours.",
+    },
+    update: {
+      heroHeading: "Here's your updated market picture.",
+      heroSub: "Values shift month to month. Here's where the property stands right now — and I'm a call away whenever the timing feels right.",
+    },
+  },
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -70,7 +93,7 @@ export default async function MailerPage({
   searchParams,
 }: {
   params: Promise<{ type: string }>;
-  searchParams: Promise<{ cid?: string; addr?: string; city?: string; zest?: string; name?: string }>;
+  searchParams: Promise<{ cid?: string; addr?: string; city?: string; zest?: string; name?: string; msg?: string }>;
 }) {
   const { type } = await params;
 
@@ -78,13 +101,19 @@ export default async function MailerPage({
   const config = CAMPAIGN_TYPES[type as CampaignType];
   const isInheritedProperty = type === "inherited-property";
 
-  const { cid, addr, city, zest, name: firstName } = await searchParams;
+  const { cid, addr, city, zest, name: firstName, msg } = await searchParams;
+  const variant = (msg && MESSAGE_VARIANTS[type as CampaignType]?.[msg]) || null;
+  const heroHeading = variant?.heroHeading ?? config.heroHeading;
+  const heroSub = variant?.heroSub ?? config.heroSub;
+
   const zestFormatted = zest ? formatZestimate(zest) : "";
   const hasAddress = Boolean(addr && city);
   const hasZestimate = Boolean(zestFormatted);
   const hasBookingCalendar = Boolean(process.env.GHL_BOOKING_CALENDAR_URL);
 
-  const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
+  // Mail-campaign tracking line — matches the number printed on postcards/letters
+  const phoneDisplay = siteConfig.contact.mailerTrackingPhoneDisplay;
+  const telHref = `tel:${siteConfig.contact.mailerTrackingPhone.replace(/[\s()-]/g, "")}`;
 
   return (
     <div className="min-h-screen bg-white font-inter">
@@ -103,12 +132,12 @@ export default async function MailerPage({
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
             </svg>
-            {siteConfig.contact.phoneDisplay}
+            {phoneDisplay}
           </a>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-10 pb-24 md:pb-10 space-y-10">
+      <main className="max-w-4xl mx-auto px-4 py-10 space-y-10">
 
         {/* Personalized hero */}
         <section className="text-center space-y-4">
@@ -116,14 +145,14 @@ export default async function MailerPage({
             <p className="text-remax-blue font-semibold text-lg">Hi {firstName},</p>
           )}
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
-            {config.heroHeading}
+            {heroHeading}
           </h1>
           {hasAddress && (
             <p className="text-xl text-gray-600 font-medium">
               {addr}, {city}, NJ
             </p>
           )}
-          <p className="text-gray-500 max-w-xl mx-auto">{config.heroSub}</p>
+          <p className="text-gray-500 max-w-xl mx-auto">{heroSub}</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
             <a
               href="#book"
@@ -135,7 +164,7 @@ export default async function MailerPage({
               href={telHref}
               className="px-6 py-3 border-2 border-remax-blue text-remax-blue font-semibold rounded-lg hover:bg-remax-blue/5 transition-colors text-center"
             >
-              Call {siteConfig.contact.phoneDisplay}
+              Call {phoneDisplay}
             </a>
           </div>
         </section>
@@ -211,7 +240,7 @@ export default async function MailerPage({
                 href={telHref}
                 className="inline-block px-8 py-4 bg-white text-remax-blue font-bold rounded-lg hover:bg-white/90 transition-colors"
               >
-                Call {siteConfig.contact.phoneDisplay}
+                Call {phoneDisplay}
               </a>
               <p className="text-white/80 text-sm">
                 Or use the{" "}
@@ -243,10 +272,12 @@ export default async function MailerPage({
             </section>
           </>
         )}
+      </main>
 
-        {/* Real Zillow reviews */}
-        <ZillowReviews compact maxReviews={3} />
+      {/* Real Zillow reviews — full-bleed band, same treatment as the pillar page */}
+      <ZillowReviews />
 
+      <div className="max-w-4xl mx-auto px-4 py-10 pb-24 md:pb-10 space-y-10">
         {isInheritedProperty && (
           <>
             {/* Video */}
@@ -349,12 +380,12 @@ export default async function MailerPage({
           <p className="text-sm text-gray-500">
             Prefer to call?{" "}
             <a href={telHref} className="font-semibold text-remax-blue hover:underline">
-              {siteConfig.contact.phoneDisplay}
+              {phoneDisplay}
             </a>
           </p>
         </section>
 
-      </main>
+      </div>
 
       {/* Minimal footer */}
       <footer className="border-t border-gray-100 mt-16 py-6 text-center text-xs text-gray-400">
@@ -362,7 +393,7 @@ export default async function MailerPage({
         <p className="mt-1">&copy; {new Date().getFullYear()} {siteConfig.contact.name}. All rights reserved.</p>
       </footer>
 
-      <StickyCallButton />
+      <StickyCallButton phone={siteConfig.contact.mailerTrackingPhone} />
       <FacebookMessenger />
     </div>
   );

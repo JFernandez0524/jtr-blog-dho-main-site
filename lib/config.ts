@@ -16,6 +16,10 @@ export const siteConfig = {
     email: "info@josetherealtor.com", // TODO: Update with real email
     phone: "+1 (973) 384-1054", // TODO: Update with real phone
     phoneDisplay: "(973) 384-1054",
+    // Dedicated mail-campaign tracking line (printed on postcards/letters).
+    // Shown on /mailer/* pages so page-driven calls are attributed to direct mail.
+    mailerTrackingPhone: "+1 (908) 739-6797",
+    mailerTrackingPhoneDisplay: "(908) 739-6797",
     address: {
       street: "83 South st, ste 302",
       city: "Freehold",

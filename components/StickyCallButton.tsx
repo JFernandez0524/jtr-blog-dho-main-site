@@ -2,7 +2,6 @@
 
 import { siteConfig } from "@/lib/config";
 
-const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 const messengerUrl = "https://m.me/66616433431419";
 
 const PhoneIcon = () => (
@@ -17,7 +16,13 @@ const MessengerIcon = () => (
   </svg>
 );
 
-export default function StickyCallButton() {
+export default function StickyCallButton({
+  phone = siteConfig.contact.phone,
+}: {
+  /** Override the call target (e.g. the mail-campaign tracking number on /mailer/* pages) */
+  phone?: string;
+}) {
+  const telHref = `tel:${phone.replace(/[\s()-]/g, "")}`;
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden flex border-t border-white/20">
       <a

@@ -30,15 +30,24 @@ const SERVICE_TYPE_MAP: Record<string, string> = {
   "general": "General Inquiry",
 };
 
+// Postcard/letter template variant from the QR URL's &msg= param (e.g. "breakup").
+// Sanitized so junk params can't leak into CRM labels.
+function getMailerTemplate(source: string): string | null {
+  const match = source.match(/[?&]msg=([a-z-]{1,20})(?:&|$)/i);
+  return match ? match[1].toLowerCase() : null;
+}
+
 // Free-text label used for the contact's top-level `source` property
 export function getSourceLabel(source?: string): string {
   if (!source) return "Website";
   // Direct-mail QR landing pages — check before the organic-page substrings below
   if (source.includes("/mailer/")) {
-    if (source.includes("inherited-property")) return "Direct Mail — Inherited Property";
-    if (source.includes("preforeclosure")) return "Direct Mail — Preforeclosure";
-    if (source.includes("sell-as-is")) return "Direct Mail — Sell As-Is";
-    return "Direct Mail";
+    const template = getMailerTemplate(source);
+    const suffix = template ? ` (${template})` : "";
+    if (source.includes("inherited-property")) return `Direct Mail — Inherited Property${suffix}`;
+    if (source.includes("preforeclosure")) return `Direct Mail — Preforeclosure${suffix}`;
+    if (source.includes("sell-as-is")) return `Direct Mail — Sell As-Is${suffix}`;
+    return `Direct Mail${suffix}`;
   }
   if (source.includes("/foreclosure")) return "Foreclosure Landing Page";
   if (source.includes("/sell-as-is")) return "Sell As-Is Landing Page";
