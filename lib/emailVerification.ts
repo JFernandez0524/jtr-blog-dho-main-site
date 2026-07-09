@@ -13,11 +13,10 @@ export interface EmailVerdict {
   reason?: string;
 }
 
-// DeBounce result codes:
-// 1 = Syntax error / invalid, 2 = Spam-trap, 3 = Disposable, 4 = Accept-all,
-// 5 = Deliverable, 6 = Role (info@, admin@ …), 7 = Unknown, 8 = Mailbox disabled
-const UNDELIVERABLE_CODES = new Set(["1", "8"]);
-const DELIVERABLE_CODES = new Set(["5"]);
+// Verified against the live API (2026-07-09): the authoritative field is
+// `result` — "Invalid" (syntax / bounce / disposable, send_transactional=0),
+// "Safe to Send" (deliverable), "Risky" (accept-all, role, …), "Unknown".
+// Codes observed: 1=Syntax, 3=Disposable, 5=Deliverable, 6=Bounce.
 
 export async function verifyEmailDeliverability(email: string): Promise<EmailVerdict> {
   const apiKey = process.env.DEBOUNCE_API_KEY;
@@ -26,12 +25,12 @@ export async function verifyEmailDeliverability(email: string): Promise<EmailVer
   }
 
   try {
-    const url = new URL("https://api.debounce.com/v1/");
+    const url = new URL("https://api.debounce.io/v1/");
     url.searchParams.set("api", apiKey);
     url.searchParams.set("email", email);
 
     const response = await fetch(url.toString(), {
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(6000),
     });
 
     if (!response.ok) {
@@ -40,15 +39,17 @@ export async function verifyEmailDeliverability(email: string): Promise<EmailVer
     }
 
     const data = await response.json();
-    const code = String(data?.debounce?.code ?? "");
+    const result = String(data?.debounce?.result ?? "").toLowerCase();
     const reason = data?.debounce?.reason || data?.debounce?.result || undefined;
 
-    if (UNDELIVERABLE_CODES.has(code)) return { verdict: "undeliverable", reason };
-    if (DELIVERABLE_CODES.has(code)) return { verdict: "deliverable", reason };
-    if (code) return { verdict: "risky", reason };
+    if (result === "invalid") return { verdict: "undeliverable", reason };
+    if (result === "safe to send") return { verdict: "deliverable", reason };
+    if (result === "risky") return { verdict: "risky", reason };
 
-    console.error("DeBounce API returned no result code:", JSON.stringify(data).slice(0, 200));
-    return { verdict: "unknown", reason: "no result code" };
+    if (!result) {
+      console.error("DeBounce API returned no result:", JSON.stringify(data).slice(0, 200));
+    }
+    return { verdict: "unknown", reason: reason || "no result" };
   } catch (error) {
     // Timeout or network failure — fail open, never block a lead
     console.error("DeBounce verification failed:", error instanceof Error ? error.message : error);
