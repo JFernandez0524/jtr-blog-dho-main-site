@@ -5,7 +5,9 @@ import PropertyValuationForm from "@/components/PropertyValuationForm";
 import ZillowReviews from "@/components/ZillowReviews";
 import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 import Breadcrumb from "@/components/Breadcrumb";
+import TownsServed from "@/components/TownsServed";
 import { siteConfig } from "@/lib/config";
+import { PILLAR_INHERITED_FAQ, INHERITED_CHALLENGES, WORK_WITH_ME_STEPS } from "@/lib/inheritedContent";
 
 const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 
@@ -185,22 +187,12 @@ export default function InheritedPropertyPage() {
         <section>
           <h3 className="mb-4 mt-6">Common Challenges I Help Solve</h3>
           <ul className="space-y-4 text-remax-slate">
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Probate Navigation:</strong> Understanding the legal process and timeline for estate sales</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Family Coordination:</strong> Managing decisions when multiple heirs are involved</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Property Condition:</strong> Selling as-is or determining necessary repairs</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Tax Implications:</strong> Understanding capital gains and estate tax considerations</span>
-            </li>
+            {INHERITED_CHALLENGES.map(({ title, text }) => (
+              <li key={title} className="flex gap-3">
+                <span className="text-remax-blue font-bold">→</span>
+                <span><strong>{title}:</strong> {text}</span>
+              </li>
+            ))}
           </ul>
         </section>
 
@@ -208,24 +200,7 @@ export default function InheritedPropertyPage() {
         <section>
           <h3 className="mb-4 mt-8">Common Questions</h3>
           <div className="not-prose space-y-5">
-            {[
-              {
-                q: "What if the house needs a lot of work?",
-                a: "You can sell it as-is. Most buyers in this market factor in renovation costs — you're not required to fix anything before selling. I'll help you understand what the property is worth in its current condition.",
-              },
-              {
-                q: "What if we haven't finished probate yet?",
-                a: "We can still talk now. I'll help you understand the timeline and what steps you can start taking before probate is complete — so you're not scrambling later.",
-              },
-              {
-                q: "What if multiple heirs disagree?",
-                a: "I've helped many families navigate this. Getting an honest, professional valuation often gives everyone a clearer starting point and takes some of the emotion out of the conversation.",
-              },
-              {
-                q: "How quickly can we close?",
-                a: "Most families I work with close in 60–90 days once they're ready to move forward. If you need more time to sort things out, that's completely fine — there's no pressure.",
-              },
-            ].map(({ q, a }) => (
+            {PILLAR_INHERITED_FAQ.map(({ q, a }) => (
               <div key={q} className="border-l-4 border-remax-blue/30 pl-4">
                 <p className="font-semibold text-remax-blue mb-1">{q}</p>
                 <p className="text-remax-slate text-sm">{a}</p>
@@ -238,11 +213,9 @@ export default function InheritedPropertyPage() {
         <section className="bg-remax-blue/5 p-8 rounded-lg mt-8">
           <h3 className="mb-4">What to Expect When You Work With Me</h3>
           <ol className="space-y-3 text-remax-slate list-decimal list-inside">
-            <li>Initial consultation to understand your situation and timeline</li>
-            <li>Property evaluation and market analysis</li>
-            <li>Guidance on probate requirements and documentation</li>
-            <li>Strategic marketing plan tailored to your needs</li>
-            <li>Support through closing and estate settlement</li>
+            {WORK_WITH_ME_STEPS.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
           </ol>
         </section>
 
@@ -268,6 +241,8 @@ export default function InheritedPropertyPage() {
           </div>
         </div>
       </PillarLayout>
+
+      <TownsServed />
 
       <ZillowReviews />
     </>

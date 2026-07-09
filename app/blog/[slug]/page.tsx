@@ -16,7 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&type=blog`;
+  const ogImageUrl = post.image || `/api/og?title=${encodeURIComponent(post.title)}&type=blog`;
   
   return {
     title: `${post.title} | Jose Fernandez`,

@@ -9,15 +9,33 @@ import SafeRecaptchaProvider from "@/components/SafeRecaptchaProvider";
 import ConfigureAmplifyClientSide from "@/components/ConfigureAmplifyClientSide";
 import StickyCallButton from "@/components/StickyCallButton";
 import FacebookMessenger from "@/components/FacebookMessenger";
+import { siteConfig } from "@/lib/config";
 
 const inter = Inter({ 
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
+const defaultOgImage = "/api/og?title=NJ%20Real%20Estate%20Specialist";
+
 export const metadata: Metadata = {
+  // Resolves all relative OG/twitter image URLs (/api/og?...) to absolute URLs for crawlers
+  metadataBase: new URL(siteConfig.url),
   title: "Jose Fernandez | NJ Real Estate Specialist",
   description: "Expert guidance for inherited property, foreclosure, and as-is home sales in New Jersey.",
+  openGraph: {
+    type: "website",
+    siteName: "Jose Fernandez | NJ Real Estate",
+    title: "Jose Fernandez | NJ Real Estate Specialist",
+    description: "Expert guidance for inherited property, foreclosure, and as-is home sales in New Jersey.",
+    images: [{ url: defaultOgImage, width: 1200, height: 630, alt: "Jose Fernandez | NJ Real Estate Specialist" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jose Fernandez | NJ Real Estate Specialist",
+    description: "Expert guidance for inherited property, foreclosure, and as-is home sales in New Jersey.",
+    images: [defaultOgImage],
+  },
 };
 
 const GTM_ID = "GTM-53SVHBKB";

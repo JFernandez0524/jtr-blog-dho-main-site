@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import PillarLayout from "@/components/PillarLayout";
-import { generateServiceSchema } from "@/lib/structuredData";
+import Breadcrumb from "@/components/Breadcrumb";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Sell Your House As-Is | Jose Fernandez - NJ Real Estate",
@@ -32,8 +33,13 @@ export default function SellAsIsPage() {
   const serviceSchema = generateServiceSchema({
     name: "Sell Your House As-Is",
     description: "Sell your New Jersey home as-is without repairs, cleaning, or staging. Fast, hassle-free solutions for any property condition.",
-    url: "https://josefernandez.com/sell-as-is",
+    url: "https://www.josetherealtor.com/sell-as-is",
   });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: "https://www.josetherealtor.com" },
+    { name: "Sell As-Is", url: "https://www.josetherealtor.com/sell-as-is" },
+  ]);
 
   return (
     <>
@@ -41,6 +47,16 @@ export default function SellAsIsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <Breadcrumb items={[
+          { name: "Home", href: "/" },
+          { name: "Sell As-Is", href: "/sell-as-is", current: true },
+        ]} />
+      </div>
       <PillarLayout
       title="Sell Your House As-Is"
       subtitle="No repairs, no staging, no hassle—sell your property in any condition"

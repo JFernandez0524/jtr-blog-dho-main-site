@@ -13,6 +13,8 @@ export interface PostMetadata {
   tags: string[];
   author: string;
   readingTime: string;
+  image?: string;
+  updated?: string;
 }
 
 export interface Post extends PostMetadata {
@@ -39,6 +41,8 @@ export function getAllPosts(): PostMetadata[] {
         tags: data.tags || [],
         author: data.author || "Jose Fernandez",
         readingTime: stats.text,
+        image: data.image,
+        updated: data.updated,
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -60,6 +64,8 @@ export function getPostBySlug(slug: string): Post {
     tags: data.tags || [],
     author: data.author || "Jose Fernandez",
     readingTime: stats.text,
+    image: data.image,
+    updated: data.updated,
     content,
   };
 }

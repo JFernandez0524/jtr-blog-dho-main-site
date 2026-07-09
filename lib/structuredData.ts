@@ -75,21 +75,34 @@ export function generateArticleSchema(article: {
   author: string;
   slug: string;
   tags: string[];
+  image?: string;
+  updated?: string;
 }) {
+  const imageUrl = article.image
+    ? article.image.startsWith("http")
+      ? article.image
+      : `${siteConfig.url}${article.image}`
+    : `${siteConfig.url}/api/og?title=${encodeURIComponent(article.title)}&type=blog`;
+
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: article.title,
     description: article.excerpt,
+    image: imageUrl,
     datePublished: article.date,
-    dateModified: article.date,
+    dateModified: article.updated || article.date,
     author: {
       "@type": "Person",
       name: article.author,
     },
     publisher: {
-      "@type": "Person",
-      name: "Jose Fernandez",
+      "@type": "Organization",
+      name: "Jose Fernandez Real Estate",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteConfig.url}/remax-logo.svg`,
+      },
     },
     url: `${siteConfig.url}/blog/${article.slug}`,
     keywords: article.tags.join(", "),
@@ -104,6 +117,8 @@ export function generateServiceSchema(service: {
   name: string;
   description: string;
   url: string;
+  /** Defaults to the State of New Jersey; location pages pass their City */
+  areaServed?: { type: "City" | "State"; name: string };
 }) {
   return {
     "@context": "https://schema.org",
@@ -120,8 +135,8 @@ export function generateServiceSchema(service: {
       },
     },
     areaServed: {
-      "@type": "State",
-      name: "New Jersey",
+      "@type": service.areaServed?.type ?? "State",
+      name: service.areaServed?.name ?? "New Jersey",
     },
     url: service.url,
     serviceType: "Real Estate Services",

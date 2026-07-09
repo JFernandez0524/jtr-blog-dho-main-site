@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import BlogCTA from "@/components/BlogCTA";
 import Breadcrumb from "@/components/Breadcrumb";
+import TownsServed from "@/components/TownsServed";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 
 export async function generateStaticParams() {
   return getLocationSlugs().map((slug) => ({ locationSlug: slug }));
@@ -14,13 +16,24 @@ export async function generateMetadata({ params }: { params: Promise<{ locationS
   const { locationSlug } = await params;
   if (!getLocationSlugs().includes(locationSlug)) return {};
   const location = getLocationBySlug(locationSlug);
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(`Inherited Property in ${location.town}, NJ`)}&type=pillar`;
   return {
     title: location.title,
     description: location.metaDescription,
     alternates: {
       canonical: `https://www.josetherealtor.com/${locationSlug}`,
     },
-    openGraph: { title: location.title, description: location.metaDescription },
+    openGraph: {
+      title: location.title,
+      description: location.metaDescription,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: location.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: location.title,
+      description: location.metaDescription,
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -29,8 +42,29 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
   if (!getLocationSlugs().includes(locationSlug)) notFound();
   const location = getLocationBySlug(locationSlug);
 
+  const serviceSchema = generateServiceSchema({
+    name: `Inherited Property Solutions — ${location.town}, NJ`,
+    description: location.metaDescription,
+    url: `https://www.josetherealtor.com/${locationSlug}`,
+    areaServed: { type: "City", name: location.town },
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: "https://www.josetherealtor.com" },
+    { name: "Inherited Property", url: "https://www.josetherealtor.com/inherited-property-new-jersey" },
+    { name: location.town, url: `https://www.josetherealtor.com/${locationSlug}` },
+  ]);
+
   return (
     <article className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <header className="bg-gradient-to-b from-remax-blue/5 to-white py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumb items={[
@@ -54,6 +88,8 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
         </div>
         <BlogCTA />
       </section>
+
+      <TownsServed excludeSlug={locationSlug} heading="Other NJ Towns I Serve" />
     </article>
   );
 }
