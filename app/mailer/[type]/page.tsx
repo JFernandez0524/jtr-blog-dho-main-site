@@ -167,6 +167,18 @@ export default async function MailerPage({
               Call {phoneDisplay}
             </a>
           </div>
+          <p className="text-sm text-gray-500">
+            Prefer to chat?{" "}
+            <a
+              href={siteConfig.social.messenger}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-remax-blue hover:underline"
+            >
+              Message me on Facebook
+            </a>{" "}
+            — I reply personally.
+          </p>
         </section>
 
         {/* Zestimate card or soft fallback */}
@@ -235,13 +247,23 @@ export default async function MailerPage({
             <GHLBookingCalendar firstName={firstName} />
           ) : (
             <div className="bg-remax-blue rounded-2xl p-8 text-center space-y-4">
-              <p className="text-white text-lg font-semibold">Call or text me directly — I&apos;ll personally pick up.</p>
-              <a
-                href={telHref}
-                className="inline-block px-8 py-4 bg-white text-remax-blue font-bold rounded-lg hover:bg-white/90 transition-colors"
-              >
-                Call {phoneDisplay}
-              </a>
+              <p className="text-white text-lg font-semibold">Call, text, or message me directly — I&apos;ll personally pick up.</p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <a
+                  href={telHref}
+                  className="inline-block px-8 py-4 bg-white text-remax-blue font-bold rounded-lg hover:bg-white/90 transition-colors"
+                >
+                  Call {phoneDisplay}
+                </a>
+                <a
+                  href={siteConfig.social.messenger}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-8 py-4 bg-[#0084ff] text-white font-bold rounded-lg hover:opacity-90 transition-opacity"
+                >
+                  Message on Facebook
+                </a>
+              </div>
               <p className="text-white/80 text-sm">
                 Or use the{" "}
                 <a href="#contact-form" className="text-white underline font-semibold">
@@ -381,6 +403,15 @@ export default async function MailerPage({
             Prefer to call?{" "}
             <a href={telHref} className="font-semibold text-remax-blue hover:underline">
               {phoneDisplay}
+            </a>
+            {" "}· or{" "}
+            <a
+              href={siteConfig.social.messenger}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-remax-blue hover:underline"
+            >
+              message me on Facebook
             </a>
           </p>
         </section>

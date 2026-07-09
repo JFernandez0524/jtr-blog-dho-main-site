@@ -41,6 +41,7 @@ export const siteConfig = {
   // Social Media
   social: {
     facebook: "https://www.facebook.com/Josetherealtor/",
+    messenger: "https://m.me/66616433431419",
     instagram: "http://instagram.com/jose_fernandez_remax_agent",
     linkedin: "https://www.linkedin.com/in/josefernandezremaxagent/",
     twitter: "https://twitter.com/josefernandezre",
