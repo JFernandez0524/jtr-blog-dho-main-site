@@ -10,7 +10,19 @@ declare global {
   }
 }
 
-export default function ContactForm({ defaultServiceType = "" }: { defaultServiceType?: string }) {
+export default function ContactForm({
+  defaultServiceType = "",
+  ghlContactId,
+  campaign,
+  submitLabel = "Send Message",
+}: {
+  defaultServiceType?: string;
+  /** Existing GHL contact ID (mailer ?cid=) — server updates that contact instead of creating a duplicate */
+  ghlContactId?: string;
+  /** Campaign identifier (e.g. mailer type) passed through to the API */
+  campaign?: string;
+  submitLabel?: string;
+}) {
   const { executeRecaptcha } = useSafeReCaptcha();
   const [formData, setFormData] = useState({
     name: "",
@@ -60,6 +72,8 @@ export default function ContactForm({ defaultServiceType = "" }: { defaultServic
           recaptchaToken,
           source: window.location.href,
           referrer: document.referrer || "direct",
+          ...(ghlContactId ? { ghlContactId } : {}),
+          ...(campaign ? { campaign } : {}),
         }),
       });
 
@@ -234,7 +248,7 @@ export default function ContactForm({ defaultServiceType = "" }: { defaultServic
         aria-label="Submit contact form"
         className="w-full px-8 py-4 bg-remax-blue text-white font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {status === "loading" ? "Sending..." : "Send Message"}
+        {status === "loading" ? "Sending..." : submitLabel}
       </button>
 
       <p className="text-sm text-remax-slate/60 text-center">

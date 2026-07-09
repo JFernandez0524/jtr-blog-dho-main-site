@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, phone, message, serviceType, source, referrer } = validation.data;
+    const { name, email, phone, message, serviceType, source, referrer, ghlContactId } = validation.data;
     const client = cookiesClient;
 
     const submission = await client.models.ContactSubmission.create({
@@ -64,8 +64,10 @@ export async function POST(request: NextRequest) {
       const ghlResult = await syncToGHL({
         name, email, phone, message, serviceType,
         formType: "CONTACT",
+        source: source || request.url,
         referrer: referrer || "direct",
         submissionId: submission.data.id,
+        ghlContactId,
       });
       await client.models.ContactSubmission.update({
         id: submission.data.id,

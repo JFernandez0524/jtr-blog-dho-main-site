@@ -27,6 +27,9 @@ export const ContactFormSchema = z.object({
   source: z.string().optional(),
   referrer: z.string().optional(),
   recaptchaToken: z.string().optional(),
+  // Invalid values are dropped (not rejected) — a mangled cid must never block a lead submission
+  ghlContactId: z.string().regex(/^[A-Za-z0-9]{15,30}$/).optional().catch(undefined),
+  campaign: z.string().max(50).optional().catch(undefined),
 });
 
 export type ContactFormData = z.infer<typeof ContactFormSchema>;
