@@ -244,7 +244,7 @@ export default async function MailerPage({
               </a>
               <p className="text-white/80 text-sm">
                 Or use the{" "}
-                <a href="#contact-form" className="underline font-semibold">
+                <a href="#contact-form" className="text-white underline font-semibold">
                   form below
                 </a>{" "}
                 and I&apos;ll reach out within 24 hours.
