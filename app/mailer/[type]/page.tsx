@@ -142,7 +142,7 @@ export default async function MailerPage({
         {/* Personalized hero */}
         <section className="text-center space-y-4">
           {firstName && (
-            <p className="text-remax-blue font-semibold text-lg">Hi {firstName},</p>
+            <p className="text-remax-blue font-bold text-3xl sm:text-4xl">Hi {firstName},</p>
           )}
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
             {heroHeading}
