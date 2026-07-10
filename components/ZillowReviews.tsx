@@ -155,19 +155,18 @@ export default function ZillowReviews({
           ))}
         </div>
 
-        <div className="text-center mt-8">
+        <p className="text-center mt-8 text-sm text-remax-slate/60">
+          All reviews verified on{" "}
           <a
             href="https://www.zillow.com/profile/Jose%20Fernandez%20NJ"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-remax-blue text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="underline hover:text-remax-blue"
           >
-            View All Reviews on Zillow
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            Zillow
           </a>
-        </div>
+          .
+        </p>
       </div>
     </section>
   );
