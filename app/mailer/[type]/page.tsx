@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +19,7 @@ const CAMPAIGN_TYPES = {
     heroSub: "We help NJ families navigate estate sales with confidence — and get the best outcome.",
     heroCta: "Book My Free In-Home Analysis",
     bookingHeading: "Pick a Time for Your Free In-Home Analysis",
-    bookingSub: "I'll walk through the property with you, run the numbers both ways, and give you an honest recommendation — no pressure, no obligation.",
+    bookingSub: "I'll walk the property with you and build a side-by-side of what you'd actually net — a full-service listing vs. a cash sale — so you decide with real numbers. No pressure, no obligation.",
     ctaHeading: "Prefer We Reach Out to You?",
     ctaSub: "Tell me a little about the property and I'll personally call you within 24 hours.",
     serviceType: "inherited-property",
@@ -81,6 +83,10 @@ export async function generateMetadata({
     robots: { index: false, follow: false },
   };
 }
+
+// Team/award graphic — the section renders automatically once the file exists
+const TEAM_GRAPHIC = "/borrero-group-team.jpg";
+const hasTeamGraphic = fs.existsSync(path.join(process.cwd(), "public", TEAM_GRAPHIC));
 
 function formatZestimate(zest: string): string {
   const num = parseInt(zest, 10);
@@ -179,6 +185,15 @@ export default async function MailerPage({
             </a>{" "}
             — I reply personally.
           </p>
+
+          {/* Proof strip — team numbers, not generic agent claims */}
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 pt-3 text-sm text-gray-600 font-medium">
+            <span>The Borrero Group at RE/MAX</span>
+            <span className="text-gray-300">·</span>
+            <span><strong className="text-remax-blue">$60M+</strong> sold every year</span>
+            <span className="text-gray-300">·</span>
+            <span>NJ Realtors<span className="align-super text-[10px]">®</span> Circle of Excellence <strong className="text-remax-blue">Platinum</strong> — every year since 2017</span>
+          </div>
         </section>
 
         {/* Zestimate card or soft fallback */}
@@ -213,18 +228,18 @@ export default async function MailerPage({
             <section className="space-y-5">
               <div className="text-center space-y-2">
                 <h2 className="text-2xl font-bold text-gray-900">Two Common Ways Families Sell an Inherited Property</h2>
-                <p className="text-gray-500">The right path depends on condition, timeline, and your goals — here&apos;s how I help you decide.</p>
+                <p className="text-gray-500">You&apos;ve probably gotten a stack of &quot;cash offer&quot; letters. I&apos;m not an investor — I show you both numbers so you choose what nets your family more.</p>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
                   <p className="font-bold text-remax-blue text-base">List on the Market</p>
-                  <p className="text-gray-600 text-sm">Best when the property is in decent shape and you have time. We market to qualified buyers and typically get the highest price.</p>
+                  <p className="text-gray-600 text-sm">Best when the property is in decent shape and you have time — typically the highest price. Full-service: professional photography, paid social ads, open houses, and we handle the town CO and open permits. It&apos;s how our team sells $60M+ every year — we sell houses, not just list them.</p>
                   <p className="text-xs text-gray-400 font-medium">Typical timeline: 60–90 days</p>
                 </div>
                 <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
                   <p className="font-bold text-remax-blue text-base">Sell Off-Market for Cash</p>
-                  <p className="text-gray-600 text-sm">Best when speed or condition matters more. No showings, no repairs — we work with serious cash buyers who can close fast.</p>
+                  <p className="text-gray-600 text-sm">Best when speed or condition matters more. No showings, no repairs — we work with serious cash buyers who can close fast. And because I negotiate the offer for you, &quot;fast&quot; doesn&apos;t have to mean &quot;cheap.&quot;</p>
                   <p className="text-xs text-gray-400 font-medium">Typical timeline: 14–21 days</p>
                 </div>
               </div>
@@ -300,6 +315,23 @@ export default async function MailerPage({
       <ZillowReviews />
 
       <div className="max-w-4xl mx-auto px-4 py-10 pb-24 md:pb-10 space-y-10">
+
+        {/* Team + awards graphic */}
+        {hasTeamGraphic && (
+          <section className="space-y-4 text-center">
+            <h2 className="text-2xl font-bold text-gray-900">The Team Behind Your Sale</h2>
+            <p className="text-gray-500 max-w-xl mx-auto">
+              Eight of us, one process — NJ Realtors<span className="align-super text-[10px]">®</span> Circle of Excellence Platinum performance every year since 2017.
+            </p>
+            <Image
+              src={TEAM_GRAPHIC}
+              alt="The Borrero Group at RE/MAX — NJ Realtors Circle of Excellence Platinum Award winners, every year since 2017"
+              width={800}
+              height={800}
+              className="rounded-2xl mx-auto w-full max-w-2xl h-auto"
+            />
+          </section>
+        )}
         {isInheritedProperty && (
           <>
             {/* Video */}
@@ -351,7 +383,7 @@ export default async function MailerPage({
             />
             <div className="text-center sm:text-left space-y-1">
               <p className="font-bold text-gray-900 text-xl">Jose Fernandez, NJ Real Estate Agent</p>
-              <p className="text-remax-blue font-medium">RE/MAX Agent · 15 Years in NJ Real Estate</p>
+              <p className="text-remax-blue font-medium">Partner, The Borrero Group at RE/MAX · $60M+ Sold Every Year · Circle of Excellence Platinum</p>
               <a
                 href={siteConfig.social.zillow}
                 target="_blank"

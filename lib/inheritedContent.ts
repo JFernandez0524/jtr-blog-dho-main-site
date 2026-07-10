@@ -60,9 +60,9 @@ export const INHERITED_CHALLENGES: { title: string; text: string }[] = [
 ];
 
 export const WORK_WITH_ME_STEPS: string[] = [
-  "Initial consultation to understand your situation and timeline",
-  "Property evaluation and market analysis",
-  "Guidance on probate requirements and documentation",
-  "Strategic marketing plan tailored to your needs",
-  "Support through closing and estate settlement",
+  "Initial consultation to understand your situation, timeline, and probate status",
+  "Pre-market walkthrough and local market analysis — plus trusted contractor referrals that save you time and money",
+  "Full marketing launch: professional photography, paid social ads, open houses, and just-listed campaigns",
+  "We handle the town: CO, open permits, and NJ paperwork requirements",
+  "Offer negotiation, inspection issues, attorney review, and timeline management through closing day",
 ];
