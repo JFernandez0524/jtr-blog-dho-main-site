@@ -246,18 +246,19 @@ export default async function MailerPage({
                 </div>
               </div>
 
-              <figure className="space-y-2">
+              <figure className="bg-remax-blue rounded-2xl p-5 sm:p-8 space-y-5 shadow-lg">
+                <figcaption className="text-center space-y-1">
+                  <p className="text-white font-bold text-xl sm:text-2xl">Every Family Gets a Full Pricing Analysis — Not a Guess</p>
+                  <p className="text-white/80 text-sm sm:text-base">Real comps, market trends, and a data-driven plan for top dollar. Here&apos;s what yours will look like:</p>
+                </figcaption>
                 <Image
                   src="/listingPresentationLayout.png"
                   alt="Sample listing presentation from The Borrero Group — market at a glance, comparable sales map, recent comp highlights, and local market trends"
                   width={1672}
                   height={941}
                   sizes="(max-width: 896px) 100vw, 896px"
-                  className="rounded-xl border border-gray-200 w-full h-auto"
+                  className="rounded-xl w-full h-auto shadow-md"
                 />
-                <figcaption className="text-sm text-gray-500 text-center">
-                  A sample of the pricing analysis every family gets — real comps, market trends, and a data-driven plan for top dollar.
-                </figcaption>
               </figure>
 
               <div className="bg-remax-blue/5 border border-remax-blue/20 rounded-xl p-5 text-center space-y-1">
