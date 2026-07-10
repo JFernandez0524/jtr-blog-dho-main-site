@@ -87,7 +87,7 @@ export async function generateMetadata({
 }
 
 // Team/award graphic — the image renders automatically once the file exists
-const TEAM_GRAPHIC = "/TeamDiamond.jpg";
+const TEAM_GRAPHIC = "/TeamDiamond.png";
 const hasTeamGraphic = fs.existsSync(path.join(process.cwd(), "public", TEAM_GRAPHIC));
 
 function formatZestimate(zest: string): string {
@@ -246,6 +246,20 @@ export default async function MailerPage({
                 </div>
               </div>
 
+              <figure className="space-y-2">
+                <Image
+                  src="/listingPresentationLayout.png"
+                  alt="Sample listing presentation from The Borrero Group — market at a glance, comparable sales map, recent comp highlights, and local market trends"
+                  width={1672}
+                  height={941}
+                  sizes="(max-width: 896px) 100vw, 896px"
+                  className="rounded-xl border border-gray-200 w-full h-auto"
+                />
+                <figcaption className="text-sm text-gray-500 text-center">
+                  A sample of the pricing analysis every family gets — real comps, market trends, and a data-driven plan for top dollar.
+                </figcaption>
+              </figure>
+
               <div className="bg-remax-blue/5 border border-remax-blue/20 rounded-xl p-5 text-center space-y-1">
                 <p className="font-semibold text-remax-blue">A free in-home walkthrough is the only way to know which path puts more money in your pocket.</p>
                 <p className="text-sm text-gray-500">I&apos;ll assess the condition, run the numbers both ways, and give you a straight answer.</p>
@@ -328,9 +342,10 @@ export default async function MailerPage({
             <Image
               src={TEAM_GRAPHIC}
               alt="The Borrero Group at RE/MAX — NJ Realtors Circle of Excellence Platinum Award winners, every year since 2017"
-              width={788}
-              height={803}
-              className="rounded-2xl mx-auto w-full max-w-2xl h-auto"
+              width={1672}
+              height={941}
+              sizes="(max-width: 896px) 100vw, 896px"
+              className="rounded-2xl mx-auto w-full h-auto"
             />
           )}
           <Suspense fallback={null}>
