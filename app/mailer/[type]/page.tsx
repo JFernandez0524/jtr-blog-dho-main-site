@@ -228,7 +228,7 @@ export default async function MailerPage({
             <section className="space-y-5">
               <div className="text-center space-y-2">
                 <h2 className="text-2xl font-bold text-gray-900">Two Common Ways Families Sell an Inherited Property</h2>
-                <p className="text-gray-500">You&apos;ve probably gotten a stack of &quot;cash offer&quot; letters. I&apos;m not an investor — I show you both numbers so you choose what nets your family more.</p>
+                <p className="text-gray-500">Those &quot;cash offer&quot; letters in your mailbox are one buyer hoping you&apos;ll take their number. I maintain a deep list of vetted investors who pay fair market value — and I show you both paths so you choose what nets your family more.</p>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -239,7 +239,7 @@ export default async function MailerPage({
                 </div>
                 <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
                   <p className="font-bold text-remax-blue text-base">Sell Off-Market for Cash</p>
-                  <p className="text-gray-600 text-sm">Best when speed or condition matters more. No showings, no repairs — we work with serious cash buyers who can close fast. And because I negotiate the offer for you, &quot;fast&quot; doesn&apos;t have to mean &quot;cheap.&quot;</p>
+                  <p className="text-gray-600 text-sm">Best when speed or condition matters more. No showings, no repairs — I bring my own list of vetted cash buyers who pay fair market value, not lowball offers. And because the buyer is already at the table, you save on commission costs.</p>
                   <p className="text-xs text-gray-400 font-medium">Typical timeline: 14–21 days</p>
                 </div>
               </div>
