@@ -86,8 +86,8 @@ export async function generateMetadata({
   };
 }
 
-// Team/award graphic — the section renders automatically once the file exists
-const TEAM_GRAPHIC = "/borrero-group-team.jpg";
+// Team/award graphic — the image renders automatically once the file exists
+const TEAM_GRAPHIC = "/TeamDiamond.jpg";
 const hasTeamGraphic = fs.existsSync(path.join(process.cwd(), "public", TEAM_GRAPHIC));
 
 function formatZestimate(zest: string): string {
@@ -328,8 +328,8 @@ export default async function MailerPage({
             <Image
               src={TEAM_GRAPHIC}
               alt="The Borrero Group at RE/MAX — NJ Realtors Circle of Excellence Platinum Award winners, every year since 2017"
-              width={800}
-              height={800}
+              width={788}
+              height={803}
               className="rounded-2xl mx-auto w-full max-w-2xl h-auto"
             />
           )}
