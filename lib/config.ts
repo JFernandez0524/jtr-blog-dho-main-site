@@ -36,6 +36,15 @@ export const siteConfig = {
     license: "NJ License #1430283", // TODO: Update with real license
     yearsExperience: 15,
     areasServed: ["Newark", "Jersey City", "Paterson", "Elizabeth", "Edison", "Freehold"],
+    // Team track record (The Borrero Group) — from the Zillow team profile.
+    // Static by design: Bridge API doesn't expose agent Past Sales data.
+    // Refresh once or twice a year as milestones tick over.
+    teamStats: {
+      totalSales: "770+",
+      priceRange: "$80K–$5.2M",
+      averagePrice: "$759K",
+      annualVolume: "$60M+",
+    },
   },
 
   // Social Media

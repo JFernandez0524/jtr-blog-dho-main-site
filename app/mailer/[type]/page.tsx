@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import FacebookMessenger from "@/components/FacebookMessenger";
 import GHLBookingCalendar from "@/components/GHLBookingCalendar";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import ZillowReviews from "@/components/ZillowReviews";
+import TeamStats from "@/components/TeamStats";
 import { siteConfig } from "@/lib/config";
 import { MAILER_INHERITED_FAQ, INHERITED_CHALLENGES, WORK_WITH_ME_STEPS } from "@/lib/inheritedContent";
 
@@ -316,13 +318,13 @@ export default async function MailerPage({
 
       <div className="max-w-4xl mx-auto px-4 py-10 pb-24 md:pb-10 space-y-10">
 
-        {/* Team + awards graphic */}
-        {hasTeamGraphic && (
-          <section className="space-y-4 text-center">
-            <h2 className="text-2xl font-bold text-gray-900">The Team Behind Your Sale</h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
-              Eight of us, one process — NJ Realtors<span className="align-super text-[10px]">®</span> Circle of Excellence Platinum performance every year since 2017.
-            </p>
+        {/* Team + awards graphic and Zillow-style trust bar */}
+        <section className="space-y-4 text-center">
+          <h2 className="text-2xl font-bold text-gray-900">The Team Behind Your Sale</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Eight of us, one process — NJ Realtors<span className="align-super text-[10px]">®</span> Circle of Excellence Platinum performance every year since 2017.
+          </p>
+          {hasTeamGraphic && (
             <Image
               src={TEAM_GRAPHIC}
               alt="The Borrero Group at RE/MAX — NJ Realtors Circle of Excellence Platinum Award winners, every year since 2017"
@@ -330,8 +332,11 @@ export default async function MailerPage({
               height={800}
               className="rounded-2xl mx-auto w-full max-w-2xl h-auto"
             />
-          </section>
-        )}
+          )}
+          <Suspense fallback={null}>
+            <TeamStats />
+          </Suspense>
+        </section>
         {isInheritedProperty && (
           <>
             {/* Video */}
