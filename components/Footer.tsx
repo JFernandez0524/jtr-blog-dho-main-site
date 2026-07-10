@@ -200,6 +200,18 @@ export default function Footer() {
           <p className="text-sm text-remax-slate/60 text-center">
             © {new Date().getFullYear()} {siteConfig.contact.name}. All rights reserved.
           </p>
+          {/* Zillow branding requirement — site pages display Zillow review/Zestimate data */}
+          <p className="text-xs text-remax-slate/50 text-center mt-2">
+            © Zillow, Inc., 2006-2023. Use is subject to{" "}
+            <a
+              href="https://www.zillow.com/z/corp/terms/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-remax-blue"
+            >
+              Terms of Use
+            </a>
+          </p>
         </div>
       </div>
     </footer>

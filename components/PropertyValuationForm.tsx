@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useSafeReCaptcha } from "./SafeRecaptchaProvider";
 import { siteConfig } from "@/lib/config";
 
@@ -24,6 +25,9 @@ interface AddressData {
 interface ValuationResult {
   zestimate: number;
   address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
 }
 
 declare global {
@@ -171,9 +175,27 @@ export default function PropertyValuationForm() {
             {result.address && (
               <p className="text-remax-slate/70 text-sm">{result.address}</p>
             )}
+            {/* Zillow branding requirement: logo adjacent to Zestimate data */}
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-xs text-remax-slate/50">Zestimate® by</span>
+              <Image src="/zillow-icon.svg" alt="Zillow" width={60} height={24} className="h-5 w-auto" />
+            </div>
             <p className="text-xs text-remax-slate/50 border-t pt-3">
               This is a Zillow Zestimate, not a professional appraisal. Actual value may differ based on condition and local market.
+              {" "}Data provided &quot;as is&quot; via the Zestimate API.
             </p>
+            {result.address && (
+              <p className="text-xs text-remax-slate/50">
+                <a
+                  href={`https://www.zillow.com/homes/${encodeURIComponent([result.address, result.city, result.state, result.zip].filter(Boolean).join(" "))}_rb/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-remax-blue"
+                >
+                  See more details for {result.address} on Zillow
+                </a>
+              </p>
+            )}
           </div>
         ) : (
           <div className="text-center space-y-2">

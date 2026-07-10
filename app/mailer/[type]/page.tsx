@@ -203,6 +203,11 @@ export default async function MailerPage({
           <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6 space-y-3">
             <p className="text-sm font-medium text-blue-700 uppercase tracking-wide text-center">Estimated Starting Value</p>
             <p className="text-5xl font-bold text-remax-blue text-center">{zestFormatted}</p>
+            {/* Zillow branding requirement: logo adjacent to Zestimate data */}
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-xs text-gray-500">Zestimate® by</span>
+              <Image src="/zillow-icon.svg" alt="Zillow" width={60} height={24} className="h-5 w-auto" />
+            </div>
             {isInheritedProperty ? (
               <div className="border-t border-blue-200 pt-3 space-y-1 text-sm text-blue-900">
                 <p className="font-semibold">This is a Zestimate® — a starting point, not the final word.</p>
@@ -211,6 +216,22 @@ export default async function MailerPage({
             ) : (
               <p className="text-sm text-gray-500 text-center">Based on recent comparable sales in your area</p>
             )}
+            <p className="text-xs text-gray-400 text-center">
+              {hasAddress && (
+                <>
+                  <a
+                    href={`https://www.zillow.com/homes/${encodeURIComponent([addr, city, "NJ"].filter(Boolean).join(" "))}_rb/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-remax-blue"
+                  >
+                    See more details for {addr} on Zillow
+                  </a>
+                  {" · "}
+                </>
+              )}
+              Data provided &quot;as is&quot; via the Zestimate API.
+            </p>
           </section>
         ) : (
           <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center space-y-3">
@@ -475,6 +496,13 @@ export default async function MailerPage({
       <footer className="border-t border-gray-100 mt-16 py-6 text-center text-xs text-gray-400">
         <p>{siteConfig.business.license} · {siteConfig.business.brokerage}</p>
         <p className="mt-1">&copy; {new Date().getFullYear()} {siteConfig.contact.name}. All rights reserved.</p>
+        {/* Zillow branding requirement — this page displays Zestimate + review data */}
+        <p className="mt-1">
+          &copy; Zillow, Inc., 2006-2023. Use is subject to{" "}
+          <a href="https://www.zillow.com/z/corp/terms/" target="_blank" rel="noopener noreferrer" className="underline">
+            Terms of Use
+          </a>
+        </p>
       </footer>
 
       <StickyCallButton phone={siteConfig.contact.mailerTrackingPhone} />
