@@ -3,7 +3,8 @@ import Image from "next/image";
 import PillarLayout from "@/components/PillarLayout";
 import ContactForm from "@/components/ContactForm";
 import ZillowReviews from "@/components/ZillowReviews";
-import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
+import { generateServiceSchema, generateBreadcrumbSchema, generateFAQSchema } from "@/lib/structuredData";
+import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb";
 import TeamSection from "@/components/TeamSection";
 import { siteConfig } from "@/lib/config";
@@ -17,8 +18,8 @@ import {
 const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 
 export const metadata: Metadata = {
-  title: "Foreclosure Help & Prevention | Jose Fernandez - NJ Real Estate",
-  description: "Facing foreclosure in New Jersey? Explore your options including short sales, loan modifications, and strategic solutions to protect your credit.",
+  title: "Stop Foreclosure in NJ | Sell Before the Sheriff Sale — Jose Fernandez",
+  description: "Facing foreclosure in New Jersey? Protect your equity before the sheriff sale. Short sales, fast market sales, vetted cash buyers, loan modifications — free, confidential consultation with a licensed NJ agent.",
   alternates: {
     canonical: "https://www.josetherealtor.com/foreclosure",
   },
@@ -54,6 +55,10 @@ export default function ForeclosurePage() {
     { name: "Foreclosure Help", url: "https://www.josetherealtor.com/foreclosure" },
   ]);
 
+  const faqSchema = generateFAQSchema(
+    FORECLOSURE_FAQ.map(({ q, a }) => ({ question: q, answer: a }))
+  );
+
   return (
     <>
       <script
@@ -63,6 +68,10 @@ export default function ForeclosurePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <Breadcrumb items={[
@@ -291,6 +300,57 @@ export default function ForeclosurePage() {
               <span>Pricing and listing your home fast if a quick market sale is your best path</span>
             </li>
           </ul>
+        </section>
+
+        {/* Foreclosure guides — topic-cluster links to the blog */}
+        <section className="not-prose mt-10">
+          <h2 className="text-2xl font-bold text-remax-blue mb-2">Foreclosure Guides for NJ Homeowners</h2>
+          <p className="text-remax-slate/80 mb-5 text-sm">
+            Want to understand the process in more depth before reaching out? These guides cover the questions I hear most:
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              {
+                href: "/blog/how-to-stop-a-sheriff-sale-in-nj",
+                title: "How to Stop a Sheriff Sale in NJ",
+                desc: "Adjournments, redemption, and selling before the date — what still works.",
+              },
+              {
+                href: "/blog/can-i-sell-my-house-during-foreclosure-in-nj",
+                title: "Can I Sell My House During Foreclosure?",
+                desc: "Yes — and if you have equity, it's usually the smartest move. Here's how.",
+              },
+              {
+                href: "/blog/foreclosure-timeline-new-jersey",
+                title: "The NJ Foreclosure Timeline, Step by Step",
+                desc: "How long the process really takes and what happens at each stage.",
+              },
+              {
+                href: "/blog/facing-foreclosure-in-new-jersey-your-options",
+                title: "Facing Foreclosure in NJ? Your Options",
+                desc: "Every path available to you, explained in plain language.",
+              },
+              {
+                href: "/blog/short-sale-vs-foreclosure",
+                title: "Short Sale vs. Foreclosure",
+                desc: "What each one does to your credit, your equity, and your future.",
+              },
+              {
+                href: "/blog/what-is-a-lis-pendens-in-new-jersey",
+                title: "What Is a Lis Pendens in New Jersey?",
+                desc: "What that court filing actually means — and what it doesn't.",
+              },
+            ].map(({ href, title, desc }) => (
+              <Link
+                key={href}
+                href={href}
+                className="block border border-gray-200 rounded-2xl p-5 hover:border-remax-blue/40 hover:shadow-sm transition-all"
+              >
+                <p className="font-semibold text-remax-blue mb-1">{title}</p>
+                <p className="text-sm text-remax-slate/70">{desc}</p>
+              </Link>
+            ))}
+          </div>
         </section>
 
         {/* Team + awards graphic and Zillow-style trust bar */}
