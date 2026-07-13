@@ -151,7 +151,7 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
           email: data.email,
           phone: data.phone,
           name: data.name,
-          source: data.source || "Website Contact Form",
+          source: getSourceLabel(data.source),
           tags: ["hot-lead", ...(data.emailRisky ? ["email:risky"] : [])],
           customFields,
         }),
@@ -165,6 +165,18 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
 
       lastError = `HTTP ${response.status}: ${await response.text()}`;
       console.error(`GHL sync attempt ${attempt} failed:`, lastError);
+
+      // GHL blocks duplicate emails but hands back the existing contact's ID —
+      // a repeat inquiry from a known lead. Update that contact instead of
+      // losing the submission.
+      if (response.status === 400 && lastError.includes("duplicated contacts")) {
+        const dupId = lastError.match(/"contactId"\s*:\s*"([A-Za-z0-9]+)"/)?.[1];
+        if (dupId && dupId !== data.ghlContactId) {
+          console.warn(`GHL reports existing contact ${dupId} for this email — updating it instead`);
+          return updateGHLContact({ ...data, ghlContactId: dupId }, GHL_API_TOKEN);
+        }
+        break; // same contact already failed to update — retrying the create won't help
+      }
 
       if (attempt < maxRetries) {
         await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
@@ -214,13 +226,19 @@ async function updateGHLContact(data: ContactData, apiToken: string): Promise<GH
 
       if (response.ok) {
         console.log(`GHL update successful for contact ${contactId}`);
+        // mail:converted only for mailer QR conversions; duplicate-email
+        // recoveries from other pages are repeat inquiries
+        const isMailer = Boolean(data.source?.includes("/mailer/"));
         await tagGHLContact(contactId, [
           "hot-lead",
-          "mail:converted",
+          isMailer ? "mail:converted" : "repeat-inquiry",
           ...(data.emailRisky ? ["email:risky"] : []),
         ]);
         if (data.message) {
-          await addGHLContactNote(contactId, `Mailer form submission: ${data.message}`);
+          await addGHLContactNote(
+            contactId,
+            `${isMailer ? "Mailer form submission" : "Repeat form submission"} (${getSourceLabel(data.source)}): ${data.message}`
+          );
         }
         return { success: true, contactId };
       }
