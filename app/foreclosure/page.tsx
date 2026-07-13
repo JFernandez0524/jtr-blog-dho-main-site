@@ -5,7 +5,14 @@ import ContactForm from "@/components/ContactForm";
 import ZillowReviews from "@/components/ZillowReviews";
 import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 import Breadcrumb from "@/components/Breadcrumb";
+import TeamSection from "@/components/TeamSection";
 import { siteConfig } from "@/lib/config";
+import {
+  FORECLOSURE_STAGES,
+  FORECLOSURE_OPTIONS,
+  FORECLOSURE_TRUST_POINTS,
+  FORECLOSURE_FAQ,
+} from "@/lib/foreclosureContent";
 
 const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 
@@ -66,7 +73,7 @@ export default function ForeclosurePage() {
 
       <PillarLayout
         title="Facing Foreclosure in New Jersey? There Are More Options Than Your Bank Is Telling You."
-        subtitle="Most homeowners wait too long because they feel ashamed or aren't sure who to trust. A free, confidential conversation can open doors you didn't know existed — even if you've already received a notice."
+        subtitle="Most homeowners wait too long because they feel ashamed or aren't sure who to trust. And if you have equity in your home, a sheriff sale is the worst possible way to lose it. A free, confidential conversation can open doors you didn't know existed — even if you've already received a notice."
         heroCta={
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <a
@@ -100,7 +107,7 @@ export default function ForeclosurePage() {
               />
               <div>
                 <p className="font-bold text-remax-blue text-lg leading-tight">Jose Fernandez</p>
-                <p className="text-remax-slate text-sm">RE/MAX Agent · 15 Years in NJ Real Estate</p>
+                <p className="text-remax-slate text-sm">Partner, The Borrero Group at RE/MAX · $60M+ Sold Every Year</p>
                 <div className="flex gap-0.5 mt-1">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -149,6 +156,15 @@ export default function ForeclosurePage() {
               <a href={telHref} className="text-remax-blue font-semibold hover:underline">
                 {siteConfig.contact.phoneDisplay}
               </a>
+              {" "}· or{" "}
+              <a
+                href={siteConfig.social.messenger}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-remax-blue font-semibold hover:underline"
+              >
+                message me privately on Facebook
+              </a>
             </p>
           </div>
 
@@ -170,51 +186,64 @@ export default function ForeclosurePage() {
           </p>
         </div>
 
+        {/* Where are you in the process? — NJ stages, options remain at each */}
+        <section className="not-prose mb-10">
+          <h2 className="text-2xl font-bold text-remax-blue mb-2">Where Are You in the Process?</h2>
+          <p className="text-remax-slate/80 mb-5">
+            New Jersey foreclosure moves in stages, and your stage determines your options — not the scary letters. Find yourself below:
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {FORECLOSURE_STAGES.map(({ stage, what, stillOpen }, i) => (
+              <div key={stage} className="border border-gray-200 rounded-2xl p-5 space-y-2">
+                <p className="font-bold text-remax-blue">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-remax-blue text-white text-xs font-bold mr-2 align-middle">{i + 1}</span>
+                  {stage}
+                </p>
+                <p className="text-sm text-remax-slate/80">{what}</p>
+                <p className="text-sm font-medium text-green-700">{stillOpen}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-center font-semibold text-remax-blue">
+            Wherever you are, there&apos;s a move available — the only losing move is waiting.
+          </p>
+        </section>
+
         {/* Options */}
         <section>
           <h2 className="mb-4">Your Options</h2>
           <ul className="space-y-4 text-remax-slate">
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Short Sale:</strong> Sell for less than you owe with lender approval — often the best way to protect your credit and avoid a foreclosure on your record</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Loan Modification:</strong> Work with your lender to restructure your payments — sometimes possible even after a default notice</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Quick Market Sale:</strong> Sell at market value fast enough to pay off the mortgage and walk away clean, if there's enough equity</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-remax-blue font-bold">→</span>
-              <span><strong>Deed in Lieu:</strong> Transfer the property directly to the lender to avoid the full foreclosure process — a last resort but better than foreclosure on your record</span>
-            </li>
+            {FORECLOSURE_OPTIONS.map(({ title, text }) => (
+              <li key={title} className="flex gap-3">
+                <span className="text-remax-blue font-bold">→</span>
+                <span><strong>{title}:</strong> {text}</span>
+              </li>
+            ))}
           </ul>
+        </section>
+
+        {/* Anti-scam trust block */}
+        <section className="not-prose mt-10 bg-gray-50 border border-gray-200 rounded-2xl p-6 sm:p-8">
+          <h2 className="text-2xl font-bold text-remax-blue mb-2">How to Know You&apos;re Dealing With a Professional</h2>
+          <p className="text-remax-slate/80 mb-4 text-sm">
+            Homeowners in foreclosure get targeted by &ldquo;rescue&rdquo; scams — and you should be suspicious of anyone who contacts you. Here&apos;s how legitimate help looks:
+          </p>
+          <ul className="space-y-3">
+            {FORECLOSURE_TRUST_POINTS.map((point) => (
+              <li key={point} className="flex items-start gap-2 text-sm text-remax-slate">
+                <span className="text-green-600 font-bold mt-0.5">✓</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs text-remax-slate/60">{siteConfig.business.license} · The Borrero Group at RE/MAX</p>
         </section>
 
         {/* FAQ */}
         <section>
           <h3 className="mb-4 mt-8">Common Questions</h3>
           <div className="not-prose space-y-5">
-            {[
-              {
-                q: "Is it too late if I've already received a foreclosure notice?",
-                a: "Not necessarily. New Jersey foreclosure is a slow process — it often takes over a year from first missed payment to a sheriff sale. Even after receiving a notice, short sales and other options may still be available. The key is acting now rather than waiting.",
-              },
-              {
-                q: "Will talking to a real estate agent hurt my foreclosure case?",
-                a: "No. A free consultation is just information — you're not committing to anything. Understanding your options early gives you more power, not less.",
-              },
-              {
-                q: "What if I owe more than the home is worth?",
-                a: "A short sale may be your best path. Lenders often approve them because they prefer recovering partial payment over absorbing the full cost of a lengthy foreclosure. I've negotiated short sales with NJ lenders many times.",
-              },
-              {
-                q: "Is this conversation completely confidential?",
-                a: "Yes. Everything you share with me stays between us. I understand this is a sensitive situation and discretion is something I take seriously with every client.",
-              },
-            ].map(({ q, a }) => (
+            {FORECLOSURE_FAQ.map(({ q, a }) => (
               <div key={q} className="border-l-4 border-remax-blue/30 pl-4">
                 <p className="font-semibold text-remax-blue mb-1">{q}</p>
                 <p className="text-remax-slate text-sm">{a}</p>
@@ -263,6 +292,11 @@ export default function ForeclosurePage() {
             </li>
           </ul>
         </section>
+
+        {/* Team + awards graphic and Zillow-style trust bar */}
+        <div className="not-prose mt-10">
+          <TeamSection />
+        </div>
 
         {/* Final CTA */}
         <div className="not-prose bg-remax-blue rounded-xl p-8 text-center mt-8 mb-4">
