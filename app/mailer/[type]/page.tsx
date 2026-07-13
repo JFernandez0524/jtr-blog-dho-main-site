@@ -344,6 +344,12 @@ export default async function MailerPage({
                   </div>
                 ))}
               </div>
+              <blockquote className="border-l-4 border-remax-blue bg-gray-50 rounded-r-xl p-5 max-w-2xl mx-auto">
+                <p className="text-gray-700 italic">
+                  &ldquo;The value of your agent is not only what happens when everything goes right — it&apos;s how the transaction is managed when something goes wrong.&rdquo;
+                </p>
+                <footer className="mt-2 text-sm text-gray-500">— Jose Fernandez</footer>
+              </blockquote>
             </section>
           </>
         )}
