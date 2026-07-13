@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,9 +8,18 @@ import FacebookMessenger from "@/components/FacebookMessenger";
 import GHLBookingCalendar from "@/components/GHLBookingCalendar";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import ZillowReviews from "@/components/ZillowReviews";
-import TeamStats from "@/components/TeamStats";
+import TeamSection from "@/components/TeamSection";
 import { siteConfig } from "@/lib/config";
-import { MAILER_INHERITED_FAQ, INHERITED_CHALLENGES, WORK_WITH_ME_STEPS } from "@/lib/inheritedContent";
+import {
+  MAILER_INHERITED_FAQ,
+  INHERITED_CHALLENGES,
+  WORK_WITH_ME_STEPS,
+  TWO_PATHS_INTRO,
+  TWO_PATHS,
+  WALKTHROUGH_CALLOUT,
+  PRICING_ANALYSIS_PANEL,
+  AGENT_VALUE_QUOTE,
+} from "@/lib/inheritedContent";
 
 const CAMPAIGN_TYPES = {
   "inherited-property": {
@@ -85,10 +91,6 @@ export async function generateMetadata({
     robots: { index: false, follow: false },
   };
 }
-
-// Team/award graphic — the image renders automatically once the file exists
-const TEAM_GRAPHIC = "/TeamDiamond.png";
-const hasTeamGraphic = fs.existsSync(path.join(process.cwd(), "public", TEAM_GRAPHIC));
 
 function formatZestimate(zest: string): string {
   const num = parseInt(zest, 10);
@@ -251,30 +253,27 @@ export default async function MailerPage({
             <section className="space-y-5">
               <div className="text-center space-y-2">
                 <h2 className="text-2xl font-bold text-gray-900">Two Common Ways Families Sell an Inherited Property</h2>
-                <p className="text-gray-500">Those &quot;cash offer&quot; letters in your mailbox are one buyer hoping you&apos;ll take their number. I maintain a deep list of vetted investors who pay fair market value — and I show you both paths so you choose what nets your family more.</p>
+                <p className="text-gray-500">{TWO_PATHS_INTRO}</p>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
-                  <p className="font-bold text-remax-blue text-base">List on the Market</p>
-                  <p className="text-gray-600 text-sm">Best when the property is in decent shape and you have time — typically the highest price. Full-service: professional photography, paid social ads, open houses, and we handle the town CO and open permits. It&apos;s how our team sells $60M+ every year — we sell houses, not just list them.</p>
-                  <p className="text-xs text-gray-400 font-medium">Typical timeline: 60–90 days</p>
-                </div>
-                <div className="border border-gray-200 rounded-2xl p-6 space-y-3">
-                  <p className="font-bold text-remax-blue text-base">Sell Off-Market for Cash</p>
-                  <p className="text-gray-600 text-sm">Best when speed or condition matters more. No showings, no repairs — I bring my own list of vetted cash buyers who pay fair market value, not lowball offers. And because the buyer is already at the table, you save on commission costs.</p>
-                  <p className="text-xs text-gray-400 font-medium">Typical timeline: 14–21 days</p>
-                </div>
+                {TWO_PATHS.map(({ title, text, timeline }) => (
+                  <div key={title} className="border border-gray-200 rounded-2xl p-6 space-y-3">
+                    <p className="font-bold text-remax-blue text-base">{title}</p>
+                    <p className="text-gray-600 text-sm">{text}</p>
+                    <p className="text-xs text-gray-400 font-medium">{timeline}</p>
+                  </div>
+                ))}
               </div>
 
               <figure className="bg-remax-blue rounded-2xl p-5 sm:p-8 space-y-5 shadow-lg">
                 <figcaption className="text-center space-y-1">
-                  <p className="text-white font-bold text-xl sm:text-2xl">Every Family Gets a Full Pricing Analysis — Not a Guess</p>
-                  <p className="text-white/80 text-sm sm:text-base">Real comps, market trends, and a data-driven plan for top dollar. Here&apos;s what yours will look like:</p>
+                  <p className="text-white font-bold text-xl sm:text-2xl">{PRICING_ANALYSIS_PANEL.heading}</p>
+                  <p className="text-white/80 text-sm sm:text-base">{PRICING_ANALYSIS_PANEL.sub}</p>
                 </figcaption>
                 <Image
-                  src="/listingPresentationLayout.png"
-                  alt="Sample listing presentation from The Borrero Group — market at a glance, comparable sales map, recent comp highlights, and local market trends"
+                  src={PRICING_ANALYSIS_PANEL.image}
+                  alt={PRICING_ANALYSIS_PANEL.imageAlt}
                   width={1672}
                   height={941}
                   sizes="(max-width: 896px) 100vw, 896px"
@@ -283,8 +282,8 @@ export default async function MailerPage({
               </figure>
 
               <div className="bg-remax-blue/5 border border-remax-blue/20 rounded-xl p-5 text-center space-y-1">
-                <p className="font-semibold text-remax-blue">A free in-home walkthrough is the only way to know which path puts more money in your pocket.</p>
-                <p className="text-sm text-gray-500">I&apos;ll assess the condition, run the numbers both ways, and give you a straight answer.</p>
+                <p className="font-semibold text-remax-blue">{WALKTHROUGH_CALLOUT.headline}</p>
+                <p className="text-sm text-gray-500">{WALKTHROUGH_CALLOUT.sub}</p>
               </div>
             </section>
           </>
@@ -345,9 +344,7 @@ export default async function MailerPage({
                 ))}
               </div>
               <blockquote className="border-l-4 border-remax-blue bg-gray-50 rounded-r-xl p-5 max-w-2xl mx-auto">
-                <p className="text-gray-700 italic">
-                  &ldquo;The value of your agent is not only what happens when everything goes right — it&apos;s how the transaction is managed when something goes wrong.&rdquo;
-                </p>
+                <p className="text-gray-700 italic">&ldquo;{AGENT_VALUE_QUOTE}&rdquo;</p>
                 <footer className="mt-2 text-sm text-gray-500">— Jose Fernandez</footer>
               </blockquote>
             </section>
@@ -361,25 +358,7 @@ export default async function MailerPage({
       <div className="max-w-4xl mx-auto px-4 py-10 pb-24 md:pb-10 space-y-10">
 
         {/* Team + awards graphic and Zillow-style trust bar */}
-        <section className="space-y-4 text-center">
-          <h2 className="text-2xl font-bold text-gray-900">The Team Behind Your Sale</h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            Eight of us, one process — NJ Realtors<span className="align-super text-[10px]">®</span> Circle of Excellence Platinum performance every year since 2017.
-          </p>
-          {hasTeamGraphic && (
-            <Image
-              src={TEAM_GRAPHIC}
-              alt="The Borrero Group at RE/MAX — NJ Realtors Circle of Excellence Platinum Award winners, every year since 2017"
-              width={1672}
-              height={941}
-              sizes="(max-width: 896px) 100vw, 896px"
-              className="rounded-2xl mx-auto w-full h-auto"
-            />
-          )}
-          <Suspense fallback={null}>
-            <TeamStats />
-          </Suspense>
-        </section>
+        <TeamSection />
         {isInheritedProperty && (
           <>
             {/* Video */}

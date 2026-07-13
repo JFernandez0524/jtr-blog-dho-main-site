@@ -6,8 +6,18 @@ import ZillowReviews from "@/components/ZillowReviews";
 import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 import Breadcrumb from "@/components/Breadcrumb";
 import TownsServed from "@/components/TownsServed";
+import TeamSection from "@/components/TeamSection";
 import { siteConfig } from "@/lib/config";
-import { PILLAR_INHERITED_FAQ, INHERITED_CHALLENGES, WORK_WITH_ME_STEPS } from "@/lib/inheritedContent";
+import {
+  PILLAR_INHERITED_FAQ,
+  INHERITED_CHALLENGES,
+  WORK_WITH_ME_STEPS,
+  TWO_PATHS_INTRO,
+  TWO_PATHS,
+  WALKTHROUGH_CALLOUT,
+  PRICING_ANALYSIS_PANEL,
+  AGENT_VALUE_QUOTE,
+} from "@/lib/inheritedContent";
 
 const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 
@@ -102,7 +112,7 @@ export default function InheritedPropertyPage() {
               />
               <div>
                 <p className="font-bold text-remax-blue text-lg leading-tight">Jose Fernandez</p>
-                <p className="text-remax-slate text-sm">RE/MAX Agent · 15 Years in NJ Real Estate</p>
+                <p className="text-remax-slate text-sm">Partner, The Borrero Group at RE/MAX · $60M+ Sold Every Year</p>
                 <div className="flex gap-0.5 mt-1">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -146,6 +156,15 @@ export default function InheritedPropertyPage() {
               <a href={telHref} className="text-remax-blue font-semibold hover:underline">
                 {siteConfig.contact.phoneDisplay}
               </a>
+              {" "}· or{" "}
+              <a
+                href={siteConfig.social.messenger}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-remax-blue font-semibold hover:underline"
+              >
+                message me on Facebook
+              </a>
             </p>
           </div>
 
@@ -183,6 +202,44 @@ export default function InheritedPropertyPage() {
           </p>
         </section>
 
+        {/* Two paths — list vs off-market cash, same section as the mailer pages */}
+        <section className="not-prose mt-10 space-y-5">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold text-remax-blue">Two Common Ways Families Sell an Inherited Property</h2>
+            <p className="text-remax-slate/80">{TWO_PATHS_INTRO}</p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {TWO_PATHS.map(({ title, text, timeline }) => (
+              <div key={title} className="border border-gray-200 rounded-2xl p-6 space-y-3">
+                <p className="font-bold text-remax-blue text-base">{title}</p>
+                <p className="text-remax-slate/80 text-sm">{text}</p>
+                <p className="text-xs text-remax-slate/50 font-medium">{timeline}</p>
+              </div>
+            ))}
+          </div>
+
+          <figure className="bg-remax-blue rounded-2xl p-5 sm:p-8 space-y-5 shadow-lg">
+            <figcaption className="text-center space-y-1">
+              <p className="text-white font-bold text-xl sm:text-2xl">{PRICING_ANALYSIS_PANEL.heading}</p>
+              <p className="text-white/80 text-sm sm:text-base">{PRICING_ANALYSIS_PANEL.sub}</p>
+            </figcaption>
+            <Image
+              src={PRICING_ANALYSIS_PANEL.image}
+              alt={PRICING_ANALYSIS_PANEL.imageAlt}
+              width={1672}
+              height={941}
+              sizes="(max-width: 896px) 100vw, 896px"
+              className="rounded-xl w-full h-auto shadow-md"
+            />
+          </figure>
+
+          <div className="bg-remax-blue/5 border border-remax-blue/20 rounded-xl p-5 text-center space-y-1">
+            <p className="font-semibold text-remax-blue">{WALKTHROUGH_CALLOUT.headline}</p>
+            <p className="text-sm text-remax-slate/70">{WALKTHROUGH_CALLOUT.sub}</p>
+          </div>
+        </section>
+
         {/* Common Challenges */}
         <section>
           <h3 className="mb-4 mt-6">Common Challenges I Help Solve</h3>
@@ -194,6 +251,10 @@ export default function InheritedPropertyPage() {
               </li>
             ))}
           </ul>
+          <blockquote className="not-prose border-l-4 border-remax-blue bg-gray-50 rounded-r-xl p-5 mt-6">
+            <p className="text-remax-slate italic">&ldquo;{AGENT_VALUE_QUOTE}&rdquo;</p>
+            <footer className="mt-2 text-sm text-remax-slate/60">— Jose Fernandez</footer>
+          </blockquote>
         </section>
 
         {/* FAQ */}
@@ -218,6 +279,11 @@ export default function InheritedPropertyPage() {
             ))}
           </ol>
         </section>
+
+        {/* Team + awards graphic and Zillow-style trust bar */}
+        <div className="not-prose mt-10">
+          <TeamSection />
+        </div>
 
         {/* Final CTA */}
         <div className="not-prose bg-remax-blue rounded-xl p-8 text-center mt-8 mb-4">
