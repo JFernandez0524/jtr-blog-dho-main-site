@@ -3,7 +3,8 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getLocationBySlug, getLocationSlugs, LocationServiceType } from "@/lib/mdx";
 import { notFound } from "next/navigation";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
-import BlogCTA from "@/components/BlogCTA";
+import ContactForm from "@/components/ContactForm";
+import TeamSection from "@/components/TeamSection";
 import Breadcrumb from "@/components/Breadcrumb";
 import TownsServed from "@/components/TownsServed";
 import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
@@ -112,7 +113,16 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
         <div className="prose prose-lg max-w-none prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate [&>h1]:mb-6 [&>h1]:mt-8 [&>h2]:mb-6 [&>h2]:mt-8 [&>h3]:mb-4 [&>h3]:mt-6 [&>p]:mb-4 [&>ul]:mb-4 [&>ol]:mb-4 [&>li]:mb-2">
           <MDXRemote source={location.content} components={{ YouTubeEmbed }} />
         </div>
-        <BlogCTA />
+
+        {/* Trust stack + real conversion path (replaces the old generic CTA card) */}
+        <div className="mt-12">
+          <TeamSection />
+        </div>
+        <div id="contact-form" className="mt-12 bg-white rounded-xl shadow-md p-6 sm:p-8 scroll-mt-20">
+          <h2 className="text-xl font-bold text-remax-blue mb-1">Talk to Jose About Your {location.town} Property</h2>
+          <p className="text-remax-slate text-sm mb-4">Free and confidential — tell me where things stand and I&apos;ll personally reach out with honest answers for your situation.</p>
+          <ContactForm defaultServiceType={location.serviceType} />
+        </div>
       </section>
 
       <TownsServed excludeSlug={locationSlug} serviceType={location.serviceType} />

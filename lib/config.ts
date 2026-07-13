@@ -35,7 +35,9 @@ export const siteConfig = {
     brokerage: "RE/MAX",
     license: "NJ License #1430283", // TODO: Update with real license
     yearsExperience: 15,
-    areasServed: ["Newark", "Jersey City", "Paterson", "Elizabeth", "Edison", "Freehold"],
+    // Anchor towns — where Jose has genuine presence (office, home, owned
+    // property, recent sales, weekly work). Keep aligned with town pages.
+    areasServed: ["Freehold", "Nutley", "Belleville", "Elizabeth", "Perth Amboy", "Jersey City", "Bayonne", "Newark"],
     // Team track record (The Borrero Group) — from the Zillow team profile.
     // Static by design: Bridge API doesn't expose agent Past Sales data.
     // Refresh once or twice a year as milestones tick over.
