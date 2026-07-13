@@ -1,12 +1,36 @@
 import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getLocationBySlug, getLocationSlugs } from "@/lib/mdx";
+import { getLocationBySlug, getLocationSlugs, LocationServiceType } from "@/lib/mdx";
 import { notFound } from "next/navigation";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import BlogCTA from "@/components/BlogCTA";
 import Breadcrumb from "@/components/Breadcrumb";
 import TownsServed from "@/components/TownsServed";
 import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
+
+const LOCATION_SERVICE_CONFIG: Record<
+  LocationServiceType,
+  { pillarHref: string; pillarLabel: string; serviceName: string; ogType: string }
+> = {
+  "inherited-property": {
+    pillarHref: "/inherited-property-new-jersey",
+    pillarLabel: "Inherited Property",
+    serviceName: "Inherited Property Solutions",
+    ogType: "Inherited Property",
+  },
+  foreclosure: {
+    pillarHref: "/foreclosure",
+    pillarLabel: "Foreclosure Help",
+    serviceName: "Foreclosure Assistance",
+    ogType: "Foreclosure Help",
+  },
+  "sell-as-is": {
+    pillarHref: "/sell-as-is",
+    pillarLabel: "Sell As-Is",
+    serviceName: "As-Is Home Sales",
+    ogType: "Sell As-Is",
+  },
+};
 
 export async function generateStaticParams() {
   return getLocationSlugs().map((slug) => ({ locationSlug: slug }));
@@ -16,7 +40,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locationS
   const { locationSlug } = await params;
   if (!getLocationSlugs().includes(locationSlug)) return {};
   const location = getLocationBySlug(locationSlug);
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(`Inherited Property in ${location.town}, NJ`)}&type=pillar`;
+  const config = LOCATION_SERVICE_CONFIG[location.serviceType];
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(`${config.ogType} in ${location.town}, NJ`)}&type=pillar`;
   return {
     title: location.title,
     description: location.metaDescription,
@@ -41,9 +66,10 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
   const { locationSlug } = await params;
   if (!getLocationSlugs().includes(locationSlug)) notFound();
   const location = getLocationBySlug(locationSlug);
+  const config = LOCATION_SERVICE_CONFIG[location.serviceType];
 
   const serviceSchema = generateServiceSchema({
-    name: `Inherited Property Solutions — ${location.town}, NJ`,
+    name: `${config.serviceName} — ${location.town}, NJ`,
     description: location.metaDescription,
     url: `https://www.josetherealtor.com/${locationSlug}`,
     areaServed: { type: "City", name: location.town },
@@ -51,7 +77,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "https://www.josetherealtor.com" },
-    { name: "Inherited Property", url: "https://www.josetherealtor.com/inherited-property-new-jersey" },
+    { name: config.pillarLabel, url: `https://www.josetherealtor.com${config.pillarHref}` },
     { name: location.town, url: `https://www.josetherealtor.com/${locationSlug}` },
   ]);
 
@@ -69,7 +95,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumb items={[
             { name: "Home", href: "/" },
-            { name: "Inherited Property", href: "/inherited-property-new-jersey" },
+            { name: config.pillarLabel, href: config.pillarHref },
             { name: location.town, href: `/${locationSlug}`, current: true },
           ]} />
           <h1 className="text-4xl lg:text-5xl font-bold text-balance mt-6 mb-4">{location.heroHeading}</h1>
@@ -89,7 +115,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
         <BlogCTA />
       </section>
 
-      <TownsServed excludeSlug={locationSlug} heading="Other NJ Towns I Serve" />
+      <TownsServed excludeSlug={locationSlug} serviceType={location.serviceType} />
     </article>
   );
 }

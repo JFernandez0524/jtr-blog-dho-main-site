@@ -79,6 +79,8 @@ export function getPostSlugs(): string[] {
 
 const locationsDirectory = path.join(process.cwd(), "content/locations");
 
+export type LocationServiceType = "inherited-property" | "foreclosure" | "sell-as-is";
+
 export interface LocationMetadata {
   slug: string;
   town: string;
@@ -88,27 +90,41 @@ export interface LocationMetadata {
   heroHeading: string;
   heroSubtext: string;
   youtubeId?: string;
+  /** Defaults to "inherited-property" for pages predating this field */
+  serviceType: LocationServiceType;
 }
 
 export interface Location extends LocationMetadata {
   content: string;
 }
 
+function readLocationMetadata(file: string): LocationMetadata {
+  const slug = file.replace(/\.mdx$/, "");
+  const { data } = matter(fs.readFileSync(path.join(locationsDirectory, file), "utf8"));
+  return {
+    slug,
+    town: data.town,
+    county: data.county,
+    title: data.title,
+    metaDescription: data.metaDescription,
+    heroHeading: data.heroHeading,
+    heroSubtext: data.heroSubtext,
+    youtubeId: data.youtubeId,
+    serviceType: data.serviceType || "inherited-property",
+  };
+}
+
 export function getAllLocations(): LocationMetadata[] {
   const files = fs.readdirSync(locationsDirectory);
   return files
     .filter((file) => file.endsWith(".mdx"))
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const { data } = matter(fs.readFileSync(path.join(locationsDirectory, file), "utf8"));
-      return { slug, town: data.town, county: data.county, title: data.title, metaDescription: data.metaDescription, heroHeading: data.heroHeading, heroSubtext: data.heroSubtext, youtubeId: data.youtubeId };
-    });
+    .map(readLocationMetadata);
 }
 
 export function getLocationBySlug(slug: string): Location {
   const fullPath = path.join(locationsDirectory, `${slug}.mdx`);
-  const { data, content } = matter(fs.readFileSync(fullPath, "utf8"));
-  return { slug, town: data.town, county: data.county, title: data.title, metaDescription: data.metaDescription, heroHeading: data.heroHeading, heroSubtext: data.heroSubtext, youtubeId: data.youtubeId, content };
+  const { content } = matter(fs.readFileSync(fullPath, "utf8"));
+  return { ...readLocationMetadata(`${slug}.mdx`), content };
 }
 
 export function getLocationSlugs(): string[] {
