@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SoldMap from "./SoldMap";
 
 /**
  * Homepage "areas served" section — county-clustered links to the town
@@ -65,6 +66,9 @@ export default function ServiceAreas() {
           I own property in Belleville and Elizabeth, and I&apos;m in Hudson County every week.
           These are the communities where I work:
         </p>
+        <div className="mb-12">
+          <SoldMap />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {COUNTY_CLUSTERS.map(({ county, towns }) => (
             <div key={county} className="border border-remax-slate/15 rounded-xl p-5">
