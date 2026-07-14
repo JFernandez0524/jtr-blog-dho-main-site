@@ -21,6 +21,18 @@ const nextConfig = {
   experimental: {
     outputFileTracingRoot: path.join(__dirname),
   },
+  // Consolidate the apex host onto www — GSC was indexing both hosts as
+  // separate pages, splitting ranking signals across duplicates.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "josetherealtor.com" }],
+        destination: "https://www.josetherealtor.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

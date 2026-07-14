@@ -4,6 +4,7 @@ import Link from "next/link";
 import BentoGrid from "@/components/BentoGrid";
 import ZillowReviews from "@/components/ZillowReviews";
 import SituationsHook from "@/components/SituationsHook";
+import ServiceAreas from "@/components/ServiceAreas";
 import AsyncHeroImage from "@/components/AsyncHeroImage";
 import { getAllPosts } from "@/lib/mdx";
 import { generateOrganizationSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
@@ -168,6 +169,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Service Areas */}
+      <ServiceAreas />
+
       {/* Why Choose Jose */}
       <section className="max-w-4xl mx-auto px-6 py-20">
         <h2 className="text-center mb-12">Why Work With Me?</h2>
@@ -189,8 +193,9 @@ export default function Home() {
           <div className="space-y-4">
             <h3 className="text-xl mb-3">Local Market Knowledge</h3>
             <p className="text-remax-slate/80">
-              As a New Jersey specialist, I understand local probate laws, foreclosure timelines, and market conditions 
-              that affect your specific situation.
+              My office is in Freehold, I live in Essex County, I own property in Belleville and Elizabeth,
+              and I work Hudson County every week. I understand NJ probate, foreclosure, and market conditions
+              from the ground — not from a database.
             </p>
           </div>
           <div className="space-y-4">
