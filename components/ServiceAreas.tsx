@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SoldMap from "./SoldMap";
+import Image from "next/image";
 
 /**
  * Homepage "areas served" section — county-clustered links to the town
@@ -66,9 +66,20 @@ export default function ServiceAreas() {
           I own property in Belleville and Elizabeth, and I&apos;m in Hudson County every week.
           These are the communities where I work:
         </p>
-        <div className="mb-12">
-          <SoldMap />
-        </div>
+        <figure className="mb-12 max-w-4xl mx-auto">
+          <Image
+            src="/sold-homes-map.png"
+            alt="Homes we've sold across New Jersey — including Nutley, Belleville, Bloomfield, West Orange, East Orange, Irvington, Passaic, Woodland Park, Teaneck, Carlstadt, Garfield, Jersey City, Bayonne, West New York, Union City, Union Township, Cranford, Rahway, Westfield, Hillside, Clark, Garwood, Perth Amboy, Parlin, Manalapan, Somerset, Boonton Township, Colts Neck, Brick, and Millville — from $439K to $3.2M"
+            width={1672}
+            height={941}
+            sizes="(max-width: 896px) 100vw, 896px"
+            className="rounded-2xl w-full h-auto shadow-sm"
+          />
+          <figcaption className="text-center text-sm text-remax-slate/70 mt-3">
+            From <strong className="text-remax-slate">$439K</strong> starters to{" "}
+            <strong className="text-remax-slate">$3.2M</strong> estates — we sell everything.
+          </figcaption>
+        </figure>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {COUNTY_CLUSTERS.map(({ county, towns }) => (
             <div key={county} className="border border-remax-slate/15 rounded-xl p-5">

@@ -42,7 +42,8 @@ export const siteConfig = {
     // Static by design: Bridge API doesn't expose agent Past Sales data.
     // Refresh once or twice a year as milestones tick over.
     teamStats: {
-      totalSales: "770+",
+      // Keep aligned with the sold-homes-map graphic, which states 750+
+      totalSales: "750+",
       priceRange: "$80K–$5.2M",
       averagePrice: "$759K",
       annualVolume: "$60M+",

@@ -22,6 +22,14 @@ export default function TeamSection() {
         sizes="(max-width: 896px) 100vw, 896px"
         className="rounded-2xl mx-auto w-full h-auto"
       />
+      <Image
+        src="/sold-homes-map.png"
+        alt="Map of homes we've sold across New Jersey — North Jersey, Central Jersey, the Shore, and South Jersey, from $439K starter homes to a $3.2M Colts Neck estate. 750+ homes sold in 28+ cities and towns."
+        width={1672}
+        height={941}
+        sizes="(max-width: 896px) 100vw, 896px"
+        className="rounded-2xl mx-auto w-full h-auto"
+      />
       <Suspense fallback={null}>
         <TeamStats />
       </Suspense>
