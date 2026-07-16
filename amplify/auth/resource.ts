@@ -11,6 +11,10 @@ export const auth = defineAuth({
       google: {
         clientId: secret('GOOGLE_CLIENT_ID'),
         clientSecret: secret('GOOGLE_CLIENT_SECRET'),
+        // Without the email scope Google never returns the user's email,
+        // Cognito can't populate its required email attribute, and every
+        // sign-in fails at /oauth2/idpresponse (bounces back to /login)
+        scopes: ['openid', 'email', 'profile'],
       },
       callbackUrls: [
         'http://localhost:3000/login',
