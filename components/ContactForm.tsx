@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useSafeReCaptcha } from "./SafeRecaptchaProvider";
 import { siteConfig } from "@/lib/config";
+import { getAttribution } from "@/lib/attribution";
 
 declare global {
   interface Window {
@@ -74,6 +75,7 @@ export default function ContactForm({
           referrer: document.referrer || "direct",
           ...(ghlContactId ? { ghlContactId } : {}),
           ...(campaign ? { campaign } : {}),
+          ...(getAttribution() ? { attribution: getAttribution() } : {}),
         }),
       });
 
@@ -103,9 +105,17 @@ export default function ContactForm({
 
       setStatus("success");
       setFormData({ name: "", email: "", phone: "", message: "", serviceType: "" });
-      pushDataLayer("form_success", { 
+      // user_data feeds GTM's Enhanced Conversions variable (Google hashes it
+      // client-side before sending) — never put this data in URLs/GA4 params
+      const [firstName, ...lastParts] = formData.name.trim().split(/\s+/);
+      pushDataLayer("form_success", {
         form_name: "contact_form",
-        service_type: formData.serviceType
+        service_type: formData.serviceType,
+        user_data: {
+          email: formData.email,
+          phone_number: formData.phone,
+          address: { first_name: firstName || "", last_name: lastParts.join(" ") },
+        },
       });
     } catch (error) {
       setStatus("error");

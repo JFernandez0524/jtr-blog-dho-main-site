@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { street, city, state, zip, name, email, phone, lat, lng, address, pageUrl } = validation.data;
+  const { street, city, state, zip, name, email, phone, lat, lng, address, pageUrl, attribution } = validation.data;
 
   // Deliverability check (DeBounce) — reject only hard-invalid; fail open on errors
   const emailCheck = await verifyEmailDeliverability(email);
@@ -178,6 +178,7 @@ export async function POST(request: NextRequest) {
       source: "Property Valuation Form",
       referrer: request.headers.get("referer") || "direct",
       submittedAt: new Date().toISOString(),
+      ...(attribution ?? {}),
       ghlSyncStatus: "PENDING",
     });
     if (!result.data) throw new Error("No data returned from create");
@@ -202,6 +203,7 @@ export async function POST(request: NextRequest) {
       referrer: request.headers.get("referer") || "direct",
       submissionId: submission.id,
       emailRisky: emailCheck.verdict === "risky",
+      attribution,
     });
     await client.models.ContactSubmission.update({
       id: submission.id,

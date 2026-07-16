@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useSafeReCaptcha } from "./SafeRecaptchaProvider";
 import { siteConfig } from "@/lib/config";
+import { getAttribution } from "@/lib/attribution";
 
 const telHref = `tel:${siteConfig.contact.phone.replace(/[\s()-]/g, "")}`;
 
@@ -141,15 +142,29 @@ export default function PropertyValuationForm() {
       const res = await fetch("/api/valuation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...addressData, ...formData, pageUrl: window.location.href, recaptchaToken }),
+        body: JSON.stringify({
+          ...addressData,
+          ...formData,
+          pageUrl: window.location.href,
+          recaptchaToken,
+          ...(getAttribution() ? { attribution: getAttribution() } : {}),
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Unable to retrieve valuation.");
       setResult(data.valuation);
       setStatus("success");
+      // user_data feeds GTM's Enhanced Conversions variable (Google hashes it
+      // client-side before sending) — never put this data in URLs/GA4 params
+      const [firstName, ...lastParts] = formData.name.trim().split(/\s+/);
       pushDataLayer("form_success", {
         form_name: "valuation_form",
         has_zestimate: (data.valuation?.zestimate ?? 0) > 0,
+        user_data: {
+          email: formData.email,
+          phone_number: formData.phone,
+          address: { first_name: firstName || "", last_name: lastParts.join(" ") },
+        },
       });
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");

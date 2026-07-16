@@ -17,6 +17,15 @@ export interface ContactData {
   ghlContactId?: string;
   /** DeBounce flagged the email as risky (catch-all/role/disposable) — tag so follow-up leads with a call */
   emailRisky?: boolean;
+  /** Marketing attribution (utm_* + gclid) captured client-side by lib/attribution.ts */
+  attribution?: {
+    utmSource?: string;
+    utmMedium?: string;
+    utmCampaign?: string;
+    utmContent?: string;
+    utmTerm?: string;
+    gclid?: string;
+  };
 }
 
 export interface GHLResponse {
@@ -88,6 +97,21 @@ function getServiceTypeFromSource(source?: string): string {
   return "General Inquiry";
 }
 
+// Human-readable attribution line for the contact's notes, or null when
+// there's nothing worth recording
+function formatAttributionNote(attr?: ContactData["attribution"]): string | null {
+  if (!attr) return null;
+  const parts: string[] = [];
+  if (attr.utmSource || attr.utmMedium) {
+    parts.push(`${attr.utmSource || "?"}/${attr.utmMedium || "?"}`);
+  }
+  if (attr.utmCampaign) parts.push(`campaign: ${attr.utmCampaign}`);
+  if (attr.utmContent) parts.push(`content: ${attr.utmContent}`);
+  if (attr.utmTerm) parts.push(`term: ${attr.utmTerm}`);
+  if (attr.gclid) parts.push("gclid captured");
+  return parts.length ? `Attribution: ${parts.join(" — ")}` : null;
+}
+
 function buildCustomFields(data: ContactData): Array<{ id: string; value: string }> {
   const customFields: Array<{ id: string; value: string }> = [];
   const contactType = getContactTypeOption(data.source);
@@ -152,7 +176,11 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
           phone: data.phone,
           name: data.name,
           source: getSourceLabel(data.source),
-          tags: ["hot-lead", ...(data.emailRisky ? ["email:risky"] : [])],
+          tags: [
+            "hot-lead",
+            ...(data.emailRisky ? ["email:risky"] : []),
+            ...(data.attribution?.gclid ? ["ad:google"] : []),
+          ],
           customFields,
         }),
       });
@@ -160,6 +188,10 @@ export async function syncToGHL(data: ContactData): Promise<GHLResponse> {
       if (response.ok) {
         const result = await response.json();
         console.log(`GHL sync successful for ${data.submissionId}:`, result.contact?.id);
+        const attributionNote = formatAttributionNote(data.attribution);
+        if (attributionNote && result.contact?.id) {
+          await addGHLContactNote(result.contact.id, attributionNote);
+        }
         return { success: true, contactId: result.contact?.id };
       }
 
@@ -233,12 +265,19 @@ async function updateGHLContact(data: ContactData, apiToken: string): Promise<GH
           "hot-lead",
           isMailer ? "mail:converted" : "repeat-inquiry",
           ...(data.emailRisky ? ["email:risky"] : []),
+          ...(data.attribution?.gclid ? ["ad:google"] : []),
         ]);
-        if (data.message) {
-          await addGHLContactNote(
-            contactId,
-            `${isMailer ? "Mailer form submission" : "Repeat form submission"} (${getSourceLabel(data.source)}): ${data.message}`
-          );
+        const attributionNote = formatAttributionNote(data.attribution);
+        if (data.message || attributionNote) {
+          const noteBody = [
+            data.message
+              ? `${isMailer ? "Mailer form submission" : "Repeat form submission"} (${getSourceLabel(data.source)}): ${data.message}`
+              : null,
+            attributionNote,
+          ]
+            .filter(Boolean)
+            .join("\n");
+          await addGHLContactNote(contactId, noteBody);
         }
         return { success: true, contactId };
       }

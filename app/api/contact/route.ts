@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, phone, message, serviceType, source, referrer, ghlContactId } = validation.data;
+    const { name, email, phone, message, serviceType, source, referrer, ghlContactId, attribution } = validation.data;
 
     // Deliverability check (DeBounce). Only hard-invalid emails are rejected —
     // the lead gets an inline error and can fix the typo. Risky results are
@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
       pageUrl: source || request.url,
       referrer: referrer || "direct",
       submittedAt: new Date().toISOString(),
+      ...(attribution ?? {}),
       ghlSyncStatus: "PENDING",
     });
 
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
         submissionId: submission.data.id,
         ghlContactId,
         emailRisky: emailCheck.verdict === "risky",
+        attribution,
       });
       await client.models.ContactSubmission.update({
         id: submission.data.id,

@@ -47,6 +47,14 @@ const schema = a.schema({
       zip: a.string(),
       zestimate: a.string(),
       submittedAt: a.datetime().required(),
+      // Marketing attribution (utm_* + gclid from the landing URL) — enables
+      // per-campaign lead reporting and future offline conversion import
+      utmSource: a.string(),
+      utmMedium: a.string(),
+      utmCampaign: a.string(),
+      utmContent: a.string(),
+      utmTerm: a.string(),
+      gclid: a.string(),
       ghlSyncStatus: a.string(),
       ghlContactId: a.string(),
       ghlErrorMessage: a.string(),

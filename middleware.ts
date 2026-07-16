@@ -10,7 +10,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
-  const response = NextResponse.next();
+  // Admin pages — flag via header so the layout skips GTM/analytics
+  // (keeps lead addresses out of GA4/Meta and self-traffic out of reports)
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-admin-page", "1");
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
 
   const authenticated = await runWithAmplifyServerContext({
     nextServerContext: { request, response },

@@ -19,6 +19,22 @@ const cleanEmail = z
   .toLowerCase()
   .email("Invalid email address");
 
+// Marketing attribution (utm_* + gclid captured client-side by lib/attribution.ts).
+// Invalid shapes are dropped, never rejected — attribution must not block a lead.
+const AttributionSchema = z
+  .object({
+    utmSource: z.string().max(200).optional(),
+    utmMedium: z.string().max(200).optional(),
+    utmCampaign: z.string().max(200).optional(),
+    utmContent: z.string().max(200).optional(),
+    utmTerm: z.string().max(200).optional(),
+    gclid: z.string().max(200).optional(),
+  })
+  .optional()
+  .catch(undefined);
+
+export type Attribution = z.infer<typeof AttributionSchema>;
+
 export const ValuationFormSchema = z.object({
   name: z.string().min(2).max(100),
   email: cleanEmail,
@@ -31,6 +47,7 @@ export const ValuationFormSchema = z.object({
   lng: z.number().optional(),
   address: z.string().optional(),
   pageUrl: z.string().url().optional(),
+  attribution: AttributionSchema,
 });
 
 export type ValuationFormData = z.infer<typeof ValuationFormSchema>;
@@ -49,6 +66,7 @@ export const ContactFormSchema = z.object({
   // Invalid values are dropped (not rejected) — a mangled cid must never block a lead submission
   ghlContactId: z.string().regex(/^[A-Za-z0-9]{15,30}$/).optional().catch(undefined),
   campaign: z.string().max(50).optional().catch(undefined),
+  attribution: AttributionSchema,
 });
 
 export type ContactFormData = z.infer<typeof ContactFormSchema>;
