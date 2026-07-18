@@ -34,29 +34,41 @@ const nextConfig = {
     ];
   },
   async headers() {
+    // frameAncestors: 'none' everywhere EXCEPT /booking-confirmed, which must
+    // render inside the GHL booking iframe on our own pages (the calendar's
+    // post-booking redirect points there) — so it allows 'self' framing.
+    const securityHeaders = (frameAncestors) => [
+      // X-Frame-Options can't express "same origin ancestors only" reliably
+      // across browsers — omit it where framing is allowed; CSP governs.
+      ...(frameAncestors === "'none'" ? [{ key: "X-Frame-Options", value: "DENY" }] : []),
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+      { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+      {
+        key: "Content-Security-Policy",
+        value: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://connect.facebook.net",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+          "font-src 'self' https://fonts.gstatic.com",
+          "img-src 'self' data: blob: https:",
+          "connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.googleadservices.com https://*.g.doubleclick.net https://www.facebook.com https://graph.facebook.com",
+          `frame-src https://www.youtube.com https://www.google.com https://td.doubleclick.net https://www.googletagmanager.com https://www.facebook.com ${GHL_FRAME_ORIGINS.join(" ")}`,
+          `frame-ancestors ${frameAncestors}`,
+        ].join("; "),
+      },
+    ];
+
     return [
       {
-        source: "/(.*)",
-        headers: [
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://connect.facebook.net",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https:",
-              "connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.googleadservices.com https://*.g.doubleclick.net https://www.facebook.com https://graph.facebook.com",
-              `frame-src https://www.youtube.com https://www.google.com https://td.doubleclick.net https://www.googletagmanager.com https://www.facebook.com ${GHL_FRAME_ORIGINS.join(" ")}`,
-              "frame-ancestors 'none'",
-            ].join("; "),
-          },
-        ],
+        // Everything except /booking-confirmed
+        source: "/((?!booking-confirmed$).*)",
+        headers: securityHeaders("'none'"),
+      },
+      {
+        source: "/booking-confirmed",
+        headers: securityHeaders("'self'"),
       },
     ];
   },

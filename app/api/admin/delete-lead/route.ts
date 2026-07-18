@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAuthSession } from "aws-amplify/auth/server";
 import { runWithAmplifyServerContext, cookiesClient } from "@/utils/amplify-utils";
-import { syncToGHL } from "@/lib/ghl";
+import { deleteGHLContact } from "@/lib/ghl";
 import { isAllowedAdminEmail } from "@/lib/adminAllowlist";
 
+/**
+ * Admin lead cleanup: deletes a ContactSubmission from DynamoDB and,
+ * optionally, the linked GHL contact. Used from /admin/leads for removing
+ * test submissions and dead records without touching the CLI.
+ */
 export async function POST(request: NextRequest) {
   const response = NextResponse.next();
 
@@ -24,7 +29,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { submissionId } = await request.json();
+  const { submissionId, deleteGhlContact } = await request.json();
   if (!submissionId) {
     return NextResponse.json({ error: "Missing submissionId" }, { status: 400 });
   }
@@ -36,29 +41,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Submission not found" }, { status: 404 });
   }
 
-  const ghlResult = await syncToGHL({
-    name: submission.name,
-    email: submission.email,
-    phone: submission.phone,
-    formType: (submission.formType as "CONTACT" | "VALUATION") ?? "CONTACT",
-    message: submission.message ?? undefined,
-    serviceType: submission.serviceType ?? undefined,
-    source: submission.source ?? undefined,
-    referrer: submission.referrer ?? undefined,
-    street: submission.street ?? undefined,
-    city: submission.city ?? undefined,
-    state: submission.state ?? undefined,
-    zip: submission.zip ?? undefined,
-    zestimate: submission.zestimate ?? undefined,
-    submissionId,
-  });
+  let ghlDeleted = false;
+  if (deleteGhlContact && submission.ghlContactId) {
+    ghlDeleted = await deleteGHLContact(submission.ghlContactId);
+  }
 
-  await client.models.ContactSubmission.update({
-    id: submissionId,
-    ghlSyncStatus: ghlResult.success ? "SYNCED" : "FAILED",
-    ghlContactId: ghlResult.contactId,
-    ghlErrorMessage: ghlResult.error,
-  });
+  const { errors } = await client.models.ContactSubmission.delete({ id: submissionId });
+  if (errors?.length) {
+    console.error("Lead delete failed:", errors);
+    return NextResponse.json({ error: "Failed to delete submission" }, { status: 500 });
+  }
 
-  return NextResponse.json({ success: true, ghlSynced: ghlResult.success });
+  return NextResponse.json({ success: true, ghlDeleted });
 }

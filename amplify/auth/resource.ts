@@ -1,4 +1,5 @@
 import { defineAuth, secret } from "@aws-amplify/backend";
+import { preSignUp } from "./pre-signup/resource";
 
 /**
  * Define and configure your auth resource
@@ -27,5 +28,10 @@ export const auth = defineAuth({
         'https://www.josetherealtor.com/', 
       ],
     },
+  },
+  // Single-operator site: block account creation for everyone except the
+  // allowlisted owner (see lib/adminAllowlist.ts)
+  triggers: {
+    preSignUp,
   },
 });

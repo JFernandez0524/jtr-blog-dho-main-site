@@ -321,6 +321,32 @@ async function addGHLContactNote(contactId: string, body: string): Promise<void>
   }
 }
 
+/**
+ * Delete a GHL contact (admin lead-cleanup). Returns false on any failure —
+ * callers decide whether that blocks the rest of their flow.
+ */
+export async function deleteGHLContact(contactId: string): Promise<boolean> {
+  const GHL_API_TOKEN = process.env.GHL_API_TOKEN;
+  if (!GHL_API_TOKEN) return false;
+  try {
+    const response = await fetch(`https://services.leadconnectorhq.com/contacts/${contactId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${GHL_API_TOKEN}`,
+        Version: "2021-07-28",
+      },
+    });
+    if (!response.ok) {
+      console.error(`GHL contact delete failed: HTTP ${response.status}: ${await response.text()}`);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("GHL contact delete error:", error);
+    return false;
+  }
+}
+
 export async function tagGHLContact(contactId: string, tags: string[]): Promise<void> {
   const GHL_API_TOKEN = process.env.GHL_API_TOKEN;
   if (!GHL_API_TOKEN) return;

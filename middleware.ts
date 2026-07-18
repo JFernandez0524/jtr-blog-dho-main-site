@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAuthSession } from "aws-amplify/auth/server";
 import { runWithAmplifyServerContext } from "@/utils/amplify-utils";
+import { isAllowedAdminEmail } from "@/lib/adminAllowlist";
 
 export async function middleware(request: NextRequest) {
-  // Campaign mailer pages — strip chrome via header flag, skip auth
-  if (request.nextUrl.pathname.startsWith("/mailer")) {
+  // Campaign pages (mailer landings + booking confirmation) — strip chrome
+  // via header flag, skip auth. /booking-confirmed renders inside the GHL
+  // booking iframe after the calendar's post-booking redirect.
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/mailer") || pathname === "/booking-confirmed") {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-campaign-page", "1");
     return NextResponse.next({ request: { headers: requestHeaders } });
@@ -21,7 +25,11 @@ export async function middleware(request: NextRequest) {
     operation: async (contextSpec) => {
       try {
         const session = await fetchAuthSession(contextSpec, {});
-        return session.tokens !== undefined;
+        if (session.tokens === undefined) return false;
+        // Single-operator site: a valid session isn't enough — the signed-in
+        // email must be allowlisted (belt-and-suspenders over the preSignUp
+        // trigger that blocks foreign sign-ups at the pool)
+        return isAllowedAdminEmail(session.tokens.idToken?.payload?.email);
       } catch (error) {
         console.log(error);
         return false;
@@ -37,5 +45,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/mailer/:path*"],
+  matcher: ["/admin/:path*", "/mailer/:path*", "/booking-confirmed"],
 };

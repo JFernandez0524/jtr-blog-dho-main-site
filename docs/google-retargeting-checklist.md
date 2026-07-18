@@ -59,20 +59,53 @@ Keep the existing **Google Analytics** tag, **Google Tag AW-17877884469**, and
       enter site → create **manually**, two actions:
   - "Lead — Contact Form" — Category: *Submit lead form*, Value: none (or a
     flat value if you want ROAS math later), Count: One, Click-through
-    window: 90 days, **Enhanced conversions: ON**
+    window: 90 days, **Enhanced conversions: ON**. One action covers ALL
+    service types (Contact Us / Sell My House / General Inquiry) — they all
+    fire the same `form_success` event; the split lives in GA4's
+    `service_type` param.
   - "Lead — Home Valuation" — same settings
+  - "Phone Call Click" — Category: *Phone call lead*, Count: One, Enhanced
+    conversions OFF (a tap carries no user data). Primary, but demote to
+    Secondary if accidental mobile taps inflate it.
   - Copy each action's **Conversion ID + Label** (Tag setup → "Use Google
     Tag Manager").
+  - "Consultation Booked" — Category: *Book appointment*, **Primary**,
+    Count One, click-through 90d, Enhanced conversions OFF. Requires the
+    GHL redirect below — without it this action never fires.
 - [ ] **Tags — 2× Google Ads Conversion Tracking**:
   - "GAds Conversion — Contact Form": Conversion ID `AW-17877884469` +
     contact Label → check **Include user-provided data** → select
     `UPD - form user data` → Trigger: `CE - form_success (contact)`
   - "GAds Conversion — Valuation": same, valuation Label, trigger
     `CE - form_success (valuation)`
+- [ ] **Consultation Booked tracking** (booking iframe made visible via a
+      same-origin confirmation page):
+  - **GHL first**: Calendars → calendar `tuC1rqAOzPTThWUC7rvS` →
+    settings → Confirmation/Customizations → set the custom **Thank You /
+    redirect URL** to `https://www.josetherealtor.com/booking-confirmed`.
+    After booking, the widget redirects (inside its iframe) to that page on
+    OUR domain — where GTM runs and cookies/attribution carry over. If your
+    GHL plan has no redirect setting, stop and tell Claude (fallback:
+    appointment webhook → server-side conversion).
+  - Trigger `PV - booking confirmed`: Page View → Some Page Views →
+    Page Path equals `/booking-confirmed`
+  - Tag "GAds Conversion — Consultation Booked": Conversion ID + booked
+    Label → trigger `PV - booking confirmed`
+  - Optional GA4 event tag on the same trigger: event `consultation_booked`
+- [ ] **Phone click tracking** (no site code needed — every phone button uses
+      a `tel:` link, including the (908) mailer tracking line):
+  - Variables → Configure built-ins → enable **Click URL**
+  - Trigger `Click - tel link`: Click – Just Links → Some Link Clicks →
+    Click URL contains `tel:`
+  - Tag "GAds Conversion — Phone Click": Conversion ID + Phone label →
+    trigger `Click - tel link`
+  - Optional GA4 event tag on the same trigger: event `phone_call_click`,
+    param `link_url` = `{{Click URL}}` → shows 973 (site) vs 908 (mailer)
+    call splits in GA4
 - [ ] **Preview** (GTM Preview → connect to www.josetherealtor.com): submit a
       test on /contact and on the valuation form → verify both conversion
-      tags + the GA4 event tag fire on `form_success`, and the paused tag
-      doesn't.
+      tags + the GA4 event tag fire on `form_success`; click a phone button →
+      phone tag fires; and the paused tag doesn't fire anywhere.
 - [ ] **Publish** as version **"Form conversions + EC; pause pageview goal"**
       with notes listing what changed. (Convention: every publish gets a
       descriptive name + notes — see Appendix.)
@@ -117,6 +150,27 @@ these lists must be educational and generic — "Know Your Options When Selling
 an Inherited Home" ✅, "Facing Foreclosure?" ❌. Never imply you know the
 viewer's situation. If a disapproval cites personalized-ads policy, soften the
 creative before appealing.
+
+### Direct-mail QR attribution (Thanks.io UI, ~10 min)
+
+Add UTMs to each mail template's QR URL, keeping every existing param
+(`cid`, `addr`, `city`, `name`, `zest`, `msg`). The `msg` param still swaps
+the hero; `utm_content` mirrors it so GA4/DynamoDB/GHL all see the exact
+piece:
+
+```
+...&msg=breakup&utm_source=thanksio&utm_medium=direct-mail&utm_campaign=probate-3touch&utm_content=breakup
+```
+
+- [ ] Breakup letter (#593401): `&utm_content=breakup`
+- [ ] Standard postcard (#593400): `&utm_content=standard`
+- [ ] Borrero intro letter (#592411): `&utm_content=intro`
+- [ ] Monthly update (#593396): `&utm_content=update` (+ its own
+      `utm_campaign=monthly-update`)
+
+Payoff: a scan → booked appointment now attributes to the exact mail piece
+(the site stores utm_* per lead and the booking conversion fires on the
+same-origin confirmation page with attribution intact).
 
 ## Phase 4 — Launch (gated: wait until All Visitors ≥ ~100 members)
 
@@ -174,3 +228,11 @@ to serve").
 - **Follow-up (not now)**: offline conversion import — the site already stores
   each lead's `gclid`, so signed listings can later be uploaded to Google Ads
   as high-value conversions.
+- **Mail opt-out ops**: the update-variant mailer page (`msg=update`) has a
+  one-click "take me off your mailing list" button that tags the GHL contact
+  `mail:optout`. Set up a GHL workflow (or check a saved filter regularly) on
+  that tag → remove the recipient from the Thanks.io monthly loop. Opt-outs
+  are wins: postage saved + a clean list.
+- **Update-variant VSL**: when the video is recorded, set `videoId` on the
+  `update` entry of MESSAGE_VARIANTS in `app/mailer/[type]/page.tsx` — the
+  decision block renders it automatically.

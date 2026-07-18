@@ -9,6 +9,7 @@ import GHLBookingCalendar from "@/components/GHLBookingCalendar";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import ZillowReviews from "@/components/ZillowReviews";
 import TeamSection from "@/components/TeamSection";
+import OptOutButton from "@/components/OptOutButton";
 import { siteConfig } from "@/lib/config";
 import {
   MAILER_INHERITED_FAQ,
@@ -62,7 +63,12 @@ type CampaignType = keyof typeof CAMPAIGN_TYPES;
  * holding. Only heroHeading/heroSub change — everything else stays on one
  * measured funnel. Unknown or missing msg falls back to the campaign default.
  */
-const MESSAGE_VARIANTS: Partial<Record<CampaignType, Record<string, { heroHeading: string; heroSub: string }>>> = {
+const MESSAGE_VARIANTS: Partial<
+  Record<
+    CampaignType,
+    Record<string, { heroHeading: string; heroSub: string; videoId?: string }>
+  >
+> = {
   "inherited-property": {
     breakup: {
       heroHeading: "Before you file this away — here's where the property stands today.",
@@ -72,9 +78,14 @@ const MESSAGE_VARIANTS: Partial<Record<CampaignType, Record<string, { heroHeadin
       heroHeading: "Thinking about selling your inherited property?",
       heroSub: "The Borrero Group at RE/MAX has helped NJ families sell 750+ properties — from fixer-uppers to million-dollar estates. Let's find the right path for yours.",
     },
+    // Monthly-update recipients have already scanned a previous piece — they
+    // know Jose. This variant is direct-response: decide, or opt out.
+    // videoId: set when the VSL is recorded — renders a video section at the
+    // top of the decision block.
     update: {
-      heroHeading: "Here's your updated market picture.",
-      heroSub: "Values shift month to month. Here's where the property stands right now — and I'm a call away whenever the timing feels right.",
+      heroHeading: "You know the numbers. Let's talk about what they mean for you.",
+      heroSub: "You've gotten my updates for a while now — so this month, instead of another market snapshot, a simple question: is it time to have the conversation?",
+      // videoId: "XXXXXXXXXXX",
     },
   },
 };
@@ -115,6 +126,9 @@ export default async function MailerPage({
   const variant = (msg && MESSAGE_VARIANTS[type as CampaignType]?.[msg]) || null;
   const heroHeading = variant?.heroHeading ?? config.heroHeading;
   const heroSub = variant?.heroSub ?? config.heroSub;
+  // Monthly-update recipients get the direct-response decision block
+  const isUpdateVariant = msg === "update";
+  const vslVideoId = variant?.videoId;
 
   const zestFormatted = zest ? formatZestimate(zest) : "";
   const hasAddress = Boolean(addr && city);
@@ -243,6 +257,47 @@ export default async function MailerPage({
             <p className="text-amber-700">
               Fill out the form below and we&apos;ll get you a real number within 24 hours — no obligation.
             </p>
+          </section>
+        )}
+
+        {/* Update variant — decision block. These recipients already scanned a
+            previous piece; ask for a decision instead of more education. */}
+        {isUpdateVariant && (
+          <section className="bg-gray-900 rounded-2xl p-6 sm:p-10 space-y-6 text-center">
+            {vslVideoId && (
+              <div className="max-w-2xl mx-auto">
+                <YouTubeEmbed id={vslVideoId} title="A personal message from Jose" />
+              </div>
+            )}
+            <div className="space-y-3">
+              <p className="text-sm font-semibold uppercase tracking-wide text-white/60">
+                You&apos;ve heard from me a few times now
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+                Let&apos;s make this the last letter you need from me.
+              </h2>
+              <p className="text-white/80 max-w-xl mx-auto">
+                You&apos;ve seen the numbers on the property. If there&apos;s a
+                conversation worth having, I&apos;m ready to have it. And if
+                these updates aren&apos;t useful, tell me — I&apos;ll stop
+                sending them. Either answer is a good answer.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <a
+                href="#book"
+                className="px-8 py-4 bg-remax-blue text-white font-bold rounded-lg hover:opacity-90 transition-opacity"
+              >
+                Yes — let&apos;s talk about the property
+              </a>
+              <a
+                href={telHref}
+                className="px-8 py-4 bg-white text-gray-900 font-bold rounded-lg hover:bg-white/90 transition-colors"
+              >
+                Call or text {phoneDisplay}
+              </a>
+            </div>
+            <OptOutButton cid={cid} phoneDisplay={phoneDisplay} telHref={telHref} />
           </section>
         )}
 

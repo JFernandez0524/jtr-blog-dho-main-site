@@ -14,6 +14,7 @@ export default function AdminLeadsPage() {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [retrying, setRetrying] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const client = generateClient<Schema>();
 
@@ -47,6 +48,29 @@ export default function AdminLeadsPage() {
       console.error("Retry failed:", error);
     } finally {
       setRetrying(null);
+    }
+  }
+
+  async function deleteLead(submission: ContactSubmission) {
+    if (!window.confirm(`Delete lead "${submission.name}" (${submission.email})? This cannot be undone.`)) {
+      return;
+    }
+    const deleteGhlContact = Boolean(
+      submission.ghlContactId &&
+        window.confirm("Also delete the linked GHL contact? (Cancel keeps the GHL contact.)")
+    );
+    setDeleting(submission.id);
+    try {
+      const response = await fetch("/api/admin/delete-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submissionId: submission.id, deleteGhlContact }),
+      });
+      if (response.ok) await fetchSubmissions();
+    } catch (error) {
+      console.error("Delete failed:", error);
+    } finally {
+      setDeleting(null);
     }
   }
 
@@ -146,15 +170,25 @@ export default function AdminLeadsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      {submission.ghlSyncStatus === "FAILED" && (
+                      <div className="flex items-center gap-4">
+                        {(submission.ghlSyncStatus === "FAILED" ||
+                          submission.ghlSyncStatus === "PENDING") && (
+                          <button
+                            onClick={() => retrySync(submission.id)}
+                            disabled={retrying === submission.id}
+                            className="text-remax-blue hover:underline disabled:opacity-50"
+                          >
+                            {retrying === submission.id ? "Retrying..." : "Retry Sync"}
+                          </button>
+                        )}
                         <button
-                          onClick={() => retrySync(submission.id)}
-                          disabled={retrying === submission.id}
-                          className="text-remax-blue hover:underline disabled:opacity-50"
+                          onClick={() => deleteLead(submission)}
+                          disabled={deleting === submission.id}
+                          className="text-red-600 hover:underline disabled:opacity-50"
                         >
-                          {retrying === submission.id ? "Retrying..." : "Retry Sync"}
+                          {deleting === submission.id ? "Deleting..." : "Delete"}
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))}
