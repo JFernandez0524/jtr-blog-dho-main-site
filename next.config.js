@@ -24,6 +24,10 @@ const nextConfig = {
   // Consolidate the apex host onto www — GSC was indexing both hosts as
   // separate pages, splitting ranking signals across duplicates.
   async redirects() {
+    // Town pages pruned to Jose's real footprint (2026-07) — indexed URLs
+    // 301 to their pillar so search equity flows back instead of 404ing
+    const removedInheritedTowns = ["cherry-hill", "princeton", "trenton", "hamilton", "toms-river", "paterson"];
+    const removedForeclosureTowns = ["toms-river", "paterson"];
     return [
       {
         source: "/:path*",
@@ -31,6 +35,16 @@ const nextConfig = {
         destination: "https://www.josetherealtor.com/:path*",
         permanent: true,
       },
+      ...removedInheritedTowns.map((town) => ({
+        source: `/inherited-property-${town}-nj`,
+        destination: "/inherited-property-new-jersey",
+        permanent: true,
+      })),
+      ...removedForeclosureTowns.map((town) => ({
+        source: `/foreclosure-${town}-nj`,
+        destination: "/foreclosure",
+        permanent: true,
+      })),
     ];
   },
   async headers() {

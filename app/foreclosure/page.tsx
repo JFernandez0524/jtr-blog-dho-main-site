@@ -7,6 +7,7 @@ import { generateServiceSchema, generateBreadcrumbSchema, generateFAQSchema } fr
 import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb";
 import TeamSection from "@/components/TeamSection";
+import TownsServed from "@/components/TownsServed";
 import { siteConfig } from "@/lib/config";
 import {
   FORECLOSURE_STAGES,
@@ -382,6 +383,7 @@ export default function ForeclosurePage() {
       </PillarLayout>
 
       <ZillowReviews />
+      <TownsServed serviceType="foreclosure" />
     </>
   );
 }
