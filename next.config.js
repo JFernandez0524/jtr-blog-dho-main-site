@@ -18,9 +18,7 @@ try {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    outputFileTracingRoot: path.join(__dirname),
-  },
+  outputFileTracingRoot: path.join(__dirname),
   // Consolidate the apex host onto www — GSC was indexing both hosts as
   // separate pages, splitting ranking signals across duplicates.
   async redirects() {

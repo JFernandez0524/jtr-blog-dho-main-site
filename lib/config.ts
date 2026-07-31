@@ -13,7 +13,7 @@ export const siteConfig = {
   // Contact Information
   contact: {
     name: "Jose Fernandez",
-    email: "info@josetherealtor.com", // TODO: Update with real email
+    email: "jose.fernandez@JoseTheRealtor.com",
     phone: "+1 (973) 384-1054", // TODO: Update with real phone
     phoneDisplay: "(973) 384-1054",
     // Dedicated mail-campaign tracking line (printed on postcards/letters).
