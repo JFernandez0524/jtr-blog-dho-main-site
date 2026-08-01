@@ -7,6 +7,7 @@ import YouTubeEmbed from "@/components/YouTubeEmbed";
 import BlogCTA from "@/components/BlogCTA";
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
+import Image from "next/image";
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs();
@@ -143,6 +144,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       {/* Content */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        {post.image && (
+          <div className="mb-8 overflow-hidden rounded-xl border border-remax-slate/10 shadow-md">
+            <Image
+              src={post.image}
+              alt={post.title}
+              width={1200}
+              height={675}
+              className="w-full h-auto object-cover max-h-[480px]"
+              priority
+            />
+          </div>
+        )}
         <div className="prose prose-lg max-w-none prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate [&>h1]:mb-6 [&>h1]:mt-8 [&>h2]:mb-6 [&>h2]:mt-8 [&>h3]:mb-4 [&>h3]:mt-6 [&>p]:mb-4 [&>ul]:mb-4 [&>ol]:mb-4 [&>li]:mb-2 prose-iframe:h-auto">
           <MDXRemote source={post.content} components={{ YouTubeEmbed }} />
         </div>

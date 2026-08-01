@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { PostMetadata } from "@/lib/mdx";
 
 interface BlogListProps {
@@ -53,9 +54,20 @@ export default function BlogList({ posts }: BlogListProps) {
         {filteredPosts.map((post) => (
           <article
             key={post.slug}
-            className="border border-remax-slate/10 rounded-lg p-6 hover:border-remax-blue/30 transition-colors"
+            className="border border-remax-slate/10 rounded-lg p-6 hover:border-remax-blue/30 transition-colors flex flex-col justify-between"
           >
-            <div className="flex gap-2 mb-3">
+            <div>
+              {post.image && (
+                <div className="mb-4 overflow-hidden rounded-md aspect-video relative">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
+              <div className="flex gap-2 mb-3 flex-wrap">
               {post.tags.map((tag) => (
                 <span
                   key={tag}
@@ -82,7 +94,8 @@ export default function BlogList({ posts }: BlogListProps) {
               </time>
               <span>{post.readingTime}</span>
             </div>
-          </article>
+          </div>
+        </article>
         ))}
       </div>
 
