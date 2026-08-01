@@ -1,6 +1,8 @@
 import { AuthGetCurrentUserServer } from "@/utils/amplify-utils";
 import Logout from "@/components/Logout";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await AuthGetCurrentUserServer();
 

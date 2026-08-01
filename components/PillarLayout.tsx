@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import Link from "next/link";
 import AsyncHeroImage from "./AsyncHeroImage";
 
 interface PillarLayoutProps {
@@ -39,12 +40,12 @@ export default function PillarLayout({ title, subtitle, children, compact, pageT
             <p className="text-xl text-white/90">
               Let's discuss your situation and find the best solution for you.
             </p>
-            <a
+            <Link
               href="/contact"
               className="inline-block px-8 py-3 bg-white text-remax-blue font-semibold rounded hover:bg-white/90 transition-colors"
             >
               Contact Jose Today
-            </a>
+            </Link>
           </div>
         </section>
       )}
