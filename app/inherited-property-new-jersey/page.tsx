@@ -104,7 +104,7 @@ export default function InheritedPropertyPage() {
           <div className="flex flex-col gap-4 order-2 md:order-1">
             <div className="flex items-center gap-4">
               <Image
-                src="/jose-profile.jpg"
+                src="/jose-profile.webp"
                 alt="Jose Fernandez, NJ Real Estate Agent"
                 width={80}
                 height={80}

@@ -68,7 +68,7 @@ export default function ServiceAreas() {
         </p>
         <figure className="mb-12 max-w-4xl mx-auto">
           <Image
-            src="/sold-homes-map.png"
+            src="/sold-homes-map.webp"
             alt="Homes we've sold across New Jersey — including Nutley, Belleville, Bloomfield, West Orange, East Orange, Irvington, Passaic, Woodland Park, Teaneck, Carlstadt, Garfield, Jersey City, Bayonne, West New York, Union City, Union Township, Cranford, Rahway, Westfield, Hillside, Clark, Garwood, Perth Amboy, Parlin, Manalapan, Somerset, Boonton Township, Colts Neck, Brick, and Millville — from $439K to $3.2M"
             width={1672}
             height={941}

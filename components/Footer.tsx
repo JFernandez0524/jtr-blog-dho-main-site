@@ -45,14 +45,14 @@ export default function Footer() {
                 className="h-10 w-auto opacity-70"
               />
               <Image
-                src="/realtor-r.jpg"
+                src="/realtor-r.webp"
                 alt="REALTOR® Member"
                 width={40}
                 height={40}
                 className="h-10 w-auto opacity-70"
               />
               <Image
-                src="/equal-housing.png"
+                src="/equal-housing.webp"
                 alt="Equal Housing Opportunity"
                 width={40}
                 height={40}
@@ -180,7 +180,7 @@ export default function Footer() {
               className="hover:opacity-80 transition-opacity"
             >
               <Image
-                src="/cmn-logo.png"
+                src="/cmn-logo.webp"
                 alt="RE/MAX and Children's Miracle Network Hospitals"
                 width={200}
                 height={60}

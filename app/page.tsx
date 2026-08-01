@@ -99,7 +99,7 @@ export default function Home() {
             </div>
             <div className="relative">
               <Image
-                src="/jose-profile.jpg"
+                src="/jose-profile.webp"
                 alt={siteConfig.contact.name}
                 width={350}
                 height={350}

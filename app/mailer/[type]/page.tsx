@@ -457,7 +457,7 @@ export default async function MailerPage({
         <section className="border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-5">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             <Image
-              src="/jose-profile.jpg"
+              src="/jose-profile.webp"
               alt="Jose Fernandez"
               width={100}
               height={100}

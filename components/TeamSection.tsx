@@ -15,7 +15,7 @@ export default function TeamSection() {
         Eight of us, one process — NJ Realtors<span className="align-super text-[10px]">®</span> Circle of Excellence Platinum performance every year since 2017.
       </p>
       <Image
-        src="/TeamDiamond.png"
+        src="/TeamDiamond.webp"
         alt="The Borrero Group at RE/MAX — NJ Realtors Circle of Excellence Platinum Award winners, every year since 2017"
         width={1672}
         height={941}
@@ -23,7 +23,7 @@ export default function TeamSection() {
         className="rounded-2xl mx-auto w-full h-auto"
       />
       <Image
-        src="/sold-homes-map.png"
+        src="/sold-homes-map.webp"
         alt="Map of homes we've sold across New Jersey — North Jersey, Central Jersey, the Shore, and South Jersey, from $439K starter homes to a $3.2M Colts Neck estate. 750+ homes sold in 28+ cities and towns."
         width={1672}
         height={941}

@@ -34,7 +34,7 @@ export function generateLocalBusinessSchema(reviewCount?: number, averageRating?
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
     name: siteConfig.contact.name,
-    image: `${siteConfig.url}/jose-profile.jpg`,
+    image: `${siteConfig.url}/jose-profile.webp`,
     "@id": siteConfig.url,
     url: siteConfig.url,
     telephone: siteConfig.contact.phone,

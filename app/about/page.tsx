@@ -24,7 +24,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-black/50" />
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <Image
-            src="/jose-profile.jpg"
+            src="/jose-profile.webp"
             alt={siteConfig.contact.name}
             width={150}
             height={150}

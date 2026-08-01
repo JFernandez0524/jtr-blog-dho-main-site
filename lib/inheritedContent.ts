@@ -82,11 +82,11 @@ export const WALKTHROUGH_CALLOUT = {
 };
 
 // Blue panel framing the sample listing-presentation graphic
-// (public/listingPresentationLayout.png).
+// (public/listingPresentationLayout.webp).
 export const PRICING_ANALYSIS_PANEL = {
   heading: "Every Family Gets a Full Pricing Analysis — Not a Guess",
   sub: "Real comps, market trends, and a data-driven plan for top dollar. Here’s what yours will look like:",
-  image: "/listingPresentationLayout.png",
+  image: "/listingPresentationLayout.webp",
   imageAlt:
     "Sample listing presentation from The Borrero Group — market at a glance, comparable sales map, recent comp highlights, and local market trends",
 };
