@@ -1,7 +1,22 @@
 #!/usr/bin/env python3
 import os
+import sys
 import glob
-from PIL import Image
+import subprocess
+
+def get_pil():
+    try:
+        from PIL import Image
+        return Image
+    except ImportError:
+        try:
+            print("📦 Installing Pillow for image optimization...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow", "--quiet"])
+            from PIL import Image
+            return Image
+        except Exception as e:
+            print(f"⚠️ Pillow could not be installed: {e}. Skipping automatic image optimization.")
+            return None
 
 def optimize_images():
     public_dir = os.path.abspath("public")
@@ -10,7 +25,7 @@ def optimize_images():
     # Extensions to convert
     convert_exts = ('.png', '.jpg', '.jpeg')
     
-    # Exclude files if needed (e.g., icons that must be exact PNG names for external manifests)
+    # Exclude files if needed
     exclude_files = set()
     
     # Find image files
@@ -26,14 +41,17 @@ def optimize_images():
     if not images_to_convert:
         print("✨ No unoptimized images found in public/ directory.")
         return
-        
+
+    Image = get_pil()
+    if not Image:
+        return
+
     print(f"🖼️ Found {len(images_to_convert)} image(s) to optimize into WebP format...\n")
     
     replacements = {}
     saved_bytes = 0
     
     for filepath in images_to_convert:
-        filename = os.path.basename(filepath)
         base_name, old_ext = os.path.splitext(filepath)
         webp_filepath = f"{base_name}.webp"
         
@@ -44,7 +62,6 @@ def optimize_images():
         
         try:
             with Image.open(filepath) as img:
-                # Convert RGBA/P to RGB for WebP if needed, or keep alpha channel
                 if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
                     img.save(webp_filepath, 'WEBP', quality=82, optimize=True)
                 else:
@@ -56,12 +73,9 @@ def optimize_images():
             
             print(f"  ✅ Converted: {rel_old} ({orig_size/1024:.1f} KB) → {rel_new} ({new_size/1024:.1f} KB) [-{(diff/orig_size)*100:.1f}%]")
             
-            # Remove original file to eliminate clutter
             os.remove(filepath)
             
-            # Store replacement mapping for code updating
             replacements[rel_old] = rel_new
-            # Also store without leading slash if used in code
             replacements[rel_old.lstrip('/')] = rel_new.lstrip('/')
             
         except Exception as e:
@@ -69,7 +83,6 @@ def optimize_images():
             
     print(f"\n🎉 Total disk space saved: {saved_bytes / 1024 / 1024:.2f} MB")
     
-    # Update code and content references across project
     if replacements:
         print("\n🔍 Updating code & content references...")
         scan_dirs = ["app", "components", "content", "lib", "public", "utils"]
