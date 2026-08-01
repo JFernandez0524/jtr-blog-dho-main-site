@@ -14,10 +14,10 @@ Google UIs. Work top to bottom; each phase gates the next.
 
 ## Phase 0 — Account triage (do first, ~10 minutes)
 
-- [ ] **Fix the payment method.** Google Ads → the red banner "Your ads aren't
+- [x] **Fix the payment method.** Google Ads → the red banner "Your ads aren't
       running" → **Fix it** → verify/re-enter the payment method. Nothing
       serves until this is done.
-- [ ] **Demote the pageview "conversion".** Google Ads → Goals → Conversions →
+- [x] **Demote the pageview "conversion".** Google Ads → Goals → Conversions →
       find the action fired by the GTM tag "JTR - Goal Page Visitors" (it
       counts every pageview as a conversion — that's why "All converters" ≈
       all visitors). Set it to **Secondary** (or remove it). Do NOT leave it
@@ -25,7 +25,7 @@ Google UIs. Work top to bottom; each phase gates the next.
 
 ## Phase 1 — Deploy the site changes
 
-- [ ] Deploy the code changes (CSP, admin-page tag blocking, attribution
+- [x] Deploy the code changes (CSP, admin-page tag blocking, attribution
       capture, `user_data` on `form_success`). Everything below depends on
       the deployed site.
 
@@ -34,27 +34,27 @@ Google UIs. Work top to bottom; each phase gates the next.
 Keep the existing **Google Analytics** tag, **Google Tag AW-17877884469**, and
 **Conversion Linker** — they're correct. In workspace:
 
-- [ ] **Pause "JTR - Goal Page Visitors"** (Tags → open it → ⋮ → Pause). Its
+- [x] **Pause "JTR - Goal Page Visitors"** (Tags → open it → ⋮ → Pause). Its
       replacement is step 6 below.
-- [ ] **Variables — create Data Layer Variables** (Variables → New → Data
+- [x] **Variables — create Data Layer Variables** (Variables → New → Data
       Layer Variable), all Version 2:
   - `dlv - form_name` → variable name `form_name`
   - `dlv - service_type` → variable name `service_type`
   - `dlv - user_data` → variable name `user_data`
-- [ ] **Variable — User-Provided Data** (for Enhanced Conversions):
+- [x] **Variable — User-Provided Data** (for Enhanced Conversions):
       Variables → New → **User-Provided Data** → Type: *Data Layer* →
       Data Layer Variable Name: `user_data`. Name it `UPD - form user data`.
-- [ ] **Triggers — Custom Event** (Triggers → New → Custom Event):
+- [x] **Triggers — Custom Event** (Triggers → New → Custom Event):
   - `CE - form_success (contact)` — Event name `form_success`, fire on Some
     Custom Events where `dlv - form_name` equals `contact_form`
   - `CE - form_success (valuation)` — Event name `form_success`, where
     `dlv - form_name` equals `valuation_form`
   - `CE - form_success (all)` — Event name `form_success`, All Custom Events
-- [ ] **Tag — GA4 event**: Tags → New → Google Analytics: GA4 Event →
+- [x] **Tag — GA4 event**: Tags → New → Google Analytics: GA4 Event →
       Measurement ID: (same as the existing Google Analytics tag) → Event
       name `form_success` → Event parameters: `form_name` = `{{dlv - form_name}}`,
       `service_type` = `{{dlv - service_type}}` → Trigger: `CE - form_success (all)`.
-- [ ] **Conversion actions in Google Ads first** (needed for the tags below):
+- [x] **Conversion actions in Google Ads first** (needed for the tags below):
       Google Ads → Goals → Conversions → New conversion action → Website →
       enter site → create **manually**, two actions:
   - "Lead — Contact Form" — Category: *Submit lead form*, Value: none (or a
@@ -72,13 +72,13 @@ Keep the existing **Google Analytics** tag, **Google Tag AW-17877884469**, and
   - "Consultation Booked" — Category: *Book appointment*, **Primary**,
     Count One, click-through 90d, Enhanced conversions OFF. Requires the
     GHL redirect below — without it this action never fires.
-- [ ] **Tags — 2× Google Ads Conversion Tracking**:
+- [x] **Tags — 2× Google Ads Conversion Tracking**:
   - "GAds Conversion — Contact Form": Conversion ID `AW-17877884469` +
     contact Label → check **Include user-provided data** → select
     `UPD - form user data` → Trigger: `CE - form_success (contact)`
   - "GAds Conversion — Valuation": same, valuation Label, trigger
     `CE - form_success (valuation)`
-- [ ] **Consultation Booked tracking** (booking iframe made visible via a
+- [x] **Consultation Booked tracking** (booking iframe made visible via a
       same-origin confirmation page):
   - **GHL first**: Calendars → calendar `tuC1rqAOzPTThWUC7rvS` →
     settings → Confirmation/Customizations → set the custom **Thank You /
@@ -92,7 +92,7 @@ Keep the existing **Google Analytics** tag, **Google Tag AW-17877884469**, and
   - Tag "GAds Conversion — Consultation Booked": Conversion ID + booked
     Label → trigger `PV - booking confirmed`
   - Optional GA4 event tag on the same trigger: event `consultation_booked`
-- [ ] **Phone click tracking** (no site code needed — every phone button uses
+- [x] **Phone click tracking** (no site code needed — every phone button uses
       a `tel:` link, including the (908) mailer tracking line):
   - Variables → Configure built-ins → enable **Click URL**
   - Trigger `Click - tel link`: Click – Just Links → Some Link Clicks →
@@ -102,11 +102,11 @@ Keep the existing **Google Analytics** tag, **Google Tag AW-17877884469**, and
   - Optional GA4 event tag on the same trigger: event `phone_call_click`,
     param `link_url` = `{{Click URL}}` → shows 973 (site) vs 908 (mailer)
     call splits in GA4
-- [ ] **Preview** (GTM Preview → connect to www.josetherealtor.com): submit a
+- [x] **Preview** (GTM Preview → connect to www.josetherealtor.com): submit a
       test on /contact and on the valuation form → verify both conversion
       tags + the GA4 event tag fire on `form_success`; click a phone button →
       phone tag fires; and the paused tag doesn't fire anywhere.
-- [ ] **Publish** as version **"Form conversions + EC; pause pageview goal"**
+- [x] **Publish** as version **"Form conversions + EC; pause pageview goal"**
       with notes listing what changed. (Convention: every publish gets a
       descriptive name + notes — see Appendix.)
 
@@ -214,7 +214,7 @@ to serve").
 | CTR / CPC / cost per lead | Ads campaign |
 | Form conversions (contact vs valuation) | Ads Conversions + GA4 `form_success` |
 | Leads with `ad:google` tag | GHL |
-| Appointments booked | GHL calendar (booking iframe is cross-origin — not trackable on-site) |
+| Appointments booked | Google Ads / GA4 (`/booking-confirmed` page view) + GHL calendar |
 | Listings signed / ROAS | Manual |
 
 ## Appendix — conventions
