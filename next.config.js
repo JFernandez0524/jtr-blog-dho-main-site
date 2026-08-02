@@ -65,7 +65,7 @@ const nextConfig = {
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "font-src 'self' https://fonts.gstatic.com",
           "img-src 'self' data: blob: https:",
-          "connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.google.com https://www.googleadservices.com https://*.g.doubleclick.net https://www.facebook.com https://graph.facebook.com",
+          "connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.google.com https://www.googleadservices.com https://*.g.doubleclick.net https://*.doubleclick.net https://doubleclick.net https://www.facebook.com https://graph.facebook.com",
           `frame-src https://www.youtube.com https://www.google.com https://td.doubleclick.net https://www.googletagmanager.com https://www.facebook.com ${GHL_FRAME_ORIGINS.join(" ")}`,
           `frame-ancestors ${frameAncestors}`,
         ].join("; "),
