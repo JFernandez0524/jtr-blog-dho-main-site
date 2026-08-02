@@ -112,13 +112,12 @@ Keep the existing **Google Analytics** tag, **Google Tag AW-17877884469**, and
 
 ## Phase 3 — GA4 + Google Ads console
 
-- [ ] GA4 → Admin → Product links → confirm the **Google Ads link** exists
-      (create it if not).
-- [ ] GA4 → Admin → Events → mark `form_success` as a **Key event**
-      (reporting only — bidding uses the GTM conversion tags; don't ALSO
-      import it into Ads or you'll double-count).
-- [ ] Google Ads → Goals → Conversions → confirm the two new Lead actions are
-      **Primary** and the old pageview action is Secondary/removed.
+- [x] GA4 → Admin → Product links → confirm the **Google Ads link** exists
+      (link `13304921856` confirmed active for customer `8988909411`).
+- [x] GA4 → Admin → Events → mark `form_success`, `call_click`, and
+      `messenger_click` as **Key events**.
+- [x] Google Ads → Goals → Conversions → confirm the new Lead actions are
+      **Primary** (*Submit lead form* and *Phone call lead*).
 - [ ] GA4 → Admin → Data streams → web stream → Configure tag settings →
       **Define internal traffic** → add your home/office IP; then Admin →
       Data settings → Data filters → activate the internal-traffic filter.
