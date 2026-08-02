@@ -2,6 +2,12 @@
 
 import { siteConfig } from "@/lib/config";
 
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
+
 const messengerUrl = "https://m.me/66616433431419";
 
 const PhoneIcon = () => (
@@ -23,10 +29,18 @@ export default function StickyCallButton({
   phone?: string;
 }) {
   const telHref = `tel:${phone.replace(/[\s()-]/g, "")}`;
+
+  const pushDataLayer = (event: string, data?: any) => {
+    if (typeof window !== "undefined" && window.dataLayer) {
+      window.dataLayer.push({ event, ...data });
+    }
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden flex border-t border-white/20">
       <a
         href={telHref}
+        onClick={() => pushDataLayer("call_click", { phone_number: phone, location: "sticky_bottom_bar" })}
         className="flex-1 bg-remax-blue text-white py-4 font-semibold text-sm flex items-center justify-center gap-2"
       >
         <PhoneIcon />
@@ -37,6 +51,7 @@ export default function StickyCallButton({
         href={messengerUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => pushDataLayer("messenger_click", { location: "sticky_bottom_bar" })}
         className="flex-1 bg-[#0084ff] text-white py-4 font-semibold text-sm flex items-center justify-center gap-2"
       >
         <MessengerIcon />
@@ -45,3 +60,4 @@ export default function StickyCallButton({
     </div>
   );
 }
+
