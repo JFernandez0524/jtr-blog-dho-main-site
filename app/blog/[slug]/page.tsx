@@ -6,6 +6,7 @@ import { generateArticleSchema, generateFAQSchema, generateBreadcrumbSchema } fr
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import BlogCTA from "@/components/BlogCTA";
 import Breadcrumb from "@/components/Breadcrumb";
+import SocialShare from "@/components/SocialShare";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -139,6 +140,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               </span>
             ))}
           </div>
+          <SocialShare title={post.title} slug={slug} className="mt-6 pt-4 border-t border-remax-slate/10" />
         </div>
       </header>
 
@@ -159,6 +161,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="prose prose-lg max-w-none prose-headings:font-semibold prose-h1:text-4xl prose-h2:text-3xl prose-headings:text-remax-blue prose-a:text-remax-blue prose-strong:text-remax-slate [&>h1]:mb-6 [&>h1]:mt-8 [&>h2]:mb-6 [&>h2]:mt-8 [&>h3]:mb-4 [&>h3]:mt-6 [&>p]:mb-4 [&>ul]:mb-4 [&>ol]:mb-4 [&>li]:mb-2 prose-iframe:h-auto">
           <MDXRemote source={post.content} components={{ YouTubeEmbed }} />
         </div>
+
+        {/* Social Share Bar */}
+        <SocialShare title={post.title} slug={slug} className="my-8 py-4 border-y border-remax-slate/10" />
 
         {/* CTA */}
         <BlogCTA />

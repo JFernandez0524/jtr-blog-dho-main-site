@@ -13,11 +13,33 @@ const usPhone = z
   )
   .transform((digits) => `+1${digits.slice(-10)}`);
 
+const BLOCKED_TEST_DOMAINS = new Set([
+  "test.com",
+  "example.com",
+  "fake.com",
+  "invalid.com",
+  "tempmail.com",
+  "mailinator.com",
+  "dispostable.com",
+  "trashmail.com",
+  "10minutemail.com",
+  "asdf.com",
+  "testing.com",
+  "domain.com",
+]);
+
 const cleanEmail = z
   .string()
   .trim()
   .toLowerCase()
-  .email("Invalid email address");
+  .email("Invalid email address")
+  .refine(
+    (email) => {
+      const domain = email.split("@")[1];
+      return domain && !BLOCKED_TEST_DOMAINS.has(domain);
+    },
+    "Please enter a valid, active email address."
+  );
 
 // Marketing attribution (utm_* + gclid captured client-side by lib/attribution.ts).
 // Invalid shapes are dropped, never rejected — attribution must not block a lead.
