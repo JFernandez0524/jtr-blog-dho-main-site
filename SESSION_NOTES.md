@@ -305,3 +305,47 @@ The website is **production-ready** from a security standpoint. All critical vul
 
 **Session End:** 2026-03-05 03:03 UTC  
 **Next Session:** TBD
+
+---
+
+# Session Notes — 2026-08-07
+
+## Session Summary
+
+**Date:** August 7, 2026  
+**Focus:** GSC Top Queries Analysis, Page Optimization, RE/MAX Branding & Internal Linking  
+
+---
+
+## What Was Accomplished Today
+
+1. **GSC Search Query & Page Audit**:
+   - Analyzed top 10 search console terms (`can i sell my house in foreclosure in new jersey`, `selling an inherited property new jersey`, `sell inherited house in nj`, `2 cherry street elizabeth nj`, `sell inherited house newark`).
+   - Identified **2 Cherry Street, Elizabeth, NJ 07202** as the Union County Surrogate's Court address.
+2. **On-Page & Schema Optimizations**:
+   - Optimized Foreclosure post (`/blog/can-i-sell-my-house-during-foreclosure-in-nj`) with FAQ schema and equity protection headings.
+   - Added Estate Sale Process checklist to NJ Inherited Property Guide (`/blog/inherited-property-guide-nj`).
+   - Added **2 Cherry Street, Elizabeth, NJ 07202** court address to Elizabeth location page & NJ probate timeline.
+   - Added targeted phrasing for selling inherited homes in Newark and Essex County (`/inherited-property-newark-nj`).
+3. **Testimonial & RE/MAX Image Upgrades**:
+   - Added Zillow out-of-state heir testimonial to Bayonne location page (`/inherited-property-bayonne-nj`).
+   - Generated a new WebP image with official **RE/MAX FOR SALE** sign for the foreclosure blog post (`can-i-sell-house-during-foreclosure-nj.webp`).
+4. **Internal Cross-Linking**:
+   - Linked from Page 1 performers (Bayonne @ #5.0 & Perth Amboy Case Study @ #7.5) directly to Elizabeth and Newark pages.
+
+---
+
+## 📌 Reminders for Next Time You Log In
+
+- [ ] **Publish 1–2 More Real Case Studies**:
+  - Create a **Newark** or **Elizabeth** case study (similar to the Perth Amboy case study @ #7.5) featuring real addresses, real numbers ($35K over asking), and authentic seller quotes. This will help rank Newark & Elizabeth on Page 1 within weeks.
+- [ ] **Post Updates on Google Business Profile**:
+  - Create 2–3 posts on your Google Business Profile linking directly to:
+    - `https://www.josetherealtor.com/inherited-property-elizabeth-nj`
+    - `https://www.josetherealtor.com/inherited-property-newark-nj`
+  - *Local Google Business Profile posts pass strong geographic relevance signals.*
+- [ ] **Request Indexing in GSC**:
+  - Submit updated URLs in Google Search Console URL Inspection tool.
+- [ ] **Monitor Google Ads Remarketing Audiences**:
+  - Check `All Visitors - 540d` list growth as traffic reaches the 100-member threshold for Display retargeting.
+
