@@ -21,6 +21,21 @@ import {
   PRICING_ANALYSIS_PANEL,
   AGENT_VALUE_QUOTE,
 } from "@/lib/inheritedContent";
+import {
+  FORECLOSURE_STAGES,
+  FORECLOSURE_OPTIONS,
+  FORECLOSURE_TRUST_POINTS,
+} from "@/lib/foreclosureContent";
+import {
+  AUCTION_OPTIONS,
+  AUCTION_NUMBERS_NOTE,
+  AUCTION_FAQ,
+  LIS_PENDENS_STAGE_INDEX,
+  LIS_PENDENS_NUMBERS_NOTE,
+  LIS_PENDENS_FAQ,
+  LIS_PENDENS_GUIDE,
+  FORECLOSURE_BIO,
+} from "@/lib/preforeclosureMailerContent";
 
 const CAMPAIGN_TYPES = {
   "inherited-property": {
@@ -53,7 +68,34 @@ const CAMPAIGN_TYPES = {
     ctaSub: "Tell me a little about the property and I'll personally call you within 24 hours.",
     serviceType: "sell-as-is",
   },
+  // Thanks.io "Preforeclosure - Auction" letter (sheriff sale scheduled).
+  // QR: ?cid=%CUSTOM1%&zest=%CUSTOM2%&addr=%CUSTOM3%&city=%CUSTOM4%&debt=%CUSTOM7%&sale=%CUSTOM8%
+  "auction": {
+    heroHeading: "Your sheriff sale is scheduled — you still have options",
+    heroSub: "A sale date isn't the end. Selling before the auction can protect the equity you've built. Let's look at your numbers together — free, confidential, no pressure.",
+    heroCta: "Book My Free Consultation",
+    bookingHeading: "Pick a Time to Talk Before Your Sale Date",
+    bookingSub: "A quick call. I'll walk through your numbers and every option still open to you — free, confidential, no obligation.",
+    ctaHeading: "Prefer We Reach Out to You?",
+    ctaSub: "Tell me a little about your situation and I'll personally call you within 24 hours.",
+    serviceType: "foreclosure",
+  },
+  // Thanks.io "Preforeclosure - Lis Pendens" letter (foreclosure complaint filed).
+  // QR: ?cid=%CUSTOM1%&zest=%CUSTOM2%&addr=%CUSTOM3%&city=%CUSTOM4%&debt=%CUSTOM7%
+  "lis-pendens": {
+    heroHeading: "A foreclosure was filed — you have more time and options than you think",
+    heroSub: "NJ foreclosures move slowly, and right now nearly every option is still open — including protecting your equity. Let's talk through yours, confidentially.",
+    heroCta: "Book My Free Consultation",
+    bookingHeading: "Pick a Time to Talk Through Your Options",
+    bookingSub: "A quick call. I'll walk through your numbers and every option still open to you — free, confidential, no obligation.",
+    ctaHeading: "Prefer We Reach Out to You?",
+    ctaSub: "Tell me a little about your situation and I'll personally call you within 24 hours.",
+    serviceType: "foreclosure",
+  },
 } as const;
+
+// Campaigns that get the foreclosure bio, trust block, and numbers card
+const FORECLOSURE_CAMPAIGNS = new Set<string>(["preforeclosure", "auction", "lis-pendens"]);
 
 type CampaignType = keyof typeof CAMPAIGN_TYPES;
 
@@ -109,20 +151,68 @@ function formatZestimate(zest: string): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(num);
 }
 
+function formatUSD(n: number): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+}
+
+/** Lenient money parse: "412000", "$412,000", "412000.50" → 412000. Null when not positive. */
+function parseAmount(raw?: string): number | null {
+  if (!raw) return null;
+  const n = Math.round(Number(raw.replace(/[^0-9.]/g, "")));
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/**
+ * Sale date from the QR URL. Accepts ISO "2026-12-02" (custom8) and, as a
+ * fallback, "December 2, 2026". Returns the label to print and the number
+ * of whole days from today (America/New_York) — null when unparseable.
+ */
+function parseSaleDate(raw?: string): { label: string; daysAway: number } | null {
+  if (!raw) return null;
+  const s = raw.trim();
+  let y: number, m: number, d: number;
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (iso) {
+    [y, m, d] = [Number(iso[1]), Number(iso[2]), Number(iso[3])];
+  } else {
+    const parsed = new Date(s);
+    if (Number.isNaN(parsed.getTime())) return null;
+    [y, m, d] = [parsed.getFullYear(), parsed.getMonth() + 1, parsed.getDate()];
+  }
+  const saleUtc = Date.UTC(y, m - 1, d);
+  if (Number.isNaN(saleUtc) || new Date(saleUtc).getUTCDate() !== d) return null;
+  // "Today" in NJ, independent of the server's timezone
+  const [ty, tm, td] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" })
+    .format(new Date())
+    .split("-")
+    .map(Number);
+  const daysAway = Math.round((saleUtc - Date.UTC(ty, tm - 1, td)) / 86_400_000);
+  const label = new Date(saleUtc).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  return { label, daysAway };
+}
+
 export default async function MailerPage({
   params,
   searchParams,
 }: {
   params: Promise<{ type: string }>;
-  searchParams: Promise<{ cid?: string; addr?: string; city?: string; zest?: string; name?: string; msg?: string }>;
+  searchParams: Promise<{ cid?: string; addr?: string; city?: string; zest?: string; name?: string; msg?: string; sale?: string; debt?: string }>;
 }) {
   const { type } = await params;
 
   if (!(type in CAMPAIGN_TYPES)) notFound();
   const config = CAMPAIGN_TYPES[type as CampaignType];
   const isInheritedProperty = type === "inherited-property";
+  const isAuction = type === "auction";
+  const isLisPendens = type === "lis-pendens";
+  const isForeclosureCampaign = FORECLOSURE_CAMPAIGNS.has(type);
 
-  const { cid, addr, city, zest, name: firstName, msg } = await searchParams;
+  const { cid, addr, city, zest, name: firstName, msg, sale, debt } = await searchParams;
   const variant = (msg && MESSAGE_VARIANTS[type as CampaignType]?.[msg]) || null;
   const heroHeading = variant?.heroHeading ?? config.heroHeading;
   const heroSub = variant?.heroSub ?? config.heroSub;
@@ -134,6 +224,33 @@ export default async function MailerPage({
   const hasAddress = Boolean(addr && city);
   const hasZestimate = Boolean(zestFormatted);
   const hasBookingCalendar = Boolean(process.env.GHL_BOOKING_CALENDAR_URL);
+
+  // Auction / lis pendens "Your numbers" card: Zestimate − upset (auction) or
+  // loan balance (lis pendens). Same formula the letter uses for %CUSTOM6%, so
+  // the page and the letter always agree. Hidden unless equity is positive.
+  const zestNum = parseAmount(zest);
+  const debtNum = isAuction || isLisPendens ? parseAmount(debt) : null;
+  const equity = zestNum != null && debtNum != null ? zestNum - debtNum : null;
+  const hasNumbers = equity != null && equity > 0;
+  const debtLabel = isAuction ? "Upset Price (Opening Bid)" : "Estimated Loan Balance";
+
+  // Auction countdown — only for a sale date that is today or in the future
+  const saleInfo = isAuction ? parseSaleDate(sale) : null;
+  const hasUpcomingSale = saleInfo != null && saleInfo.daysAway >= 0;
+
+  const bio = isForeclosureCampaign
+    ? FORECLOSURE_BIO
+    : {
+        paragraphs: [
+          "I specialize in helping NJ families navigate inherited properties — from understanding what the home is worth to guiding you through probate, family decisions, and the right next step for your situation.",
+          "Whether you decide to sell, keep the property, or need more time to figure it out, I'm here to give you honest information — not a sales pitch.",
+        ],
+        bullets: [
+          "Free property valuation with no obligation",
+          "I'll personally call you — not a call center",
+          "15+ years navigating NJ probate and estate sales",
+        ],
+      };
 
   // Mail-campaign tracking line — matches the number printed on postcards/letters
   const phoneDisplay = siteConfig.contact.mailerTrackingPhoneDisplay;
@@ -176,6 +293,21 @@ export default async function MailerPage({
               {addr}, {city}, NJ
             </p>
           )}
+          {hasUpcomingSale && saleInfo && (
+            <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 max-w-xl mx-auto">
+              <p className="text-sm font-semibold uppercase tracking-wide text-red-700">Sheriff sale scheduled</p>
+              <p className="text-xl font-bold text-red-800">
+                {saleInfo.label}
+                {" — "}
+                {saleInfo.daysAway === 0
+                  ? "today"
+                  : saleInfo.daysAway === 1
+                    ? "tomorrow"
+                    : `${saleInfo.daysAway} days away`}
+              </p>
+              <p className="text-sm text-red-700 mt-1">Every option is easier with more time. Let&apos;s talk this week.</p>
+            </div>
+          )}
           <p className="text-gray-500 max-w-xl mx-auto">{heroSub}</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
             <a
@@ -214,8 +346,41 @@ export default async function MailerPage({
           </div>
         </section>
 
-        {/* Zestimate card or soft fallback */}
-        {hasZestimate ? (
+        {/* Zestimate card or soft fallback. Auction / lis pendens leads with a
+            known debt amount get the "Your numbers" equity card instead. */}
+        {hasNumbers && zestNum != null && debtNum != null && equity != null ? (
+          <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6 space-y-4">
+            <p className="text-sm font-medium text-blue-700 uppercase tracking-wide text-center">Your Numbers</p>
+            <div className="grid sm:grid-cols-3 gap-3 text-center">
+              <div className="bg-white rounded-xl p-4 space-y-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Estimated Value</p>
+                <p className="text-2xl font-bold text-gray-900">{formatUSD(zestNum)}</p>
+                {/* Zillow branding requirement: logo adjacent to Zestimate data */}
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-[11px] text-gray-500">Zestimate® by</span>
+                  <Image src="/zillow-icon.svg" alt="Zillow" width={50} height={20} className="h-4 w-auto" />
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 space-y-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{debtLabel}</p>
+                <p className="text-2xl font-bold text-gray-900">− {formatUSD(debtNum)}</p>
+                <p className="text-[11px] text-gray-500">From public records</p>
+              </div>
+              <div className="bg-remax-blue rounded-xl p-4 space-y-1">
+                <p className="text-xs font-medium text-white/80 uppercase tracking-wide">
+                  {isAuction ? "Equity at Risk" : "Estimated Equity"}
+                </p>
+                <p className="text-3xl font-bold text-white">{formatUSD(equity)}</p>
+              </div>
+            </div>
+            <p className="text-sm text-blue-900 text-center max-w-2xl mx-auto">
+              {isAuction ? AUCTION_NUMBERS_NOTE : LIS_PENDENS_NUMBERS_NOTE}
+            </p>
+            <p className="text-xs text-gray-400 text-center">
+              Estimates only — a free consultation is the way to get real numbers. Zestimate data provided &quot;as is&quot; via the Zestimate API.
+            </p>
+          </section>
+        ) : hasZestimate ? (
           <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6 space-y-3">
             <p className="text-sm font-medium text-blue-700 uppercase tracking-wide text-center">Estimated Starting Value</p>
             <p className="text-5xl font-bold text-remax-blue text-center">{zestFormatted}</p>
@@ -344,6 +509,75 @@ export default async function MailerPage({
           </>
         )}
 
+        {/* Auction — options still open before the sale date */}
+        {isAuction && (
+          <section className="space-y-5">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Options Still Open {hasUpcomingSale && saleInfo ? `Before ${saleInfo.label}` : "Before Your Sale Date"}
+              </h2>
+              <p className="text-gray-500">A scheduled sale is serious — but it isn&apos;t final. Here&apos;s what homeowners in your position can still do.</p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {AUCTION_OPTIONS.map(({ title, text }) => (
+                <div key={title} className="border border-gray-200 rounded-2xl p-6 space-y-2">
+                  <p className="font-bold text-remax-blue">{title}</p>
+                  <p className="text-gray-600 text-sm">{text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Lis pendens — "you are here" timeline + full option set */}
+        {isLisPendens && (
+          <>
+            <section className="space-y-5">
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl font-bold text-gray-900">Where You Are in the NJ Foreclosure Process</h2>
+                <p className="text-gray-500">New Jersey foreclosures go through the courts. You&apos;re early enough that nearly every option is still on the table.</p>
+              </div>
+              <ol className="space-y-3">
+                {FORECLOSURE_STAGES.map(({ stage, what, stillOpen }, i) => {
+                  const isCurrent = i === LIS_PENDENS_STAGE_INDEX;
+                  return (
+                    <li
+                      key={stage}
+                      className={`rounded-2xl p-5 border ${
+                        isCurrent ? "border-remax-blue bg-remax-blue/5 ring-2 ring-remax-blue/20" : "border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-bold text-gray-400">STEP {i + 1}</span>
+                        {isCurrent && (
+                          <span className="text-xs font-bold uppercase tracking-wide bg-remax-blue text-white px-2 py-0.5 rounded-full">
+                            You are here
+                          </span>
+                        )}
+                      </div>
+                      <p className="font-bold text-gray-900">{stage}</p>
+                      <p className="text-sm text-gray-600 mt-1">{what}</p>
+                      <p className="text-sm text-remax-blue font-medium mt-1">{stillOpen}</p>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+
+            <section className="space-y-5">
+              <h2 className="text-2xl font-bold text-gray-900 text-center">Your Options Right Now</h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {FORECLOSURE_OPTIONS.map(({ title, text }) => (
+                  <div key={title} className="border border-gray-200 rounded-2xl p-6 space-y-2">
+                    <p className="font-bold text-remax-blue">{title}</p>
+                    <p className="text-gray-600 text-sm">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+
         {/* Booking calendar — the primary conversion action */}
         <section id="book" className="space-y-6 scroll-mt-20">
           <div className="text-center space-y-2">
@@ -381,6 +615,22 @@ export default async function MailerPage({
             </div>
           )}
         </section>
+
+        {/* Anti-scam trust block — legitimate help has to distinguish itself
+            from the foreclosure-rescue scams these homeowners are targeted by */}
+        {(isAuction || isLisPendens) && (
+          <section className="bg-gray-50 border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900 text-center">How to Know You&apos;re Talking to Legitimate Help</h2>
+            <ul className="space-y-3">
+              {FORECLOSURE_TRUST_POINTS.map((point) => (
+                <li key={point} className="flex items-start gap-3 text-sm text-gray-700">
+                  <span className="text-green-600 font-bold mt-px">✓</span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {isInheritedProperty && (
           <>
@@ -437,6 +687,26 @@ export default async function MailerPage({
           </>
         )}
 
+        {/* Auction / lis pendens FAQ */}
+        {(isAuction || isLisPendens) && (
+          <section className="space-y-5">
+            <h2 className="text-2xl font-bold text-gray-900">Common Questions</h2>
+            <div className="space-y-5">
+              {(isAuction ? AUCTION_FAQ : LIS_PENDENS_FAQ).map(({ q, a }) => (
+                <div key={q} className="border-l-4 border-remax-blue/30 pl-4">
+                  <p className="font-semibold text-remax-blue mb-1">{q}</p>
+                  <p className="text-gray-600 text-sm">{a}</p>
+                </div>
+              ))}
+            </div>
+            {isLisPendens && (
+              <Link href={LIS_PENDENS_GUIDE.href} className="inline-block text-sm font-semibold text-remax-blue hover:underline">
+                {LIS_PENDENS_GUIDE.label} →
+              </Link>
+            )}
+          </section>
+        )}
+
         {/* CTA + form — the alternative path for leads who'd rather be contacted */}
         <section id="contact-form" className="space-y-6 scroll-mt-20">
           <div className="text-center space-y-2">
@@ -478,16 +748,13 @@ export default async function MailerPage({
           </div>
 
           <div className="space-y-3 text-gray-600 text-sm leading-relaxed">
-            <p>I specialize in helping NJ families navigate inherited properties — from understanding what the home is worth to guiding you through probate, family decisions, and the right next step for your situation.</p>
-            <p>Whether you decide to sell, keep the property, or need more time to figure it out, I&apos;m here to give you honest information — not a sales pitch.</p>
+            {bio.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
           </div>
 
           <ul className="space-y-2">
-            {[
-              "Free property valuation with no obligation",
-              "I'll personally call you — not a call center",
-              "15+ years navigating NJ probate and estate sales",
-            ].map((item) => (
+            {bio.bullets.map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
                 <span className="text-green-600 font-bold mt-px">✓</span>
                 {item}

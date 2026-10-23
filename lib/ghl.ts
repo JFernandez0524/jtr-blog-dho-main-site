@@ -56,6 +56,8 @@ export function getSourceLabel(source?: string): string {
     const template = getMailerTemplate(source);
     const suffix = template ? ` (${template})` : "";
     if (source.includes("inherited-property")) return `Direct Mail — Inherited Property${suffix}`;
+    if (source.includes("/mailer/auction")) return `Direct Mail — Preforeclosure Auction${suffix}`;
+    if (source.includes("/mailer/lis-pendens")) return `Direct Mail — Preforeclosure Lis Pendens${suffix}`;
     if (source.includes("preforeclosure")) return `Direct Mail — Preforeclosure${suffix}`;
     if (source.includes("sell-as-is")) return `Direct Mail — Sell As-Is${suffix}`;
     return `Direct Mail${suffix}`;
@@ -88,6 +90,7 @@ function getServiceTypeFromSource(source?: string): string {
   if (source.includes("/mailer/")) {
     if (source.includes("inherited-property")) return "Probate";
     if (source.includes("preforeclosure")) return "Preforeclosure";
+    if (source.includes("/mailer/auction") || source.includes("/mailer/lis-pendens")) return "Preforeclosure";
     if (source.includes("sell-as-is")) return "Sell As Is";
     return "General Inquiry";
   }
